@@ -1,0 +1,16 @@
+{
+    "name": "Jordan Radios",
+    "short_name": "Jordan Radios",
+    "description": " Listen to radio stations from Jordan.",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#F8F9FA",
+    "icons": [
+        {
+            "src": "icon-1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        }
+    ]
+}
