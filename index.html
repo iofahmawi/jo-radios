@@ -62,7 +62,7 @@
     body { font-family: 'Inter', sans-serif; background-color: var(--page-bg-color); color: var(--text-color); line-height: 1.5; display: grid; place-content: center; padding: 1rem; box-sizing: border-box; }
     .main-content { width: 100%; }
     .container { max-width: 350px; width: 100%; margin: 0 auto; background-color: var(--card-bg-color); border-radius: 12px; box-shadow: var(--card-box-shadow); overflow: hidden; display: flex; flex-direction: column; }
-    .header-area { padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider-color); }
+    .header-area { padding: 1.0rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider-color); }
     .main-title-group { display: flex; align-items: center; gap: 12px; overflow: hidden; }
     .jordan-flag { width: 42px; height: 21px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
     .main-title { font-size: 1.75rem; font-weight: 700; color: var(--title-color); white-space: nowrap; }
@@ -76,8 +76,7 @@
     .station-list li:last-child { border-bottom: none; }
     .station-list li.active { background-color: var(--station-item-active-bg); }
     .station-info-container { display: flex; align-items: center; width: 100%; }
-    .station-logo { width: 40px; height: 40px; border-radius: 4px; margin-right: 1rem; object-fit: cover; flex-shrink: 0; cursor: pointer; transition: transform 0.2s; }
-    .station-logo:hover { transform: scale(1.1); }
+    .station-logo { width: 40px; height: 40px; border-radius: 4px; margin-right: 1rem; object-fit: cover; flex-shrink: 0; transition: transform 0.2s; display: block; }
     .station-name-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; font-weight: 500; color: var(--text-color); }
     li.active .station-name-text { font-weight: 700; color: var(--station-item-active-text); }
     .station-stream-info { font-size: 0.875rem; color: var(--secondary-text-color); padding-left: 0.5rem; white-space: nowrap; flex-shrink: 0; }
@@ -122,6 +121,21 @@
     body.lang-ar .header-area,
     body.lang-ar .main-title-group {
       flex-direction: row-reverse;
+    }
+    body.lang-ar .station-info-container {
+      direction: rtl;
+    }
+    body.lang-ar .station-name-text {
+      text-align: right;
+    }
+    body.lang-ar .station-logo {
+      margin-right: 0;
+      margin-left: 1rem;
+    }
+    body.lang-ar .station-stream-info {
+      padding-left: 0;
+      padding-right: 0.5rem;
+      cursor: pointer;
     }
     body.lang-ar .modal-content {
       direction: rtl;
@@ -379,13 +393,26 @@
         updateThemeButtonText();
         updateLangButtonText();
     };
-
-    const toggleLanguage = () => {
-        const newLang = currentLang === 'en' ? 'ar' : 'en';
-        setLanguage(newLang);
-    };
     
-    const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); const stationName = getStationName(station); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", () => playStation(li, station)); li.querySelector('.station-logo').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
+    const handleLiClick = (li, station, index, event) => {
+        if (currentLang === 'ar') {
+            if (event.target.closest('.station-stream-info')) {
+                event.stopPropagation();
+                openEditModal(station, index);
+            } else {
+                playStation(li, station);
+            }
+        } else {
+            if (event.target.closest('.station-logo')) {
+                event.stopPropagation();
+                openEditModal(station, index);
+            } else {
+                playStation(li, station);
+            }
+        }
+    };
+
+    const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); const stationName = getStationName(station); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", (e) => handleLiClick(li, station, index, e)); stationListUL.appendChild(li); }); };
     const playStation = (li, station) => { if (li.classList.contains('active')) { player.stop(); audioPlayerContainer.classList.add('hidden'); li.classList.remove('active'); } else { stationListUL.querySelector("li.active")?.classList.remove("active"); li.classList.add("active"); player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } };
     const saveAndRerender = () => { localStorage.setItem('savedStations', JSON.stringify(stations)); renderStationList(); };
     
@@ -411,6 +438,8 @@
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
+    const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
+    const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
 
     const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) importedStations = JSON.parse(content); else if (file.name.match(/\.m3u8?$/)) importedStations = parseM3U(content); else return alert(translations.alertUnsupported[currentLang]); if (!Array.isArray(importedStations) || !importedStations.length) return alert(translations.alertInvalid[currentLang]); importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error(err); } }; reader.readAsText(file); fileInput.value = ''; };
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
@@ -453,8 +482,8 @@
         editStationForm.addEventListener('submit', saveStationChanges);
         deleteStationBtn.addEventListener('click', openDeleteConfirm);
         settingsBtn.addEventListener('click', openSettingsModal);
-        themeToggleBtn.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
-        langToggleBtn.addEventListener('click', toggleLanguage);
+        themeToggleBtn.addEventListener('click', toggleThemeAndClose);
+        langToggleBtn.addEventListener('click', toggleLanguageAndClose);
         addStationBtn.addEventListener('click', () => { closeSettingsModal(); openAddModal(); });
         addStationForm.addEventListener('submit', saveNewStation);
         importBtn.addEventListener('click', () => fileInput.click() );
