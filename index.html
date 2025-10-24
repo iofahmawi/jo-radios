@@ -69,11 +69,11 @@
 
     .main-content {
         flex-grow: 1;
-        padding: 1rem; /* --- تم تقليل الحشو قليلاً --- */
-        /* --- التعديل هنا: تمت إضافة Flexbox للتوسيط --- */
+        /* --- التعديل هنا: تم تحديد الحشو يدوياً لتحقيق توازن بصري --- */
+        padding: 2rem 1rem; 
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: flex-start; /* --- يضمن بقاء الحاوية في الجزء العلوي من هذه المساحة --- */
     }
 
     .header-area {
@@ -88,21 +88,20 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      overflow: hidden; /* --- يمنع المحتوى من تجاوز الحاوية --- */
+      overflow: hidden; 
     }
     .jordan-flag {
       width: 42px;
       height: 21px;
       border-radius: 4px;
       object-fit: cover;
-      flex-shrink: 0; /* --- يمنع العلم من التقلص --- */
+      flex-shrink: 0; 
     }
     .main-title {
       font-size: 1.75rem;
       font-weight: 700;
       color: var(--title-color);
       letter-spacing: 0.00735em;
-      /* --- التعديل هنا: يمنع العنوان من الالتفاف --- */
       white-space: nowrap;
     }
     #darkModeToggle {
@@ -127,7 +126,7 @@
 
     .container {
       max-width: 600px;
-      width: 100%; /* --- يضمن أن تأخذ الحاوية كامل العرض المتاح لها --- */
+      width: 100%;
       margin: 0 auto;
       background-color: var(--card-bg-color);
       border-radius: 12px;
