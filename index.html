@@ -27,21 +27,35 @@
       --divider-color: #E9ECEF; --input-bg-color: #F1F5F9; --input-border-color: #CBD5E1;
       --button-primary-bg: #1565C0; --button-primary-text: #FFFFFF;
       --button-secondary-bg: #E2E8F0; --button-secondary-text: #334155;
-      --button-danger-bg: #FECACA; --button-danger-text: #991B1B;
-      --button-danger-confirm-bg: #DC2626; --button-danger-confirm-text: #FFFFFF;
+      --button-danger-bg: #DC2626;
+      --button-danger-text: #FFFFFF;
+      --button-danger-confirm-bg: #DC2626; 
+      --button-danger-confirm-text: #FFFFFF;
     }
     .dark-mode {
-      /* Dark Mode */
-      --page-bg-color: #121212; --card-bg-color: #1E1E1E; --text-color: rgba(255, 255, 255, 0.87);
-      --title-color: rgba(255, 255, 255, 0.87); --secondary-text-color: rgba(255, 255, 255, 0.60);
-      --icon-color: rgba(255, 255, 255, 0.70); --icon-hover-color: rgba(255, 255, 255, 0.87);
-      --icon-hover-bg: rgba(255, 255, 255, 0.08); --card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-      --station-item-active-bg: rgba(144, 202, 249, 0.16); --station-item-active-text: #90CAF9;
-      --divider-color: rgba(255, 255, 255, 0.12); --input-bg-color: #333; --input-border-color: #555;
-      --button-primary-bg: #90CAF9; --button-primary-text: #121212;
-      --button-secondary-bg: #374151; --button-secondary-text: #F9FAFB;
-      --button-danger-bg: #450A0A; --button-danger-text: #FCA5A5;
-      --button-danger-confirm-bg: #991B1B; --button-danger-confirm-text: #FECACA;
+      /* Gray Theme Dark Mode */
+      --page-bg-color: #18181B;
+      --card-bg-color: #27272A;
+      --text-color: rgba(255, 255, 255, 0.90);
+      --title-color: #FFFFFF;
+      --secondary-text-color: rgba(255, 255, 255, 0.60);
+      --icon-color: rgba(255, 255, 255, 0.70);
+      --icon-hover-color: #FFFFFF;
+      --icon-hover-bg: rgba(255, 255, 255, 0.1);
+      --card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --station-item-active-bg: #3F3F46;
+      --station-item-active-text: #FFFFFF;
+      --divider-color: #3F3F46;
+      --input-bg-color: #3F3F46;
+      --input-border-color: #52525B;
+      --button-primary-bg: #3B82F6;
+      --button-primary-text: #FFFFFF;
+      --button-secondary-bg: #3F3F46;
+      --button-secondary-text: #E4E4E7;
+      --button-danger-bg: #DC2626;
+      --button-danger-text: #FFFFFF;
+      --button-danger-confirm-bg: #DC2626;
+      --button-danger-confirm-text: #FFFFFF;
     }
 
     html, body { height: 100%; margin: 0; }
@@ -52,7 +66,7 @@
     .main-title-group { display: flex; align-items: center; gap: 12px; overflow: hidden; }
     .jordan-flag { width: 42px; height: 21px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
     .main-title { font-size: 1.75rem; font-weight: 700; color: var(--title-color); white-space: nowrap; }
-    #settingsBtn { margin-left: auto; background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--icon-color); transition: background-color 0.2s, color 0.2s; }
+    #settingsBtn { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--icon-color); transition: background-color 0.2s, color 0.2s; }
     #settingsBtn:hover { background-color: var(--icon-hover-bg); color: var(--icon-hover-color); }
     #settingsBtn i { font-size: 1.5rem; }
 
@@ -77,14 +91,14 @@
     #audioPlayerContainer .plyr__controls { display: flex; justify-content: center !important; align-items: center; gap: 12px; }
     #audioPlayerContainer .plyr__controls button[data-plyr="play"] { order: -2; }
     #audioPlayerContainer .plyr__controls::before { content: 'LIVE'; color: #e11d48; font-size: 10px; font-weight: bold; background-color: rgba(225, 29, 72, 0.1); padding: 4px 8px; border-radius: 4px; order: -1; }
-    .dark-mode .plyr--audio { --plyr-audio-controls-background: var(--card-bg-color); --plyr-audio-control-color: var(--icon-color); --plyr-audio-control-color-hover: var(--icon-hover-color); --plyr-audio-control-background-hover: var(--icon-hover-bg); --plyr-color-main: var(--station-item-active-text); }
+    .dark-mode .plyr--audio { --plyr-audio-controls-background: var(--card-bg-color); --plyr-audio-control-color: var(--icon-color); --plyr-audio-control-color-hover: var(--icon-hover-color); --plyr-audio-control-background-hover: var(--icon-hover-bg); --plyr-color-main: var(--button-primary-bg); }
     .dark-mode #audioPlayerContainer .plyr__controls::before { color: #f43f5e; background-color: rgba(244, 63, 94, 0.2); }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: grid; place-items: center; z-index: 1000; }
     .modal-content { position: relative; background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; }
     .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--title-color); }
     .modal-form { display: flex; flex-direction: column; gap: 1rem; }
-    form.modal-form { margin-bottom: -0.3rem; } /* <-- هذا هو السطر الجديد الذي يستهدف النماذج فقط */
+    form.modal-form { margin-bottom: -0.3rem; }
     .modal-form label { display: block; font-weight: 500; margin-bottom: 0.5rem; }
     .modal-form input { width: 100%; padding: 0.75rem; border: 1px solid var(--input-border-color); background-color: var(--input-bg-color); color: var(--text-color); border-radius: 6px; box-sizing: border-box; }
     .modal-form .modal-actions { margin-top: 0.5rem; }
@@ -103,6 +117,22 @@
     .confirm-text { text-align: center; font-size: 1.1rem; margin: 0.5rem 0; }
     .export-options { display: flex; justify-content: space-around; padding: 0.5rem 0; }
     .export-options label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+
+    /* RTL Styles for Arabic Language */
+    body.lang-ar .header-area,
+    body.lang-ar .main-title-group {
+      flex-direction: row-reverse;
+    }
+    body.lang-ar .modal-content {
+      direction: rtl;
+    }
+    body.lang-ar .modal-close-btn {
+      right: auto;
+      left: 0.75rem;
+    }
+    body.lang-ar #editStationForm .modal-actions {
+      flex-direction: row-reverse;
+    }
   </style>
 </head>
 <body>
@@ -110,7 +140,7 @@
   <main class="main-content">
     <div class="container">
       <div class="header-area">
-        <div class="main-title-group"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png" class="jordan-flag"><h1 class="main-title">Jordan Radios</h1></div>
+        <div class="main-title-group"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png" class="jordan-flag"><h1 class="main-title" data-lang-key="pageTitle">Jordan Radios</h1></div>
         <button id="settingsBtn" title="Settings"><i class="ph ph-gear"></i></button>
       </div>
       <ul id="stationList" class="station-list"></ul>
@@ -123,12 +153,13 @@
       <button id="closeModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
       <div style="display: flex; align-items: center; gap: 1rem;"><img id="modalStationImage" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"><h3 id="modalStationName" class="modal-title"></h3></div>
       <form id="editStationForm" class="modal-form">
-        <div><label for="editStreamUrl">Stream URL</label><input type="text" id="editStreamUrl" required></div>
-        <div><label for="editLogoUrl">Logo URL</label><input type="text" id="editLogoUrl"></div>
-        <div><label for="editStreamType">Stream Type (e.g., MP3 128k)</label><input type="text" id="editStreamType"></div>
+        <div><label for="editStationName" data-lang-key="stationNameLabel">Station Name</label><input type="text" id="editStationName" required></div>
+        <div><label for="editStreamUrl" data-lang-key="streamUrlLabel">Stream URL</label><input type="text" id="editStreamUrl" required></div>
+        <div><label for="editLogoUrl" data-lang-key="logoUrlLabel">Logo URL</label><input type="text" id="editLogoUrl"></div>
+        <div><label for="editStreamType" data-lang-key="streamTypeLabel">Stream Type (e.g., MP3 128k)</label><input type="text" id="editStreamType"></div>
         <div class="modal-actions">
-            <button type="button" id="deleteStationBtn" class="btn-danger">Delete</button>
-            <button type="submit" class="btn-primary">Save</button>
+            <button type="button" id="deleteStationBtn" class="btn-danger" data-lang-key="deleteBtn">Delete</button>
+            <button type="submit" class="btn-primary" data-lang-key="saveBtn">Save</button>
         </div>
       </form>
     </div>
@@ -137,13 +168,13 @@
   <div id="addStationModal" class="modal-overlay hidden">
       <div class="modal-content">
         <button id="closeAddModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
-        <h3 class="modal-title">Add New Station</h3>
+        <h3 class="modal-title" data-lang-key="addStationModalTitle">Add New Station</h3>
         <form id="addStationForm" class="modal-form">
-          <div><label for="addStationNameInput">Station Name</label><input type="text" id="addStationNameInput" required></div>
-          <div><label for="addStreamUrl">Stream URL</label><input type="text" id="addStreamUrl" required></div>
-          <div><label for="addLogoUrl">Logo URL</label><input type="text" id="addLogoUrl"></div>
-          <div><label for="addStreamType">Stream Type</label><input type="text" id="addStreamType"></div>
-          <div class="modal-actions"><button type="submit" class="btn-primary">Add Station</button></div>
+          <div><label for="addStationNameInput" data-lang-key="stationNameLabel">Station Name</label><input type="text" id="addStationNameInput" required></div>
+          <div><label for="addStreamUrl" data-lang-key="streamUrlLabel">Stream URL</label><input type="text" id="addStreamUrl" required></div>
+          <div><label for="addLogoUrl" data-lang-key="logoUrlLabel">Logo URL</label><input type="text" id="addLogoUrl"></div>
+          <div><label for="addStreamType" data-lang-key="streamTypeLabelShort">Stream Type</label><input type="text" id="addStreamType"></div>
+          <div class="modal-actions"><button type="submit" class="btn-primary" data-lang-key="addStationBtn">Add Station</button></div>
         </form>
       </div>
   </div>
@@ -151,53 +182,70 @@
   <div id="settingsModal" class="modal-overlay hidden">
     <div class="modal-content">
         <button id="closeSettingsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
-        <h3 class="modal-title">Settings</h3>
-        <div class="settings-section"><h4 class="settings-section-title">Appearance</h4><button id="themeToggleBtn" class="btn-secondary"></button></div>
-        <div class="settings-section"><h4 class="settings-section-title">Manage List</h4><button id="addStationBtn" class="btn-secondary">Add New Station</button><button id="importBtn" class="btn-secondary">Import List</button><input type="file" id="fileInput" accept=".json,.m3u,.m3u8" class="hidden"><button id="exportBtn" class="btn-secondary">Export List</button><button id="resetBtn" class="btn-danger">Reset to Default</button></div>
+        <h3 class="modal-title" data-lang-key="settingsTitle">Settings</h3>
+        <div class="settings-section">
+            <h4 class="settings-section-title" data-lang-key="appearanceTitle">Appearance</h4>
+            <button id="themeToggleBtn" class="btn-secondary"></button>
+            <button id="langToggleBtn" class="btn-secondary"></button>
+        </div>
+        <div class="settings-section">
+            <h4 class="settings-section-title" data-lang-key="manageListTitle">Manage List</h4>
+            <button id="addStationBtn" class="btn-secondary" data-lang-key="addStationBtn">Add New Station</button>
+            <button id="importBtn" class="btn-secondary" data-lang-key="importBtn">Import List</button><input type="file" id="fileInput" accept=".json,.m3u,.m3u8" class="hidden">
+            <button id="exportBtn" class="btn-secondary" data-lang-key="exportBtn">Export List</button>
+            <button id="resetBtn" class="btn-danger" data-lang-key="resetBtn">Reset to Default</button>
+        </div>
     </div>
   </div>
 
   <div id="importConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
-          <h3 class="modal-title">Import List</h3>
-          <p class="confirm-text">New list ready. Merge with current list or replace it?</p>
-          <div class="modal-actions"><button id="cancelImportBtn" class="btn-secondary">Cancel</button><button id="mergeBtn" class="btn-secondary">Merge</button><button id="replaceBtn" class="btn-primary">Replace</button></div>
+          <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+          <h3 class="modal-title" data-lang-key="importModalTitle">Import List</h3>
+          <p class="confirm-text" data-lang-key="importConfirmText">New list ready. Merge with current list or replace it?</p>
+          <div class="modal-actions">
+              <button id="mergeBtn" class="btn-secondary" data-lang-key="mergeBtn">Merge</button>
+              <button id="replaceBtn" class="btn-primary" data-lang-key="replaceBtn">Replace</button>
+          </div>
       </div>
   </div>
 
   <div id="exportModal" class="modal-overlay hidden">
       <div class="modal-content">
-          <h3 class="modal-title">Export List</h3>
+          <button id="cancelExportBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+          <h3 class="modal-title" data-lang-key="exportModalTitle">Export List</h3>
           <div class="settings-section">
-              <h4 class="settings-section-title">Choose Format</h4>
+              <h4 class="settings-section-title" data-lang-key="exportFormatTitle">Choose Format</h4>
               <div class="export-options">
                   <label><input type="radio" name="exportFormat" value="json" checked> JSON</label>
                   <label><input type="radio" name="exportFormat" value="m3u8"> M3U8</label>
                   <label><input type="radio" name="exportFormat" value="m3u"> M3U</label>
               </div>
           </div>
-          <div class="modal-actions"><button id="cancelExportBtn" class="btn-secondary">Cancel</button><button id="confirmExportBtn" class="btn-primary">Export</button></div>
+          <div class="modal-actions">
+              <button id="confirmExportBtn" class="btn-primary" data-lang-key="exportBtnShort">Export</button>
+          </div>
       </div>
   </div>
 
   <div id="deleteConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
-          <h3 class="modal-title">Confirm Deletion</h3>
+          <button id="cancelDeleteBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+          <h3 class="modal-title" data-lang-key="deleteModalTitle">Confirm Deletion</h3>
           <p id="deleteConfirmText" class="confirm-text"></p>
           <div class="modal-actions">
-              <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
-              <button id="confirmDeleteBtn" class="btn-danger-confirm">Confirm</button>
+              <button id="confirmDeleteBtn" class="btn-danger-confirm" data-lang-key="confirmBtn">Confirm</button>
           </div>
       </div>
   </div>
   
   <div id="resetConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
-          <h3 class="modal-title">Confirm Reset</h3>
-          <p class="confirm-text">Are you sure? This will delete all your custom changes and restore the original list.</p>
+          <button id="cancelResetBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+          <h3 class="modal-title" data-lang-key="resetModalTitle">Confirm Reset</h3>
+          <p class="confirm-text" data-lang-key="resetConfirmText">Are you sure? This will delete all your custom changes and restore the original list.</p>
           <div class="modal-actions">
-              <button id="cancelResetBtn" class="btn-secondary">Cancel</button>
-              <button id="confirmResetBtn" class="btn-danger-confirm">Confirm</button>
+              <button id="confirmResetBtn" class="btn-danger-confirm" data-lang-key="confirmBtn">Confirm</button>
           </div>
       </div>
   </div>
@@ -206,7 +254,42 @@
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
     const DEFAULT_STATIONS = [
-        { name: "Watar", url: "https://securestreams2.autopo.st:1243/live", logoUrl: "https://i.postimg.cc/KzCjdtXy/1000014796.jpg", streamType: "MP3 128k" }, { name: "Melody", url: "http://s3.voscast.com:9966/;", logoUrl: "https://i.postimg.cc/SK3msqg6/1000014834.jpg", streamType: "MP3 192k" }, { name: "Radio Fann", url: "http://45.63.116.205/hls_audio2/audio.m3u8", logoUrl: "https://i.postimg.cc/PxvrzNCV/1000014808.jpg", streamType: "AAC 128k" }, { name: "Nai", url: "https://naifm.radioca.st/;", logoUrl: "https://i.postimg.cc/t4DT9K0k/1000014806-1.jpg", streamType: "MP3 64k" }, { name: "Mazaj", url: "https://mazajfm.ice.infomaniak.ch/mazajfm-192.mp3", logoUrl: "https://i.postimg.cc/8P4DvLyP/1000015658-01.jpg", streamType: "MP3 192k" }, { name: "Noon", url: "https://radionoon.radioca.st/;", logoUrl: "https://i.postimg.cc/rwT0VGDV/1000014790.jpg", streamType: "MP3 128k" }, { name: "Radio Hala", url: "https://hala-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/zD6K3nTs/1000023868.jpg", streamType: "MP3 128k" }, { name: "Rotana", url: "http://45.63.116.205:8000/stream", logoUrl: "https://i.postimg.cc/Z5Ybsw9d/1000014815.jpg", streamType: "MP3 128k" }, { name: "Radio Jordan", url: "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/cLJWB6j7/1000014952.jpg", streamType: "AAC 128k" }, { name: "Radio Amman", url: "https://jrtv-live.ercdn.net/jrradio/ammanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/dtjQ9b0F/1000014813.jpg", streamType: "AAC 128k" }, { name: "Radio Jordan Quran", url: "https://jrtv-live.ercdn.net/jrradio/quranradiovideo.m3u8", logoUrl: "https://i.postimg.cc/fbLby8DN/1000014805.jpg", streamType: "AAC 128k" }, { name: "Radio Jordan English", url: "https://jrtv-live.ercdn.net/jrradio/englishradiovideo.m3u8", logoUrl: "https://i.postimg.cc/02s2DkPZ/1000014812.jpg", streamType: "AAC 128k" }, { name: "Jeish", url: "https://jeishfm-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Cxw5TF2d/1000014803.jpg", streamType: "MP3 96k" }, { name: "Radio Al Balad", url: "http://s3.voscast.com:8964/;stream1653312509934/1", logoUrl: "https://i.postimg.cc/c1YLvgyr/1000014811.jpg", streamType: "MP3 48k" }, { name: "Ain FM", url: "http://frequencyjo.info:8001/ainfm", logoUrl: "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg", streamType: "MP3 128k" }, { name: "Leqaa", url: "https://cast6.my-control-panel.com/proxy/leqaafml/stream", logoUrl: "https://i.postimg.cc/NFhGNYTs/1000014809.jpg", streamType: "MP3 192k" }, { name: "SSAD", url: "https://s3.radio.co/s2d881c399/listen", logoUrl: "https://i.postimg.cc/0Q4PzvZG/1000014770.jpg", streamType: "MP3 128k" }, { name: "Yaqeen", url: "http://45.63.116.205/hls_audio4/audio.m3u8", logoUrl: "https://i.postimg.cc/Gp7HxZqt/1000014795.jpg", streamType: "AAC 128k" }, { name: "Hayat", url: "https://dc1.serverse.com/proxy/kjxwtpdt/stream", logoUrl: "https://i.postimg.cc/hjXhyp5r/1000014793.jpg", streamType: "MP3 128k" }, { name: "Husna", url: "https://s2.voscast.com:10445/stream", logoUrl: "https://i.postimg.cc/DzMwX1wb/1000014807.jpg", streamType: "MP3 128k" }, { name: "University of Jordan", url: "http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32", logoUrl: "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg", streamType: "MP3 128k" }, { name: "Yarmouk University", url: "https://yufm.yu.edu.jo/broadwave.mp3", logoUrl: "https://i.postimg.cc/brQyWMHQ/1000014810.jpg", streamType: "MP3 56k" }, { name: "Al al-Bayt University", url: "http://aabufm.aabu.edu.jo/aabufm", logoUrl: "https://i.postimg.cc/5254nZN1/1000014769.jpg", streamType: "MP3 128k" }, { name: "Tafila Technical University", url: "http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1", logoUrl: "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg", streamType: "MP3 24k" }, { name: "Talal Abu Ghazaleh", url: "http://89.28.216.245:8000/tagbc", logoUrl: "https://i.postimg.cc/L4rg7FRZ/1000014779.jpg", streamType: "MP3 128k" }, { name: "Jordan Academy of Arabic", url: "https://eu9.fastcast4u.com/proxy/arabicla?mp=/1", logoUrl: "https://i.postimg.cc/SsGyw3yt/1000082596-converted.jpg", streamType: "MP3 32k" }, { name: "Rotana Tarab", url: "http://45.63.116.205/hls_audio3/audio.m3u8", logoUrl: "https://i.postimg.cc/YCx4h4F1/1000014791.jpg", streamType: "AAC 128k" }, { name: "Radio Dahab", url: "https://mazajgoldhits.ice.infomaniak.ch/mazajgoldhits-192.mp3", logoUrl: "https://i.postimg.cc/QMxF5Xgv/1000014792.jpg", streamType: "MP3 128k" }, { name: "Sout Al Khaleej", url: "https://live.kwikmotion.com/qmcslkrradiolive/slkrradio/playlist.m3u8", logoUrl: "https://i.postimg.cc/g0nYmrHc/1000014830.jpg", streamType: "AAC 128k" }, { name: "Hawa Dijlah", url: "https://listen.radioking.com/radio/96766/stream/136030", logoUrl: "https://i.postimg.cc/2j4CzshW/1000014856.jpg", streamType: "MP3 192k" }, { name: "Monte Carlo Doualiya", url: "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3", logoUrl: "https://i.postimg.cc/Hn4mBMdz/1000014841-1.jpg", streamType: "MP3 128k" }, { name: "Kids", url: "https://dahab.ice.infomaniak.ch/dahab-192.mp3", logoUrl: "https://i.postimg.cc/3Jm0QfJf/1000014788-1.jpg", streamType: "MP3 192k" }, { name: "Mood", url: "https://securestreams2.autopo.st:1241/live", logoUrl: "https://i.postimg.cc/prtxfCby/1000014849.jpg", streamType: "MP3 128k" }, { name: "Beat", url: "https://securestreams2.autopo.st:1242/live", logoUrl: "https://i.postimg.cc/mZcF8gxs/1000014775.jpg", streamType: "MP3 128k" }, { name: "Play", url: "https://play995.radioca.st/;", logoUrl: "https://i.postimg.cc/4x8JDptF/1000014829.jpg", streamType: "MP3 128k" }, { name: "Bliss", url: "https://bliss1-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Hn5nHjH8/1000014797.jpg", streamType: "MP3 48k" }
+      { name: { en: "Watar", ar: "وتر" }, url: "https://securestreams2.autopo.st:1243/live", logoUrl: "https://i.postimg.cc/KzCjdtXy/1000014796.jpg", streamType: "MP3 128k" },
+      { name: { en: "Melody", ar: "ميلودي" }, url: "http://s3.voscast.com:9966/;", logoUrl: "https://i.postimg.cc/SK3msqg6/1000014834.jpg", streamType: "MP3 192k" },
+      { name: { en: "Radio Fann", ar: "راديو فن" }, url: "http://45.63.116.205/hls_audio2/audio.m3u8", logoUrl: "https://i.postimg.cc/PxvrzNCV/1000014808.jpg", streamType: "AAC 128k" },
+      { name: { en: "Nai", ar: "ناي" }, url: "https://naifm.radioca.st/;", logoUrl: "https://i.postimg.cc/t4DT9K0k/1000014806-1.jpg", streamType: "MP3 64k" },
+      { name: { en: "Mazaj", ar: "مزاج" }, url: "https://mazajfm.ice.infomaniak.ch/mazajfm-192.mp3", logoUrl: "https://i.postimg.cc/8P4DvLyP/1000015658-01.jpg", streamType: "MP3 192k" },
+      { name: { en: "Noon", ar: "نون" }, url: "https://radionoon.radioca.st/;", logoUrl: "https://i.postimg.cc/rwT0VGDV/1000014790.jpg", streamType: "MP3 128k" },
+      { name: { en: "Radio Hala", ar: "راديو هلا" }, url: "https://hala-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/zD6K3nTs/1000023868.jpg", streamType: "MP3 128k" },
+      { name: { en: "Rotana", ar: "روتانا" }, url: "http://45.63.116.205:8000/stream", logoUrl: "https://i.postimg.cc/Z5Ybsw9d/1000014815.jpg", streamType: "MP3 128k" },
+      { name: { en: "Radio Jordan", ar: "الإذاعة الأردنية" }, url: "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/cLJWB6j7/1000014952.jpg", streamType: "AAC 128k" },
+      { name: { en: "Radio Amman", ar: "راديو عمان" }, url: "https://jrtv-live.ercdn.net/jrradio/ammanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/dtjQ9b0F/1000014813.jpg", streamType: "AAC 128k" },
+      { name: { en: "Radio Jordan Quran", ar: "إذاعة القرآن الكريم" }, url: "https://jrtv-live.ercdn.net/jrradio/quranradiovideo.m3u8", logoUrl: "https://i.postimg.cc/fbLby8DN/1000014805.jpg", streamType: "AAC 128k" },
+      { name: { en: "Radio Jordan English", ar: "الإذاعة الأردنية الإنجليزية" }, url: "https://jrtv-live.ercdn.net/jrradio/englishradiovideo.m3u8", logoUrl: "https://i.postimg.cc/02s2DkPZ/1000014812.jpg", streamType: "AAC 128k" },
+      { name: { en: "Jeish", ar: "جيش" }, url: "https://jeishfm-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Cxw5TF2d/1000014803.jpg", streamType: "MP3 96k" },
+      { name: { en: "Radio Al Balad", ar: "راديو البلد" }, url: "http://s3.voscast.com:8964/;stream1653312509934/1", logoUrl: "https://i.postimg.cc/c1YLvgyr/1000014811.jpg", streamType: "MP3 48k" },
+      { name: { en: "Ain FM", ar: "عين" }, url: "http://frequencyjo.info:8001/ainfm", logoUrl: "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg", streamType: "MP3 128k" },
+      { name: { en: "Leqaa", ar: "لقاء" }, url: "https://cast6.my-control-panel.com/proxy/leqaafml/stream", logoUrl: "https://i.postimg.cc/NFhGNYTs/1000014809.jpg", streamType: "MP3 192k" },
+      { name: { en: "SSAD", ar: "صاد" }, url: "https://s3.radio.co/s2d881c399/listen", logoUrl: "https://i.postimg.cc/0Q4PzvZG/1000014770.jpg", streamType: "MP3 128k" },
+      { name: { en: "Yaqeen", ar: "يقين" }, url: "http://45.63.116.205/hls_audio4/audio.m3u8", logoUrl: "https://i.postimg.cc/Gp7HxZqt/1000014795.jpg", streamType: "AAC 128k" },
+      { name: { en: "Hayat", ar: "حياة" }, url: "https://dc1.serverse.com/proxy/kjxwtpdt/stream", logoUrl: "https://i.postimg.cc/hjXhyp5r/1000014793.jpg", streamType: "MP3 128k" },
+      { name: { en: "Husna", ar: "حسنى" }, url: "https://s2.voscast.com:10445/stream", logoUrl: "https://i.postimg.cc/DzMwX1wb/1000014807.jpg", streamType: "MP3 128k" },
+      { name: { en: "University of Jordan", ar: "الجامعة الأردنية" }, url: "http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32", logoUrl: "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg", streamType: "MP3 128k" },
+      { name: { en: "Yarmouk University", ar: "جامعة اليرموك" }, url: "https://yufm.yu.edu.jo/broadwave.mp3", logoUrl: "https://i.postimg.cc/brQyWMHQ/1000014810.jpg", streamType: "MP3 56k" },
+      { name: { en: "Al al-Bayt University", ar: "جامعة آل البيت" }, url: "http://aabufm.aabu.edu.jo/aabufm", logoUrl: "https://i.postimg.cc/5254nZN1/1000014769.jpg", streamType: "MP3 128k" },
+      { name: { en: "Tafila Technical University", ar: "جامعة الطفيلة التقنية" }, url: "http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1", logoUrl: "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg", streamType: "MP3 24k" },
+      { name: { en: "Talal Abu Ghazaleh", ar: "طلال أبو غزالة" }, url: "http://89.28.216.245:8000/tagbc", logoUrl: "https://i.postimg.cc/L4rg7FRZ/1000014779.jpg", streamType: "MP3 128k" },
+      { name: { en: "Jordan Academy of Arabic", ar: "مجمع اللغة العربية الأردني" }, url: "https://eu9.fastcast4u.com/proxy/arabicla?mp=/1", logoUrl: "https://i.postimg.cc/SsGyw3yt/1000082596-converted.jpg", streamType: "MP3 32k" },
+      { name: { en: "Rotana Tarab", ar: "روتانا طرب" }, url: "http://45.63.116.205/hls_audio3/audio.m3u8", logoUrl: "https://i.postimg.cc/YCx4h4F1/1000014791.jpg", streamType: "AAC 128k" },
+      { name: { en: "Radio Dahab", ar: "راديو دهب" }, url: "https://mazajgoldhits.ice.infomaniak.ch/mazajgoldhits-192.mp3", logoUrl: "https://i.postimg.cc/QMxF5Xgv/1000014792.jpg", streamType: "MP3 128k" },
+      { name: { en: "Sout Al Khaleej", ar: "صوت الخليج" }, url: "https://live.kwikmotion.com/qmcslkrradiolive/slkrradio/playlist.m3u8", logoUrl: "https://i.postimg.cc/g0nYmrHc/1000014830.jpg", streamType: "AAC 128k" },
+      { name: { en: "Hawa Dijlah", ar: "هوا دجلة" }, url: "https://listen.radioking.com/radio/96766/stream/136030", logoUrl: "https://i.postimg.cc/2j4CzshW/1000014856.jpg", streamType: "MP3 192k" },
+      { name: { en: "Monte Carlo Doualiya", ar: "مونت كارلو الدولية" }, url: "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3", logoUrl: "https://i.postimg.cc/Hn4mBMdz/1000014841-1.jpg", streamType: "MP3 128k" },
+      { name: { en: "Kids", ar: "كيدز" }, url: "https://dahab.ice.infomaniak.ch/dahab-192.mp3", logoUrl: "https://i.postimg.cc/3Jm0QfJf/1000014788-1.jpg", streamType: "MP3 192k" },
+      { name: { en: "Mood", ar: "مود" }, url: "https://securestreams2.autopo.st:1241/live", logoUrl: "https://i.postimg.cc/prtxfCby/1000014849.jpg", streamType: "MP3 128k" },
+      { name: { en: "Beat", ar: "بيت" }, url: "https://securestreams2.autopo.st:1242/live", logoUrl: "https://i.postimg.cc/mZcF8gxs/1000014775.jpg", streamType: "MP3 128k" },
+      { name: { en: "Play", ar: "بلاي" }, url: "https://play995.radioca.st/;", logoUrl: "https://i.postimg.cc/4x8JDptF/1000014829.jpg", streamType: "MP3 128k" },
+      { name: { en: "Bliss", ar: "بلييز" }, url: "https://bliss1-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Hn5nHjH8/1000014797.jpg", streamType: "MP3 48k" }
     ];
     let stations = [];
     
@@ -214,15 +297,15 @@
     const body = document.body, stationListUL = getEl("stationList"), audioPlayerContainer = getEl("audioPlayerContainer"),
         audio = getEl("audioPlayer"), stationModal = getEl('stationModal'), closeModalBtn = getEl('closeModalBtn'),
         editStationForm = getEl('editStationForm'), modalStationImage = getEl('modalStationImage'),
-        modalStationName = getEl('modalStationName'), editStreamUrl = getEl('editStreamUrl'),
-        editLogoUrl = getEl('editLogoUrl'), editStreamType = getEl('editStreamType'), deleteStationBtn = getEl('deleteStationBtn'),
-        settingsBtn = getEl('settingsBtn'), settingsModal = getEl('settingsModal'),
-        closeSettingsBtn = getEl('closeSettingsBtn'), themeToggleBtn = getEl('themeToggleBtn'), addStationBtn = getEl('addStationBtn'),
-        importBtn = getEl('importBtn'), fileInput = getEl('fileInput'), exportBtn = getEl('exportBtn'),
+        modalStationName = getEl('modalStationName'), editStationName = getEl('editStationName'),
+        editStreamUrl = getEl('editStreamUrl'), editLogoUrl = getEl('editLogoUrl'), editStreamType = getEl('editStreamType'), 
+        deleteStationBtn = getEl('deleteStationBtn'), settingsBtn = getEl('settingsBtn'), settingsModal = getEl('settingsModal'),
+        closeSettingsBtn = getEl('closeSettingsBtn'), themeToggleBtn = getEl('themeToggleBtn'), langToggleBtn = getEl('langToggleBtn'),
+        addStationBtn = getEl('addStationBtn'), importBtn = getEl('importBtn'), fileInput = getEl('fileInput'), exportBtn = getEl('exportBtn'),
         resetBtn = getEl('resetBtn'), addStationModal = getEl('addStationModal'), closeAddModalBtn = getEl('closeAddModalBtn'),
         addStationForm = getEl('addStationForm'), addStationNameInput = getEl('addStationNameInput'),
         addStreamUrl = getEl('addStreamUrl'), addLogoUrl = getEl('addLogoUrl'), addStreamType = getEl('addStreamType'),
-        importConfirmModal = getEl('importConfirmModal'), cancelImportBtn = getEl('cancelImportBtn'),
+        importConfirmModal = getEl('importConfirmModal'), closeImportConfirmBtn = getEl('closeImportConfirmBtn'),
         mergeBtn = getEl('mergeBtn'), replaceBtn = getEl('replaceBtn'), exportModal = getEl('exportModal'),
         cancelExportBtn = getEl('cancelExportBtn'), confirmExportBtn = getEl('confirmExportBtn'),
         deleteConfirmModal = getEl('deleteConfirmModal'), cancelDeleteBtn = getEl('cancelDeleteBtn'),
@@ -232,21 +315,90 @@
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
+    let currentLang = 'en';
 
-    const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${station.name}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", () => playStation(li, station)); li.querySelector('.station-logo').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
-    const playStation = (li, station) => { if (li.classList.contains('active')) { player.stop(); audioPlayerContainer.classList.add('hidden'); li.classList.remove('active'); } else { stationListUL.querySelector("li.active")?.classList.remove("active"); li.classList.add("active"); player.source = { type: 'audio', title: station.name, sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } };
+    const translations = {
+        pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
+        settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
+        appearanceTitle: { en: 'Appearance', ar: 'المظهر' },
+        manageListTitle: { en: 'Manage List', ar: 'إدارة القائمة' },
+        addStationBtn: { en: 'Add New Station', ar: 'إضافة محطة جديدة' },
+        importBtn: { en: 'Import List', ar: 'استيراد قائمة' },
+        exportBtn: { en: 'Export List', ar: 'تصدير قائمة' },
+        resetBtn: { en: 'Reset to Default', ar: 'إعادة للوضع الافتراضي' },
+        themeToggleLight: { en: 'Switch to Light Mode', ar: 'التحويل للوضع النهاري' },
+        themeToggleDark: { en: 'Switch to Dark Mode', ar: 'التحويل للوضع الليلي' },
+        langToggle: { en: 'Switch to Arabic', ar: 'Switch to English' },
+        streamUrlLabel: { en: 'Stream URL', ar: 'رابط البث' },
+        logoUrlLabel: { en: 'Logo URL', ar: 'رابط الشعار' },
+        streamTypeLabel: { en: 'Stream Type (e.g., MP3 128k)', ar: 'نوع البث (مثال: MP3 128k)' },
+        streamTypeLabelShort: { en: 'Stream Type', ar: 'نوع البث' },
+        deleteBtn: { en: 'Delete', ar: 'حذف' },
+        saveBtn: { en: 'Save', ar: 'حفظ' },
+        addStationModalTitle: { en: 'Add New Station', ar: 'إضافة محطة جديدة' },
+        stationNameLabel: { en: 'Station Name', ar: 'اسم المحطة' },
+        importModalTitle: { en: 'Import List', ar: 'استيراد قائمة' },
+        importConfirmText: { en: 'New list ready. Merge with current list or replace it?', ar: 'القائمة الجديدة جاهزة. هل تريد دمجها مع الحالية أم استبدالها؟' },
+        mergeBtn: { en: 'Merge', ar: 'دمج' },
+        replaceBtn: { en: 'Replace', ar: 'استبدال' },
+        exportModalTitle: { en: 'Export List', ar: 'تصدير قائمة' },
+        exportFormatTitle: { en: 'Choose Format', ar: 'اختر الصيغة' },
+        exportBtnShort: { en: 'Export', ar: 'تصدير' },
+        deleteModalTitle: { en: 'Confirm Deletion', ar: 'تأكيد الحذف' },
+        confirmBtn: { en: 'Confirm', ar: 'تأكيد' },
+        resetModalTitle: { en: 'Confirm Reset', ar: 'تأكيد إعادة التعيين' },
+        resetConfirmText: { en: 'Are you sure? This will delete all your custom changes and restore the original list.', ar: 'هل أنت متأكد؟ سيتم حذف كل التغييرات المخصصة واستعادة القائمة الأصلية.' },
+        alertRequired: { en: 'Station Name and Stream URL are required.', ar: 'اسم المحطة ورابط البث مطلوبان.' },
+        alertUnsupported: { en: 'Unsupported file type.', ar: 'نوع الملف غير مدعوم.' },
+        alertInvalid: { en: 'File is empty or invalid.', ar: 'الملف فارغ أو غير صالح.' },
+        alertParseFail: { en: 'Failed to parse the file.', ar: 'فشل في تحليل الملف.' },
+        deleteConfirmText: { en: 'Are you sure you want to delete "{stationName}"?', ar: 'هل أنت متأكد من حذف "{stationName}"؟' }
+    };
+
+    const getStationName = (station) => {
+        if (typeof station.name === 'object' && station.name !== null) {
+            return station.name[currentLang] || station.name['en'];
+        }
+        return station.name;
+    };
+
+    const setLanguage = (lang) => {
+        currentLang = lang;
+        localStorage.setItem('language', lang);
+        document.documentElement.lang = lang;
+        document.body.classList.toggle('lang-ar', lang === 'ar');
+
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.getAttribute('data-lang-key');
+            if (translations[key] && translations[key][lang]) {
+                el.textContent = translations[key][lang];
+            }
+        });
+        
+        renderStationList();
+        updateThemeButtonText();
+        updateLangButtonText();
+    };
+
+    const toggleLanguage = () => {
+        const newLang = currentLang === 'en' ? 'ar' : 'en';
+        setLanguage(newLang);
+    };
+    
+    const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); const stationName = getStationName(station); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", () => playStation(li, station)); li.querySelector('.station-logo').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
+    const playStation = (li, station) => { if (li.classList.contains('active')) { player.stop(); audioPlayerContainer.classList.add('hidden'); li.classList.remove('active'); } else { stationListUL.querySelector("li.active")?.classList.remove("active"); li.classList.add("active"); player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } };
     const saveAndRerender = () => { localStorage.setItem('savedStations', JSON.stringify(stations)); renderStationList(); };
     
-    const openEditModal = (station, index) => { currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = station.name; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
+    const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
     const closeEditModal = () => stationModal.classList.add('hidden');
-    const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; stations[currentEditingIndex].url = editStreamUrl.value.trim(); stations[currentEditingIndex].logoUrl = editLogoUrl.value.trim(); stations[currentEditingIndex].streamType = editStreamType.value.trim(); saveAndRerender(); closeEditModal(); };
-    const openDeleteConfirm = () => { if (currentEditingIndex === null) return; deleteConfirmText.textContent = `Are you sure you want to delete "${stations[currentEditingIndex].name}"?`; deleteConfirmModal.classList.remove('hidden'); };
+    const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) { return alert(translations.alertRequired[currentLang]); } if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.streamType = editStreamType.value.trim(); saveAndRerender(); closeEditModal(); };
+    const openDeleteConfirm = () => { if (currentEditingIndex === null) return; const stationName = getStationName(stations[currentEditingIndex]); deleteConfirmText.textContent = translations.deleteConfirmText[currentLang].replace('{stationName}', stationName); deleteConfirmModal.classList.remove('hidden'); };
     const closeDeleteConfirm = () => deleteConfirmModal.classList.add('hidden');
     const deleteStation = () => { if (currentEditingIndex === null) return; stations.splice(currentEditingIndex, 1); saveAndRerender(); closeEditModal(); closeDeleteConfirm(); };
 
     const openAddModal = () => { addStationForm.reset(); addStationModal.classList.remove('hidden'); };
     const closeAddModal = () => addStationModal.classList.add('hidden');
-    const saveNewStation = e => { e.preventDefault(); const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim(); if (!name || !url) return alert('Station Name and Stream URL are required.'); stations.push({ name, url, logoUrl: addLogoUrl.value.trim(), streamType: addStreamType.value.trim() }); saveAndRerender(); closeAddModal(); };
+    const saveNewStation = e => { e.preventDefault(); const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim(); if (!name || !url) return alert(translations.alertRequired[currentLang]); stations.push({ name: { en: name, ar: name }, url, logoUrl: addLogoUrl.value.trim(), streamType: addStreamType.value.trim() }); saveAndRerender(); closeAddModal(); };
 
     const openSettingsModal = () => settingsModal.classList.remove('hidden');
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
@@ -255,54 +407,68 @@
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
     const resetList = () => { localStorage.removeItem('savedStations'); location.reload(); };
 
-    const updateThemeButtonText = () => themeToggleBtn.textContent = body.classList.contains('dark-mode') ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
+    const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
 
-    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) importedStations = JSON.parse(content); else if (file.name.match(/\.m3u8?$/)) importedStations = parseM3U(content); else return alert('Unsupported file type.'); if (!Array.isArray(importedStations) || !importedStations.length) return alert('File is empty or invalid.'); importConfirmModal.classList.remove('hidden'); } catch (err) { alert('Failed to parse the file.'); console.error(err); } }; reader.readAsText(file); fileInput.value = ''; };
-    const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name, logoUrl: logo, url, streamType: '' }); } } return p; };
+    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) importedStations = JSON.parse(content); else if (file.name.match(/\.m3u8?$/)) importedStations = parseM3U(content); else return alert(translations.alertUnsupported[currentLang]); if (!Array.isArray(importedStations) || !importedStations.length) return alert(translations.alertInvalid[currentLang]); importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error(err); } }; reader.readAsText(file); fileInput.value = ''; };
+    const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
     const closeImportConfirmModal = () => importConfirmModal.classList.add('hidden');
 
     const openExportModal = () => exportModal.classList.remove('hidden');
     const closeExportModal = () => exportModal.classList.add('hidden');
-    const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${s.name}" tvg-logo="${s.logoUrl}",${s.name}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
+    const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${getStationName(s)}" tvg-logo="${s.logoUrl}",${getStationName(s)}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
     
     const initialize = () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
-        stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS;
+        stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
         
-        renderStationList();
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         
         player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
+
+        // Setup Modal Close Handlers
         closeModalBtn.addEventListener('click', closeEditModal);
-        deleteStationBtn.addEventListener('click', openDeleteConfirm);
-        stationModal.addEventListener('click', e => e.target === stationModal && closeEditModal());
-        editStationForm.addEventListener('submit', saveStationChanges);
-        
-        settingsBtn.addEventListener('click', openSettingsModal);
-        closeSettingsBtn.addEventListener('click', closeSettingsModal);
-        themeToggleBtn.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
-        
-        addStationBtn.addEventListener('click', () => { closeSettingsModal(); openAddModal(); });
         closeAddModalBtn.addEventListener('click', closeAddModal);
+        closeSettingsBtn.addEventListener('click', closeSettingsModal);
+        closeImportConfirmBtn.addEventListener('click', closeImportConfirmModal);
+        cancelExportBtn.addEventListener('click', closeExportModal);
+        cancelDeleteBtn.addEventListener('click', closeDeleteConfirm);
+        cancelResetBtn.addEventListener('click', closeResetConfirm);
+
+        // Overlay Click Handlers
+        stationModal.addEventListener('click', e => e.target === stationModal && closeEditModal());
         addStationModal.addEventListener('click', e => e.target === addStationModal && closeAddModal());
+        settingsModal.addEventListener('click', e => e.target === settingsModal && closeSettingsModal());
+        importConfirmModal.addEventListener('click', e => e.target === importConfirmModal && closeImportConfirmModal());
+        exportModal.addEventListener('click', e => e.target === exportModal && closeExportModal());
+        deleteConfirmModal.addEventListener('click', e => e.target === deleteConfirmModal && closeDeleteConfirm());
+        resetConfirmModal.addEventListener('click', e => e.target === resetConfirmModal && closeResetConfirm());
+
+        // Form and Action Handlers
+        editStationForm.addEventListener('submit', saveStationChanges);
+        deleteStationBtn.addEventListener('click', openDeleteConfirm);
+        settingsBtn.addEventListener('click', openSettingsModal);
+        themeToggleBtn.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
+        langToggleBtn.addEventListener('click', toggleLanguage);
+        addStationBtn.addEventListener('click', () => { closeSettingsModal(); openAddModal(); });
         addStationForm.addEventListener('submit', saveNewStation);
-        
         importBtn.addEventListener('click', () => fileInput.click() );
         fileInput.addEventListener('change', handleFileImport);
-        
         exportBtn.addEventListener('click', () => { closeSettingsModal(); openExportModal(); });
-        
         resetBtn.addEventListener('click', openResetConfirm);
-        
-        cancelImportBtn.addEventListener('click', closeImportConfirmModal); mergeBtn.addEventListener('click', mergeLists); replaceBtn.addEventListener('click', replaceList);
-        cancelExportBtn.addEventListener('click', closeExportModal); confirmExportBtn.addEventListener('click', handleExport);
-        cancelDeleteBtn.addEventListener('click', closeDeleteConfirm); confirmDeleteBtn.addEventListener('click', deleteStation);
-        cancelResetBtn.addEventListener('click', closeResetConfirm); confirmResetBtn.addEventListener('click', resetList);
+        mergeBtn.addEventListener('click', mergeLists); 
+        replaceBtn.addEventListener('click', replaceList);
+        confirmExportBtn.addEventListener('click', handleExport);
+        confirmDeleteBtn.addEventListener('click', deleteStation);
+        confirmResetBtn.addEventListener('click', resetList);
+
+        const savedLang = localStorage.getItem('language') || 'en';
+        setLanguage(savedLang);
     };
 
     initialize();
