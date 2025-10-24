@@ -122,7 +122,7 @@
     }
 
     .container {
-      max-width: 350px; /* <<< تم تقليل العرض هنا */
+      max-width: 350px;
       width: 100%;
       margin: 0 auto;
       background-color: var(--card-bg-color);
@@ -216,25 +216,34 @@
     .plyr--audio { border-radius: 6px !important; }
     .plyr__menu, .plyr__menu__container { z-index: 9999 !important; }
 
-    /* Player Customizations */
-    .plyr--streaming .plyr__progress, .plyr--streaming .plyr__time { display: none; }
-    .plyr--streaming .plyr__controls {
-        display: flex;
-        justify-content: center !important;
-        align-items: center;
-        gap: 12px;
+    /* --- Player Customizations --- */
+    /* التعديل هنا: تطبيق الأنماط بشكل دائم لتجنب التبديل */
+    #audioPlayerContainer .plyr__progress,
+    #audioPlayerContainer .plyr__time {
+      display: none;
     }
-    .plyr--streaming .plyr__controls button[data-plyr="play"] { order: -2; }
-    .plyr--streaming .plyr__controls::before {
-        content: 'LIVE';
-        color: #e11d48;
-        font-size: 10px;
-        font-weight: bold;
-        background-color: rgba(225, 29, 72, 0.1);
-        padding: 4px 8px;
-        border-radius: 4px;
-        letter-spacing: 0.5px;
-        order: -1;
+
+    #audioPlayerContainer .plyr__controls {
+      display: flex;
+      justify-content: center !important;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #audioPlayerContainer .plyr__controls button[data-plyr="play"] {
+      order: -2;
+    }
+
+    #audioPlayerContainer .plyr__controls::before {
+      content: 'LIVE';
+      color: #e11d48;
+      font-size: 10px;
+      font-weight: bold;
+      background-color: rgba(225, 29, 72, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      order: -1;
     }
     
     /* Dark Mode Player Overrides */
@@ -255,7 +264,7 @@
       background: var(--station-item-active-bg) !important;
       color: var(--station-item-active-text) !important;
     }
-    .dark-mode .plyr--streaming .plyr__controls::before {
+    .dark-mode #audioPlayerContainer .plyr__controls::before {
         color: #f43f5e;
         background-color: rgba(244, 63, 94, 0.2);
     }
@@ -287,7 +296,6 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
-    // JavaScript code remains the same...
     const stations = [
       { name: "Watar", url: "https://securestreams2.autopo.st:1243/live", logoUrl: "https://i.postimg.cc/KzCjdtXy/1000014796.jpg", streamType: "MP3 128k" },
       { name: "Melody", url: "http://s3.voscast.com:9966/;", logoUrl: "https://i.postimg.cc/SK3msqg6/1000014834.jpg", streamType: "MP3 192k" },
@@ -361,7 +369,7 @@
           const currentlyActiveLi = stationListUL.querySelector("li.active");
           if (currentlyActiveLi) { currentlyActiveLi.classList.remove("active"); }
           li.classList.add("active");
-          audioPlayerContainer.classList.add('hidden');
+          
           player.source = { type: 'audio', title: station.name, sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : (station.url.includes('.aac') ? 'audio/aac' : 'audio/mpeg'), }] };
           player.play().catch(error => console.warn(`Error playing ${station.name}:`, error));
         }
@@ -370,8 +378,6 @@
     });
     
     player.on('ready', (event) => {
-      const instance = event.detail.plyr;
-      instance.elements.container.classList.add('plyr--streaming');
       audioPlayerContainer.classList.remove('hidden');
     });
 
