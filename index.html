@@ -69,35 +69,41 @@
 
     .main-content {
         flex-grow: 1;
-        padding: 1.5rem;
+        padding: 1rem; /* --- تم تقليل الحشو قليلاً --- */
+        /* --- التعديل هنا: تمت إضافة Flexbox للتوسيط --- */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .header-area {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 0.5rem 1.5rem 0.5rem;
+      padding: 1.25rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--divider-color);
     }
 
     .main-title-group {
       display: flex;
       align-items: center;
       gap: 12px;
+      overflow: hidden; /* --- يمنع المحتوى من تجاوز الحاوية --- */
     }
     .jordan-flag {
-      /* --- التعديل هنا: تم تحديد العرض والارتفاع للحفاظ على النسبة --- */
       width: 42px;
       height: 21px;
       border-radius: 4px;
-      object-fit: cover; /* يضمن تغطية المساحة دون تشويه */
+      object-fit: cover;
+      flex-shrink: 0; /* --- يمنع العلم من التقلص --- */
     }
     .main-title {
       font-size: 1.75rem;
       font-weight: 700;
       color: var(--title-color);
       letter-spacing: 0.00735em;
+      /* --- التعديل هنا: يمنع العنوان من الالتفاف --- */
+      white-space: nowrap;
     }
     #darkModeToggle {
       background: none;
@@ -121,6 +127,7 @@
 
     .container {
       max-width: 600px;
+      width: 100%; /* --- يضمن أن تأخذ الحاوية كامل العرض المتاح لها --- */
       margin: 0 auto;
       background-color: var(--card-bg-color);
       border-radius: 12px;
@@ -289,17 +296,17 @@
 <body>
 
   <main class="main-content">
-    <div class="header-area">
-      <div class="main-title-group">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png" alt="Jordan Flag" class="jordan-flag" onerror="this.style.display='none'">
-        <h1 class="main-title">Jordan Radios</h1>
-      </div>
-      <button id="darkModeToggle" title="Toggle Dark Mode">
-        <i class="ph ph-moon"></i>
-      </button>
-    </div>
-
     <div class="container">
+      <div class="header-area">
+        <div class="main-title-group">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png" alt="Jordan Flag" class="jordan-flag" onerror="this.style.display='none'">
+          <h1 class="main-title">Jordan Radios</h1>
+        </div>
+        <button id="darkModeToggle" title="Toggle Dark Mode">
+          <i class="ph ph-moon"></i>
+        </button>
+      </div>
+
       <ul id="stationList" class="station-list">
         <!-- Station items will be dynamically inserted here -->
       </ul>
