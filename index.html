@@ -51,8 +51,9 @@
       --divider-color: rgba(255, 255, 255, 0.12);
     }
 
-    html {
+    html, body {
         height: 100%;
+        margin: 0;
     }
 
     body {
@@ -60,20 +61,16 @@
       background-color: var(--page-bg-color);
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
-      margin: 0;
       line-height: 1.5;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      
+      display: grid;
+      place-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
     }
 
     .main-content {
-        flex-grow: 1;
-        /* --- التعديل هنا: تم تحديد الحشو يدوياً لتحقيق توازن بصري --- */
-        padding: 2rem 1rem; 
-        display: flex;
-        justify-content: center;
-        align-items: flex-start; /* --- يضمن بقاء الحاوية في الجزء العلوي من هذه المساحة --- */
+      width: 100%;
     }
 
     .header-area {
@@ -125,7 +122,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 350px; /* <<< تم تقليل العرض هنا */
       width: 100%;
       margin: 0 auto;
       background-color: var(--card-bg-color);
@@ -218,34 +215,6 @@
 
     .plyr--audio { border-radius: 6px !important; }
     .plyr__menu, .plyr__menu__container { z-index: 9999 !important; }
-    
-    footer {
-      width: 100%;
-      background-color: var(--page-bg-color); 
-      padding-top: 1.25rem;
-      padding-bottom: calc(0.55cm + env(safe-area-inset-bottom, 0px));
-      text-align: center;
-      transition: background-color 0.3s;
-      flex-shrink: 0;
-    }
-    
-    footer p {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      font-size: 0.875rem;
-      color: var(--secondary-text-color);
-    }
-    footer a.github-link {
-      font-weight: 700;
-      color: #CE1126;
-      text-decoration: none;
-      transition: color 0.2s ease-in-out;
-    }
-    footer a.github-link:hover {
-      color: var(--station-item-active-text);
-      text-decoration: underline;
-    }
 
     /* Player Customizations */
     .plyr--streaming .plyr__progress, .plyr--streaming .plyr__time { display: none; }
@@ -314,13 +283,6 @@
       </div>
     </div>
   </main>
-  
-  <footer>
-    <p>
-      Developed by 
-      <a href="https://github.com/iofahmawi" target="_blank" rel="noopener noreferrer" class="github-link">iofahmawi</a>
-    </p>
-  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
