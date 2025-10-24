@@ -87,9 +87,11 @@
       gap: 12px;
     }
     .jordan-flag {
+      /* --- التعديل هنا: تم تحديد العرض والارتفاع للحفاظ على النسبة --- */
       width: 42px;
-      height: auto;
+      height: 21px;
       border-radius: 4px;
+      object-fit: cover; /* يضمن تغطية المساحة دون تشويه */
     }
     .main-title {
       font-size: 1.75rem;
@@ -230,7 +232,6 @@
     }
     footer a.github-link {
       font-weight: 700;
-      /* --- التعديل هنا: تم تحديث اللون الأحمر --- */
       color: #CE1126;
       text-decoration: none;
       transition: color 0.2s ease-in-out;
