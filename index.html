@@ -413,7 +413,38 @@
     };
 
     const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); const stationName = getStationName(station); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", (e) => handleLiClick(li, station, index, e)); stationListUL.appendChild(li); }); };
-    const playStation = (li, station) => { if (li.classList.contains('active')) { player.stop(); audioPlayerContainer.classList.add('hidden'); li.classList.remove('active'); } else { stationListUL.querySelector("li.active")?.classList.remove("active"); li.classList.add("active"); player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } };
+    
+    // ===== START: MODIFIED CODE =====
+    const playStation = (li, station) => {
+        // Check if the clicked station is already the active one
+        if (li.classList.contains('active')) {
+            // If it is, just toggle between play and pause
+            player.togglePlay();
+        } else {
+            // If it's a new station, remove active class from the old one
+            const currentlyActive = stationListUL.querySelector("li.active");
+            if (currentlyActive) {
+                currentlyActive.classList.remove("active");
+            }
+            // Add active class to the new station
+            li.classList.add("active");
+
+            // Set the new source for the player
+            player.source = {
+                type: 'audio',
+                title: getStationName(station),
+                sources: [{
+                    src: station.url,
+                    type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg'
+                }]
+            };
+
+            // Play the new station
+            player.play().catch(e => console.warn(`Error playing:`, e));
+        }
+    };
+    // ===== END: MODIFIED CODE =====
+
     const saveAndRerender = () => { localStorage.setItem('savedStations', JSON.stringify(stations)); renderStationList(); };
     
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
