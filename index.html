@@ -16,6 +16,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- === SORTABLEJS LIBRARY === -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
   <style>
     :root {
       /* Light Mode */
@@ -31,6 +34,7 @@
       --button-danger-text: #FFFFFF;
       --button-danger-confirm-bg: #DC2626; 
       --button-danger-confirm-text: #FFFFFF;
+      --page-bg-gradient: radial-gradient(circle, #ffffff 0%, #F8F9FA 100%);
     }
     .dark-mode {
       /* Gray Theme Dark Mode */
@@ -56,10 +60,26 @@
       --button-danger-text: #FFFFFF;
       --button-danger-confirm-bg: #DC2626;
       --button-danger-confirm-text: #FFFFFF;
+      --page-bg-gradient: radial-gradient(circle, #27272A 0%, #18181B 100%);
     }
 
     html, body { height: 100%; margin: 0; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--page-bg-color); color: var(--text-color); line-height: 1.5; display: grid; place-content: center; padding: 1rem; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: var(--page-bg-gradient); 
+      color: var(--text-color); 
+      line-height: 1.5; 
+      display: grid; 
+      place-content: center; 
+      padding: 1rem; 
+      box-sizing: border-box;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
     .main-content { width: 100%; }
     .container { max-width: 350px; width: 100%; margin: 0 auto; background-color: var(--card-bg-color); border-radius: 12px; box-shadow: var(--card-box-shadow); overflow: hidden; display: flex; flex-direction: column; }
     .header-area { padding: 1.0rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider-color); }
@@ -70,25 +90,96 @@
     #settingsBtn:hover { background-color: var(--icon-hover-bg); color: var(--icon-hover-color); }
     #settingsBtn i { font-size: 1.5rem; }
 
-    .station-list { list-style: none; padding: 0; margin: 0; max-height: 528px; overflow-y: auto; scrollbar-width: none; }
+    .station-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+      max-height: 528px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
     .station-list::-webkit-scrollbar { display: none; }
-    .station-list li { padding: 0.75rem 1.5rem; cursor: pointer; transition: background-color 0.2s; border-bottom: 1px solid var(--divider-color); }
-    .station-list li:last-child { border-bottom: none; }
-    .station-list li.active { background-color: var(--station-item-active-bg); }
-    .station-info-container { display: flex; align-items: center; width: 100%; }
-    .station-logo { width: 40px; height: 40px; border-radius: 4px; margin-right: 1rem; object-fit: cover; flex-shrink: 0; transition: transform 0.2s; display: block; }
-    .station-name-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; font-weight: 500; color: var(--text-color); }
-    li.active .station-name-text { font-weight: 700; color: var(--station-item-active-text); }
-    .station-stream-info { font-size: 0.875rem; color: var(--secondary-text-color); padding-left: 0.5rem; white-space: nowrap; flex-shrink: 0; }
-    li.active .station-stream-info { color: var(--station-item-active-text); opacity: 0.8; }
+
+    .station-list li {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s; /* ===> تم الإصلاح هنا <=== */
+    }
+    .station-list li.active {
+      background-color: var(--station-item-active-bg);
+    }
+    .station-list li.active .station-logo {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    }
+
+    .station-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      object-fit: cover;
+      flex-shrink: 0;
+      pointer-events: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .station-name-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-align: center;
+      color: var(--text-color);
+      width: 100%;
+      word-break: break-word;
+      pointer-events: none;
+    }
+    li.active .station-name-text {
+      font-weight: 700;
+      color: var(--station-item-active-text);
+    }
     
+    .edit-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: none;
+      border: none;
+      color: var(--icon-color);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .edit-btn:hover {
+      background-color: var(--icon-hover-bg);
+      color: var(--icon-hover-color);
+    }
+    .edit-btn i {
+      font-size: 1.25rem;
+    }
+    
+    .station-list li.show-edit-btn .edit-btn {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .hidden { display: none !important; }
 
-    /* ===== START: NEW DRAG & DROP STYLE ===== */
-    .station-list li.dragging {
+    .station-list li.sortable-ghost {
       opacity: 0.5;
     }
-    /* ===== END: NEW DRAG & DROP STYLE ===== */
 
     #audioPlayerContainer { padding: 0.75rem 1rem; border-top: 1px solid var(--divider-color); }
     .plyr--audio { border-radius: 6px !important; }
@@ -125,34 +216,10 @@
 
     /* RTL Styles for Arabic Language */
     body.lang-ar .header-area,
-    body.lang-ar .main-title-group {
-      flex-direction: row-reverse;
-    }
-    body.lang-ar .station-info-container {
-      direction: rtl;
-    }
-    body.lang-ar .station-name-text {
-      text-align: right;
-    }
-    body.lang-ar .station-logo {
-      margin-right: 0;
-      margin-left: 1rem;
-    }
-    body.lang-ar .station-stream-info {
-      padding-left: 0;
-      padding-right: 0.5rem;
-      cursor: pointer;
-    }
-    body.lang-ar .modal-content {
-      direction: rtl;
-    }
-    body.lang-ar .modal-close-btn {
-      right: auto;
-      left: 0.75rem;
-    }
-    body.lang-ar #editStationForm .modal-actions {
-      flex-direction: row-reverse;
-    }
+    body.lang-ar .main-title-group { flex-direction: row-reverse; }
+    body.lang-ar .modal-content { direction: rtl; }
+    body.lang-ar .modal-close-btn { right: auto; left: 0.75rem; }
+    body.lang-ar #editStationForm .modal-actions { flex-direction: row-reverse; }
   </style>
 </head>
 <body>
@@ -168,7 +235,6 @@
     </div>
   </main>
   
-  <!-- All Modals remain unchanged -->
   <div id="stationModal" class="modal-overlay hidden">
     <div class="modal-content">
       <button id="closeModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -185,6 +251,7 @@
       </form>
     </div>
   </div>
+
   <div id="addStationModal" class="modal-overlay hidden">
       <div class="modal-content">
         <button id="closeAddModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -198,6 +265,7 @@
         </form>
       </div>
   </div>
+
   <div id="settingsModal" class="modal-overlay hidden">
     <div class="modal-content">
         <button id="closeSettingsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -216,6 +284,7 @@
         </div>
     </div>
   </div>
+
   <div id="importConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -227,6 +296,7 @@
           </div>
       </div>
   </div>
+
   <div id="exportModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelExportBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -244,6 +314,7 @@
           </div>
       </div>
   </div>
+
   <div id="deleteConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelDeleteBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -254,6 +325,7 @@
           </div>
       </div>
   </div>
+  
   <div id="resetConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelResetBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -332,12 +404,10 @@
     let currentEditingIndex = null, importedStations = [];
     let currentLang = 'en';
 
-    // ===== START: NEW VARIABLES FOR DRAG & DROP =====
-    let draggedItem = null;
-    let activePlayingElement = null;
-    // ===== END: NEW VARIABLES FOR DRAG & DROP =====
-
-
+    // === START: TIMER FOR AUTO-HIDING EDIT BUTTON ===
+    let editButtonHideTimer = null;
+    // === END: TIMER ===
+    
     const translations = {
         pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
         settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
@@ -387,120 +457,122 @@
         currentLang = lang;
         localStorage.setItem('language', lang);
         document.documentElement.lang = lang;
-        document.body.classList.toggle('lang-ar', lang === 'ar');
-
+        body.classList.toggle('lang-ar', lang === 'ar');
         document.querySelectorAll('[data-lang-key]').forEach(el => {
             const key = el.getAttribute('data-lang-key');
             if (translations[key] && translations[key][lang]) {
                 el.textContent = translations[key][lang];
             }
         });
-        
         renderStationList();
         updateThemeButtonText();
         updateLangButtonText();
     };
     
-    const handleLiClick = (li, station, index, event) => {
-        if (currentLang === 'ar') {
-            if (event.target.closest('.station-stream-info')) {
-                event.stopPropagation();
-                openEditModal(station, index);
-            } else {
-                playStation(li, station);
-            }
-        } else {
-            if (event.target.closest('.station-logo')) {
-                event.stopPropagation();
-                openEditModal(station, index);
-            } else {
-                playStation(li, station);
-            }
-        }
-    };
-
-    // ===== START: MODIFIED CODE =====
     const renderStationList = () => {
+        const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url;
         stationListUL.innerHTML = '';
         stations.forEach((station, index) => {
             const li = document.createElement("li");
-            // Add draggable attribute
-            li.setAttribute('draggable', true);
+            if (station.url === currentlyPlayingUrl) {
+                li.classList.add('active');
+            }
+            li.dataset.url = station.url;
+
             const stationName = getStationName(station);
-            li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`;
-            li.addEventListener("click", (e) => handleLiClick(li, station, index, e));
+            li.innerHTML = `
+                <img src="${station.logoUrl}" class="station-logo">
+                <span class="station-name-text">${stationName}</span>
+                <button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>
+            `;
+
+            li.addEventListener("click", () => playStation(li, station));
+            
+            const editBtn = li.querySelector('.edit-btn');
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEditModal(station, index);
+            });
+
             stationListUL.appendChild(li);
         });
     };
-    // ===== END: MODIFIED CODE =====
     
     const playStation = (li, station) => {
-        if (li.classList.contains('active')) {
-            player.togglePlay();
-        } else {
-            stationListUL.querySelector("li.active")?.classList.remove("active");
+        const wasActive = li.classList.contains('active');
+    
+        if (!wasActive) {
+            // Deactivate the old station
+            const oldActiveItem = stationListUL.querySelector("li.active");
+            if (oldActiveItem) {
+                oldActiveItem.classList.remove("active", "show-edit-btn");
+            }
+            
+            // Activate the new station
             li.classList.add("active");
             player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] };
             player.play().catch(e => console.warn(`Error playing:`, e));
+        } else {
+            // If it was already active, just toggle play
+            player.togglePlay();
         }
-    };
-
-    // ===== START: MODIFIED CODE (saveStations function separated) =====
-    const saveStations = () => {
-        localStorage.setItem('savedStations', JSON.stringify(stations));
-    };
-
-    const saveAndRerender = () => {
-        saveStations();
-        renderStationList();
-    };
-    // ===== END: MODIFIED CODE =====
     
+        // In both cases (new station or interaction with old), reset the timer.
+        resetEditButtonTimer();
+    };
+
+    const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
+    const saveAndRerender = () => { saveStations(); renderStationList(); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
+    const openDeleteConfirm = () => { deleteConfirmModal.classList.remove('hidden'); };
     const closeEditModal = () => stationModal.classList.add('hidden');
     const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) { return alert(translations.alertRequired[currentLang]); } if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.streamType = editStreamType.value.trim(); saveAndRerender(); closeEditModal(); };
-    const openDeleteConfirm = () => { if (currentEditingIndex === null) return; const stationName = getStationName(stations[currentEditingIndex]); deleteConfirmText.textContent = translations.deleteConfirmText[currentLang].replace('{stationName}', stationName); deleteConfirmModal.classList.remove('hidden'); };
     const closeDeleteConfirm = () => deleteConfirmModal.classList.add('hidden');
     const deleteStation = () => { if (currentEditingIndex === null) return; stations.splice(currentEditingIndex, 1); saveAndRerender(); closeEditModal(); closeDeleteConfirm(); };
-
     const openAddModal = () => { addStationForm.reset(); addStationModal.classList.remove('hidden'); };
     const closeAddModal = () => addStationModal.classList.add('hidden');
     const saveNewStation = e => { e.preventDefault(); const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim(); if (!name || !url) return alert(translations.alertRequired[currentLang]); stations.push({ name: { en: name, ar: name }, url, logoUrl: addLogoUrl.value.trim(), streamType: addStreamType.value.trim() }); saveAndRerender(); closeAddModal(); };
-
     const openSettingsModal = () => settingsModal.classList.remove('hidden');
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
-    
     const openResetConfirm = () => { closeSettingsModal(); resetConfirmModal.classList.remove('hidden'); };
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
     const resetList = () => { localStorage.removeItem('savedStations'); location.reload(); };
-
     const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
-
     const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) importedStations = JSON.parse(content); else if (file.name.match(/\.m3u8?$/)) importedStations = parseM3U(content); else return alert(translations.alertUnsupported[currentLang]); if (!Array.isArray(importedStations) || !importedStations.length) return alert(translations.alertInvalid[currentLang]); importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error(err); } }; reader.readAsText(file); fileInput.value = ''; };
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
     const closeImportConfirmModal = () => importConfirmModal.classList.add('hidden');
-
     const openExportModal = () => exportModal.classList.remove('hidden');
     const closeExportModal = () => exportModal.classList.add('hidden');
     const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${getStationName(s)}" tvg-logo="${s.logoUrl}",${getStationName(s)}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
     
+    // === START: AUTO-HIDE LOGIC ===
+    function resetEditButtonTimer() {
+        clearTimeout(editButtonHideTimer);
+        const activeItem = stationListUL.querySelector('li.active');
+        if (activeItem) {
+            activeItem.classList.add('show-edit-btn');
+            editButtonHideTimer = setTimeout(() => {
+                activeItem.classList.remove('show-edit-btn');
+            }, 5000);
+        }
+    }
+    // === END: AUTO-HIDE LOGIC ===
+
     const initialize = () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
         stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
-        
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         
         player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
 
-        // Setup Modal Close Handlers
         closeModalBtn.addEventListener('click', closeEditModal);
         closeAddModalBtn.addEventListener('click', closeAddModal);
         closeSettingsBtn.addEventListener('click', closeSettingsModal);
@@ -508,8 +580,6 @@
         cancelExportBtn.addEventListener('click', closeExportModal);
         cancelDeleteBtn.addEventListener('click', closeDeleteConfirm);
         cancelResetBtn.addEventListener('click', closeResetConfirm);
-
-        // Overlay Click Handlers
         stationModal.addEventListener('click', e => e.target === stationModal && closeEditModal());
         addStationModal.addEventListener('click', e => e.target === addStationModal && closeAddModal());
         settingsModal.addEventListener('click', e => e.target === settingsModal && closeSettingsModal());
@@ -517,8 +587,6 @@
         exportModal.addEventListener('click', e => e.target === exportModal && closeExportModal());
         deleteConfirmModal.addEventListener('click', e => e.target === deleteConfirmModal && closeDeleteConfirm());
         resetConfirmModal.addEventListener('click', e => e.target === resetConfirmModal && closeResetConfirm());
-
-        // Form and Action Handlers
         editStationForm.addEventListener('submit', saveStationChanges);
         deleteStationBtn.addEventListener('click', openDeleteConfirm);
         settingsBtn.addEventListener('click', openSettingsModal);
@@ -536,86 +604,22 @@
         confirmDeleteBtn.addEventListener('click', deleteStation);
         confirmResetBtn.addEventListener('click', resetList);
 
-        // ===== START: NEW DRAG & DROP EVENT LISTENERS =====
-        stationListUL.addEventListener('dragstart', (e) => {
-            draggedItem = e.target.closest('li');
-            if (!draggedItem) return;
-
-            // Find the currently active (playing) station
-            activePlayingElement = stationListUL.querySelector('li.active');
-            if (activePlayingElement) {
-                // Temporarily remove the blue highlight as requested
-                activePlayingElement.classList.remove('active');
-            }
-
-            // Add the 'dragging' class for visual feedback
-            setTimeout(() => {
-                draggedItem.classList.add('dragging');
-            }, 0);
+        new Sortable(stationListUL, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            delay: 250,
+            delayOnTouchOnly: true,
+            filter: '.edit-btn',
+            onEnd: function (evt) {
+                const movedItem = stations.splice(evt.oldIndex, 1)[0];
+                stations.splice(evt.newIndex, 0, movedItem);
+                saveStations();
+            },
         });
 
-        stationListUL.addEventListener('dragend', () => {
-            if (!draggedItem) return;
-            draggedItem.classList.remove('dragging');
-            
-            // Restore the blue highlight to the station that was playing
-            if (activePlayingElement) {
-                activePlayingElement.classList.add('active');
-            }
-            
-            // Reset state
-            draggedItem = null;
-            activePlayingElement = null;
-        });
-        
-        stationListUL.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(stationListUL, e.clientY);
-            if (afterElement == null) {
-                stationListUL.appendChild(draggedItem);
-            } else {
-                stationListUL.insertBefore(draggedItem, afterElement);
-            }
-        });
-
-        stationListUL.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (!draggedItem) return;
-            
-            // Update the underlying stations array to match the new DOM order
-            const newStations = [];
-            const listItems = stationListUL.querySelectorAll('li');
-            const originalStationsMap = new Map();
-            stations.forEach(station => {
-                const name = getStationName(station);
-                originalStationsMap.set(name, station);
-            });
-
-            listItems.forEach(li => {
-                const nameText = li.querySelector('.station-name-text').textContent;
-                if(originalStationsMap.has(nameText)) {
-                    newStations.push(originalStationsMap.get(nameText));
-                }
-            });
-            
-            stations = newStations;
-            saveStations(); // Save the new order without re-rendering
-        });
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
-
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-        // ===== END: NEW DRAG & DROP EVENT LISTENERS =====
+        // Add event listeners to reset timer on user activity
+        document.addEventListener('mousemove', resetEditButtonTimer);
+        document.addEventListener('touchstart', resetEditButtonTimer);
 
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
@@ -625,13 +629,7 @@
   </script>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(registration => { console.log('SW registration successful:', registration.scope); })
-          .catch(err => { console.log('SW registration failed:', err); });
-      });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(registration => { console.log('SW registration successful:', registration.scope); }).catch(err => { console.log('SW registration failed:', err); }); }); }
   </script>
 </body>
 </html>
