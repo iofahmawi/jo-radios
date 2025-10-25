@@ -84,6 +84,12 @@
     
     .hidden { display: none !important; }
 
+    /* ===== START: NEW DRAG & DROP STYLE ===== */
+    .station-list li.dragging {
+      opacity: 0.5;
+    }
+    /* ===== END: NEW DRAG & DROP STYLE ===== */
+
     #audioPlayerContainer { padding: 0.75rem 1rem; border-top: 1px solid var(--divider-color); }
     .plyr--audio { border-radius: 6px !important; }
     #audioPlayerContainer .plyr__progress, #audioPlayerContainer .plyr__time { display: none; }
@@ -162,6 +168,7 @@
     </div>
   </main>
   
+  <!-- All Modals remain unchanged -->
   <div id="stationModal" class="modal-overlay hidden">
     <div class="modal-content">
       <button id="closeModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -178,7 +185,6 @@
       </form>
     </div>
   </div>
-
   <div id="addStationModal" class="modal-overlay hidden">
       <div class="modal-content">
         <button id="closeAddModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -192,7 +198,6 @@
         </form>
       </div>
   </div>
-
   <div id="settingsModal" class="modal-overlay hidden">
     <div class="modal-content">
         <button id="closeSettingsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -211,7 +216,6 @@
         </div>
     </div>
   </div>
-
   <div id="importConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -223,7 +227,6 @@
           </div>
       </div>
   </div>
-
   <div id="exportModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelExportBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -241,7 +244,6 @@
           </div>
       </div>
   </div>
-
   <div id="deleteConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelDeleteBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -252,7 +254,6 @@
           </div>
       </div>
   </div>
-  
   <div id="resetConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelResetBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -330,6 +331,12 @@
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
     let currentLang = 'en';
+
+    // ===== START: NEW VARIABLES FOR DRAG & DROP =====
+    let draggedItem = null;
+    let activePlayingElement = null;
+    // ===== END: NEW VARIABLES FOR DRAG & DROP =====
+
 
     const translations = {
         pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
@@ -412,40 +419,42 @@
         }
     };
 
-    const renderStationList = () => { stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); const stationName = getStationName(station); li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`; li.addEventListener("click", (e) => handleLiClick(li, station, index, e)); stationListUL.appendChild(li); }); };
-    
     // ===== START: MODIFIED CODE =====
+    const renderStationList = () => {
+        stationListUL.innerHTML = '';
+        stations.forEach((station, index) => {
+            const li = document.createElement("li");
+            // Add draggable attribute
+            li.setAttribute('draggable', true);
+            const stationName = getStationName(station);
+            li.innerHTML = `<div class="station-info-container"><img src="${station.logoUrl}" class="station-logo"><span class="station-name-text">${stationName}</span><span class="station-stream-info">${station.streamType || ''}</span></div>`;
+            li.addEventListener("click", (e) => handleLiClick(li, station, index, e));
+            stationListUL.appendChild(li);
+        });
+    };
+    // ===== END: MODIFIED CODE =====
+    
     const playStation = (li, station) => {
-        // Check if the clicked station is already the active one
         if (li.classList.contains('active')) {
-            // If it is, just toggle between play and pause
             player.togglePlay();
         } else {
-            // If it's a new station, remove active class from the old one
-            const currentlyActive = stationListUL.querySelector("li.active");
-            if (currentlyActive) {
-                currentlyActive.classList.remove("active");
-            }
-            // Add active class to the new station
+            stationListUL.querySelector("li.active")?.classList.remove("active");
             li.classList.add("active");
-
-            // Set the new source for the player
-            player.source = {
-                type: 'audio',
-                title: getStationName(station),
-                sources: [{
-                    src: station.url,
-                    type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg'
-                }]
-            };
-
-            // Play the new station
+            player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] };
             player.play().catch(e => console.warn(`Error playing:`, e));
         }
     };
-    // ===== END: MODIFIED CODE =====
 
-    const saveAndRerender = () => { localStorage.setItem('savedStations', JSON.stringify(stations)); renderStationList(); };
+    // ===== START: MODIFIED CODE (saveStations function separated) =====
+    const saveStations = () => {
+        localStorage.setItem('savedStations', JSON.stringify(stations));
+    };
+
+    const saveAndRerender = () => {
+        saveStations();
+        renderStationList();
+    };
+    // ===== END: MODIFIED CODE =====
     
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
     const closeEditModal = () => stationModal.classList.add('hidden');
@@ -526,6 +535,87 @@
         confirmExportBtn.addEventListener('click', handleExport);
         confirmDeleteBtn.addEventListener('click', deleteStation);
         confirmResetBtn.addEventListener('click', resetList);
+
+        // ===== START: NEW DRAG & DROP EVENT LISTENERS =====
+        stationListUL.addEventListener('dragstart', (e) => {
+            draggedItem = e.target.closest('li');
+            if (!draggedItem) return;
+
+            // Find the currently active (playing) station
+            activePlayingElement = stationListUL.querySelector('li.active');
+            if (activePlayingElement) {
+                // Temporarily remove the blue highlight as requested
+                activePlayingElement.classList.remove('active');
+            }
+
+            // Add the 'dragging' class for visual feedback
+            setTimeout(() => {
+                draggedItem.classList.add('dragging');
+            }, 0);
+        });
+
+        stationListUL.addEventListener('dragend', () => {
+            if (!draggedItem) return;
+            draggedItem.classList.remove('dragging');
+            
+            // Restore the blue highlight to the station that was playing
+            if (activePlayingElement) {
+                activePlayingElement.classList.add('active');
+            }
+            
+            // Reset state
+            draggedItem = null;
+            activePlayingElement = null;
+        });
+        
+        stationListUL.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(stationListUL, e.clientY);
+            if (afterElement == null) {
+                stationListUL.appendChild(draggedItem);
+            } else {
+                stationListUL.insertBefore(draggedItem, afterElement);
+            }
+        });
+
+        stationListUL.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (!draggedItem) return;
+            
+            // Update the underlying stations array to match the new DOM order
+            const newStations = [];
+            const listItems = stationListUL.querySelectorAll('li');
+            const originalStationsMap = new Map();
+            stations.forEach(station => {
+                const name = getStationName(station);
+                originalStationsMap.set(name, station);
+            });
+
+            listItems.forEach(li => {
+                const nameText = li.querySelector('.station-name-text').textContent;
+                if(originalStationsMap.has(nameText)) {
+                    newStations.push(originalStationsMap.get(nameText));
+                }
+            });
+            
+            stations = newStations;
+            saveStations(); // Save the new order without re-rendering
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+        // ===== END: NEW DRAG & DROP EVENT LISTENERS =====
 
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
