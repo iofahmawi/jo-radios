@@ -289,8 +289,12 @@
         <div class="settings-section">
             <h4 class="settings-section-title" data-lang-key="manageListTitle">Manage List</h4>
             <button id="addStationBtn" class="btn-secondary" data-lang-key="addStationBtn">Add New Station</button>
-            <button id="importBtn" class="btn-secondary" data-lang-key="importBtn">Import List</button><input type="file" id="fileInput" accept=".json,.m3u,.m3u8" class="hidden">
-            <button id="exportBtn" class="btn-secondary" data-lang-key="exportBtn">Export List</button>
+            <button id="openImportOptionsBtn" class="btn-secondary" data-lang-key="importBtn">Import...</button>
+            <button id="openExportOptionsBtn" class="btn-secondary" data-lang-key="exportBtn">Export...</button>
+            <input type="file" id="fileInput" accept=".json,.m3u,.m3u8" class="hidden">
+        </div>
+        
+        <div class="settings-section">
             <button id="resetBtn" class="btn-danger" data-lang-key="resetBtn">Reset to Default</button>
         </div>
     </div>
@@ -316,6 +320,28 @@
       </div>
   </div>
 
+  <div id="importOptionsModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="closeImportOptionsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+        <h3 class="modal-title" data-lang-key="importOptionsTitle">Choose Import Type</h3>
+        <div class="modal-actions" style="flex-direction: column;">
+            <button id="importStationsChoiceBtn" class="btn-secondary" data-lang-key="stationsListOnly">Stations List Only</button>
+            <button id="importProfileChoiceBtn" class="btn-primary" data-lang-key="fullProfileBackup">Full Profile (Stations & UI)</button>
+        </div>
+      </div>
+  </div>
+  
+  <div id="exportOptionsModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="closeExportOptionsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+        <h3 class="modal-title" data-lang-key="exportOptionsTitle">Choose Export Type</h3>
+        <div class="modal-actions" style="flex-direction: column;">
+            <button id="exportStationsChoiceBtn" class="btn-secondary" data-lang-key="stationsListOnly">Stations List Only</button>
+            <button id="exportProfileChoiceBtn" class="btn-primary" data-lang-key="fullProfileBackup">Full Profile (Stations & UI)</button>
+        </div>
+      </div>
+  </div>
+
   <div id="importConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -324,23 +350,6 @@
           <div class="modal-actions">
               <button id="mergeBtn" class="btn-secondary" data-lang-key="mergeBtn">Merge</button>
               <button id="replaceBtn" class="btn-primary" data-lang-key="replaceBtn">Replace</button>
-          </div>
-      </div>
-  </div>
-  <div id="exportModal" class="modal-overlay hidden">
-      <div class="modal-content">
-          <button id="cancelExportBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
-          <h3 class="modal-title" data-lang-key="exportModalTitle">Export List</h3>
-          <div class="settings-section">
-              <h4 class="settings-section-title" data-lang-key="exportFormatTitle">Choose Format</h4>
-              <div class="export-options">
-                  <label><input type="radio" name="exportFormat" value="json" checked> JSON</label>
-                  <label><input type="radio" name="exportFormat" value="m3u8"> M3U8</label>
-                  <label><input type="radio" name="exportFormat" value="m3u"> M3U</label>
-              </div>
-          </div>
-          <div class="modal-actions">
-              <button id="confirmExportBtn" class="btn-primary" data-lang-key="exportBtnShort">Export</button>
           </div>
       </div>
   </div>
@@ -419,17 +428,20 @@
         editStreamUrl = getEl('editStreamUrl'), editLogoUrl = getEl('editLogoUrl'), editStreamType = getEl('editStreamType'), 
         deleteStationBtn = getEl('deleteStationBtn'), settingsBtn = getEl('settingsBtn'), settingsModal = getEl('settingsModal'),
         closeSettingsBtn = getEl('closeSettingsBtn'), themeToggleBtn = getEl('themeToggleBtn'), langToggleBtn = getEl('langToggleBtn'),
-        addStationBtn = getEl('addStationBtn'), importBtn = getEl('importBtn'), fileInput = getEl('fileInput'), exportBtn = getEl('exportBtn'),
+        addStationBtn = getEl('addStationBtn'), 
+        openImportOptionsBtn = getEl('openImportOptionsBtn'), openExportOptionsBtn = getEl('openExportOptionsBtn'),
+        fileInput = getEl('fileInput'), 
         resetBtn = getEl('resetBtn'), addStationModal = getEl('addStationModal'), closeAddModalBtn = getEl('closeAddModalBtn'),
         addStationForm = getEl('addStationForm'), addStationNameInput = getEl('addStationNameInput'),
         addStreamUrl = getEl('addStreamUrl'), addLogoUrl = getEl('addLogoUrl'), addStreamType = getEl('addStreamType'),
         importConfirmModal = getEl('importConfirmModal'), closeImportConfirmBtn = getEl('closeImportConfirmBtn'),
-        mergeBtn = getEl('mergeBtn'), replaceBtn = getEl('replaceBtn'), exportModal = getEl('exportModal'),
-        cancelExportBtn = getEl('cancelExportBtn'), confirmExportBtn = getEl('confirmExportBtn'),
+        mergeBtn = getEl('mergeBtn'), replaceBtn = getEl('replaceBtn'),
         deleteConfirmModal = getEl('deleteConfirmModal'), cancelDeleteBtn = getEl('cancelDeleteBtn'),
         confirmDeleteBtn = getEl('confirmDeleteBtn'), deleteConfirmText = getEl('deleteConfirmText'),
         resetConfirmModal = getEl('resetConfirmModal'), cancelResetBtn = getEl('cancelResetBtn'),
-        confirmResetBtn = getEl('confirmResetBtn');
+        confirmResetBtn = getEl('confirmResetBtn'),
+        importOptionsModal = getEl('importOptionsModal'), closeImportOptionsBtn = getEl('closeImportOptionsBtn'), importStationsChoiceBtn = getEl('importStationsChoiceBtn'), importProfileChoiceBtn = getEl('importProfileChoiceBtn'),
+        exportOptionsModal = getEl('exportOptionsModal'), closeExportOptionsBtn = getEl('closeExportOptionsBtn'), exportStationsChoiceBtn = getEl('exportStationsChoiceBtn'), exportProfileChoiceBtn = getEl('exportProfileChoiceBtn');
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
@@ -443,12 +455,16 @@
         personalizationTitle: { en: 'Personalization', ar: 'تخصيص الواجهة' },
         customTitleLabel: { en: 'Custom Title', ar: 'عنوان مخصص' },
         customImageUrlLabel: { en: 'Custom Image URL', ar: 'رابط صورة مخصصة' },
+        importOptionsTitle: { en: 'Choose Import Type', ar: 'اختر نوع الاستيراد' },
+        exportOptionsTitle: { en: 'Choose Export Type', ar: 'اختر نوع التصدير' },
+        stationsListOnly: { en: 'Stations List Only', ar: 'قائمة المحطات فقط' },
+        fullProfileBackup: { en: 'Stations & UI', ar: 'المحطات والواجهة' },
         settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
         appearanceTitle: { en: 'Appearance', ar: 'المظهر' },
         manageListTitle: { en: 'Manage List', ar: 'إدارة القائمة' },
         addStationBtn: { en: 'Add New Station', ar: 'إضافة محطة جديدة' },
-        importBtn: { en: 'Import List', ar: 'استيراد قائمة' },
-        exportBtn: { en: 'Export List', ar: 'تصدير قائمة' },
+        importBtn: { en: 'Import', ar: 'استيراد' },
+        exportBtn: { en: 'Export', ar: 'تصدير' },
         resetBtn: { en: 'Reset to Default', ar: 'إعادة للوضع الافتراضي' },
         themeToggleLight: { en: 'Switch to Light Mode', ar: 'التحويل للوضع النهاري' },
         themeToggleDark: { en: 'Switch to Dark Mode', ar: 'التحويل للوضع الليلي' },
@@ -465,9 +481,6 @@
         importConfirmText: { en: 'New list ready. Merge with current list or replace it?', ar: 'القائمة الجديدة جاهزة. هل تريد دمجها مع الحالية أم استبدالها؟' },
         mergeBtn: { en: 'Merge', ar: 'دمج' },
         replaceBtn: { en: 'Replace', ar: 'استبدال' },
-        exportModalTitle: { en: 'Export List', ar: 'تصدير قائمة' },
-        exportFormatTitle: { en: 'Choose Format', ar: 'اختر الصيغة' },
-        exportBtnShort: { en: 'Export', ar: 'تصدير' },
         deleteModalTitle: { en: 'Confirm Deletion', ar: 'تأكيد الحذف' },
         confirmBtn: { en: 'Confirm', ar: 'تأكيد' },
         resetModalTitle: { en: 'Confirm Reset', ar: 'تأكيد إعادة التعيين' },
@@ -479,16 +492,7 @@
         deleteConfirmText: { en: 'Are you sure you want to delete "{stationName}"?', ar: 'هل أنت متأكد من حذف "{stationName}"؟' }
     };
 
-    const applyCustomization = (title, imageUrl) => {
-        if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key');
-        } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; }
-        if (imageUrl) {
-            headerImage.src = imageUrl;
-            headerImage.style.display = 'block';
-            headerImage.style.height = '32px'; headerImage.style.width = 'auto'; headerImage.style.maxWidth = '64px';
-        } else { headerImage.style.display = 'none'; }
-    };
-
+    const applyCustomization = (title, imageUrl) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = '32px'; headerImage.style.width = 'auto'; headerImage.style.maxWidth = '64px'; } else { headerImage.style.display = 'none'; } };
     const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); applyCustomization(newTitle, newImageUrl); personalizationModal.classList.add('hidden'); };
     const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') || ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') || ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
@@ -517,21 +521,23 @@
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
-    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) { const rawData = JSON.parse(content); const rawStations = Array.isArray(rawData) ? rawData : [rawData]; const findValue = (obj, possibleKeys, defaultValue = '') => { for (const key of possibleKeys) { if (obj[key] && typeof obj[key] === 'string') return obj[key].trim(); } return defaultValue; }; importedStations = rawStations.map(station => { let name; if (typeof station.name === 'object' && station.name !== null) { name = station.name; } else { const nameStr = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown'); name = { en: nameStr, ar: nameStr }; } const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']); const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']); if (!url) return null; return { name: name, url: url, logoUrl: logoUrl, streamType: findValue(station, ['streamType', 'type', 'description'], '') }; }).filter(Boolean); } else if (file.name.match(/\.m3u8?$/)) { importedStations = parseM3U(content); } else { return alert(translations.alertUnsupported[currentLang]); } if (!Array.isArray(importedStations) || !importedStations.length) { return alert(translations.alertInvalid[currentLang]); } importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error("Import Error:", err); } }; reader.readAsText(file); fileInput.value = ''; };
+    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; const importType = e.target.dataset.importType; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) { const data = JSON.parse(content); if (importType === 'profile' && data.profile && Array.isArray(data.stations)) { importedStations = data.stations; const { title, imageUrl } = data.profile; localStorage.setItem('customTitle', title); localStorage.setItem('customImageUrl', imageUrl); applyCustomization(title, imageUrl); replaceList(); return; } const rawStations = Array.isArray(data) ? data : [data]; const findValue = (obj, possibleKeys, defaultValue = '') => { for (const key of possibleKeys) { if (obj[key] && typeof obj[key] === 'string') return obj[key].trim(); } return defaultValue; }; importedStations = rawStations.map(station => { let name; if (typeof station.name === 'object' && station.name !== null) { name = station.name; } else { const nameStr = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown'); name = { en: nameStr, ar: nameStr }; } const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']); const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']); if (!url) return null; return { name: name, url: url, logoUrl: logoUrl, streamType: findValue(station, ['streamType', 'type', 'description'], '') }; }).filter(Boolean); } else if (file.name.match(/\.m3u8?$/)) { importedStations = parseM3U(content); } else { return alert(translations.alertUnsupported[currentLang]); } if (!Array.isArray(importedStations) || !importedStations.length) { return alert(translations.alertInvalid[currentLang]); } importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error("Import Error:", err); } }; reader.readAsText(file); fileInput.value = ''; };
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
     const closeImportConfirmModal = () => importConfirmModal.classList.add('hidden');
-    const openExportModal = () => exportModal.classList.remove('hidden');
-    const closeExportModal = () => exportModal.classList.add('hidden');
-    const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${getStationName(s)}" tvg-logo="${s.logoUrl}",${getStationName(s)}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
+    const handleExportStations = () => { const filename = `stations_list.json`; const content = JSON.stringify(stations, null, 2); downloadFile(content, filename, 'application/json'); closeExportOptionsModal(); };
+    const handleExportProfile = () => { const profileData = { profile: { title: localStorage.getItem('customTitle') || '', imageUrl: localStorage.getItem('customImageUrl') || '' }, stations: stations }; const content = JSON.stringify(profileData, null, 2); downloadFile(content, 'radio_profile.json', 'application/json'); closeExportOptionsModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
     function resetEditButtonTimer() { clearTimeout(editButtonHideTimer); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) { activeItem.classList.add('show-edit-btn'); editButtonHideTimer = setTimeout(() => { activeItem.classList.remove('show-edit-btn'); }, 5000); } }
+    const openImportOptionsModal = () => { settingsModal.classList.add('hidden'); importOptionsModal.classList.remove('hidden'); };
+    const closeImportOptionsModal = () => importOptionsModal.classList.add('hidden');
+    const openExportOptionsModal = () => { settingsModal.classList.add('hidden'); exportOptionsModal.classList.remove('hidden'); };
+    const closeExportOptionsModal = () => exportOptionsModal.classList.add('hidden');
 
     const initialize = () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
         stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
-        
         const savedTitle = localStorage.getItem('customTitle');
         const savedImageUrl = localStorage.getItem('customImageUrl');
         if (localStorage.getItem('customTitle') !== null || localStorage.getItem('customImageUrl') !== null) {
@@ -539,10 +545,8 @@
         } else {
             headerImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png";
             headerImage.style.display = 'block';
-            // إعادة الحجم الافتراضي للعلم
             headerImage.style.height = '21px'; headerImage.style.width = '42px';
         }
-
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
         personalizeBtn.addEventListener('click', openPersonalizationModal);
@@ -553,14 +557,12 @@
         closeAddModalBtn.addEventListener('click', closeAddModal);
         closeSettingsBtn.addEventListener('click', closeSettingsModal);
         closeImportConfirmBtn.addEventListener('click', closeImportConfirmModal);
-        cancelExportBtn.addEventListener('click', closeExportModal);
         cancelDeleteBtn.addEventListener('click', closeDeleteConfirm);
         cancelResetBtn.addEventListener('click', closeResetConfirm);
         stationModal.addEventListener('click', e => e.target === stationModal && closeEditModal());
         addStationModal.addEventListener('click', e => e.target === addStationModal && closeAddModal());
         settingsModal.addEventListener('click', e => e.target === settingsModal && closeSettingsModal());
         importConfirmModal.addEventListener('click', e => e.target === importConfirmModal && closeImportConfirmModal());
-        exportModal.addEventListener('click', e => e.target === exportModal && closeExportModal());
         deleteConfirmModal.addEventListener('click', e => e.target === deleteConfirmModal && closeDeleteConfirm());
         resetConfirmModal.addEventListener('click', e => e.target === resetConfirmModal && closeResetConfirm());
         editStationForm.addEventListener('submit', saveStationChanges);
@@ -570,13 +572,18 @@
         langToggleBtn.addEventListener('click', toggleLanguageAndClose);
         addStationBtn.addEventListener('click', () => { closeSettingsModal(); openAddModal(); });
         addStationForm.addEventListener('submit', saveNewStation);
-        importBtn.addEventListener('click', () => fileInput.click() );
+        openImportOptionsBtn.addEventListener('click', openImportOptionsModal);
+        openExportOptionsBtn.addEventListener('click', openExportOptionsModal);
+        closeImportOptionsBtn.addEventListener('click', closeImportOptionsModal);
+        closeExportOptionsBtn.addEventListener('click', closeExportOptionsModal);
+        importStationsChoiceBtn.addEventListener('click', () => { fileInput.dataset.importType = 'stations'; fileInput.click(); closeImportOptionsModal(); });
+        importProfileChoiceBtn.addEventListener('click', () => { fileInput.dataset.importType = 'profile'; fileInput.click(); closeImportOptionsModal(); });
+        exportStationsChoiceBtn.addEventListener('click', handleExportStations);
+        exportProfileChoiceBtn.addEventListener('click', handleExportProfile);
         fileInput.addEventListener('change', handleFileImport);
-        exportBtn.addEventListener('click', () => { closeSettingsModal(); openExportModal(); });
         resetBtn.addEventListener('click', openResetConfirm);
         mergeBtn.addEventListener('click', mergeLists); 
         replaceBtn.addEventListener('click', replaceList);
-        confirmExportBtn.addEventListener('click', handleExport);
         confirmDeleteBtn.addEventListener('click', deleteStation);
         confirmResetBtn.addEventListener('click', resetList);
         new Sortable(stationListUL, { animation: 150, ghostClass: 'sortable-ghost', delay: 250, delayOnTouchOnly: true, filter: '.edit-btn', onEnd: function (evt) { const movedItem = stations.splice(evt.oldIndex, 1)[0]; stations.splice(evt.newIndex, 0, movedItem); saveStations(); }, });
