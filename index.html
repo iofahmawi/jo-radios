@@ -9,6 +9,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-1024.png">
   <link rel="apple-touch-icon" href="icon-1024.png">
+  	
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
@@ -80,7 +81,13 @@
     .container { max-width: 350px; width: 100%; margin: 0 auto; background-color: var(--card-bg-color); border-radius: 12px; box-shadow: var(--card-box-shadow); overflow: hidden; display: flex; flex-direction: column; }
     .header-area { padding: 1.0rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider-color); }
     .main-title-group { display: flex; align-items: center; gap: 12px; overflow: hidden; }
-    .jordan-flag { width: 42px; height: 21px; border-radius: 4px; object-fit: contain; flex-shrink: 0; }
+    .header-image {
+      width: 42px;
+      height: 21px;
+      border-radius: 4px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
     .main-title { font-size: 1.75rem; font-weight: 700; color: var(--title-color); white-space: nowrap; }
     #settingsBtn { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--icon-color); transition: background-color 0.2s, color 0.2s; }
     #settingsBtn:hover { background-color: var(--icon-hover-bg); color: var(--icon-hover-color); }
@@ -94,7 +101,7 @@
       max-height: 528px;
       overflow-y: auto;
       scrollbar-width: none;
-      direction: rtl; /* <<< التعديل الأول والدائم هنا */
+      direction: rtl;
     }
     .station-list::-webkit-scrollbar { display: none; }
 
@@ -108,7 +115,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.2s;
-      direction: ltr; /* <<< التعديل الثاني والدائم هنا */
+      direction: ltr;
     }
     .station-list li.active {
       background-color: var(--station-item-active-bg);
@@ -189,7 +196,7 @@
     .dark-mode #audioPlayerContainer .plyr__controls::before { color: #f43f5e; background-color: rgba(244, 63, 94, 0.2); }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: grid; place-items: center; z-index: 1000; }
-    .modal-content { position: relative; background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; }
+    .modal-content { position: relative; background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--title-color); }
     .modal-form { display: flex; flex-direction: column; gap: 1rem; }
     form.modal-form { margin-bottom: -0.3rem; }
@@ -226,7 +233,10 @@
   <main class="main-content">
     <div class="container">
       <div class="header-area">
-        <div class="main-title-group"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png" class="jordan-flag"><h1 class="main-title" data-lang-key="pageTitle">Jordan Radios</h1></div>
+        <div class="main-title-group">
+          <img id="headerImage" class="header-image">
+          <h1 id="mainTitle" class="main-title" data-lang-key="pageTitle">Jordan Radios</h1>
+        </div>
         <button id="settingsBtn" title="Settings"><i class="ph ph-gear"></i></button>
       </div>
       <ul id="stationList" class="station-list"></ul>
@@ -250,7 +260,6 @@
       </form>
     </div>
   </div>
-
   <div id="addStationModal" class="modal-overlay hidden">
       <div class="modal-content">
         <button id="closeAddModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -269,11 +278,14 @@
     <div class="modal-content">
         <button id="closeSettingsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
         <h3 class="modal-title" data-lang-key="settingsTitle">Settings</h3>
+        
         <div class="settings-section">
             <h4 class="settings-section-title" data-lang-key="appearanceTitle">Appearance</h4>
             <button id="themeToggleBtn" class="btn-secondary"></button>
             <button id="langToggleBtn" class="btn-secondary"></button>
+            <button id="personalizeBtn" class="btn-secondary" data-lang-key="personalizeBtn">Personalize UI</button>
         </div>
+
         <div class="settings-section">
             <h4 class="settings-section-title" data-lang-key="manageListTitle">Manage List</h4>
             <button id="addStationBtn" class="btn-secondary" data-lang-key="addStationBtn">Add New Station</button>
@@ -282,6 +294,26 @@
             <button id="resetBtn" class="btn-danger" data-lang-key="resetBtn">Reset to Default</button>
         </div>
     </div>
+  </div>
+
+  <div id="personalizationModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="closePersonalizationModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
+        <h3 class="modal-title" data-lang-key="personalizationTitle">Personalization</h3>
+        <form id="personalizationForm" class="modal-form">
+            <div>
+                <label for="customTitleInput" data-lang-key="customTitleLabel">Custom Title</label>
+                <input type="text" id="customTitleInput" placeholder="e.g., Quran Radio">
+            </div>
+            <div>
+                <label for="customImageUrlInput" data-lang-key="customImageUrlLabel">Custom Image URL</label>
+                <input type="text" id="customImageUrlInput" placeholder="https://example.com/image.png (optional)">
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="btn-primary" data-lang-key="saveBtn">Save</button>
+            </div>
+        </form>
+      </div>
   </div>
 
   <div id="importConfirmModal" class="modal-overlay hidden">
@@ -295,7 +327,6 @@
           </div>
       </div>
   </div>
-
   <div id="exportModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelExportBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -313,7 +344,6 @@
           </div>
       </div>
   </div>
-
   <div id="deleteConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelDeleteBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -324,7 +354,6 @@
           </div>
       </div>
   </div>
-  
   <div id="resetConfirmModal" class="modal-overlay hidden">
       <div class="modal-content">
           <button id="cancelResetBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -380,6 +409,9 @@
     let stations = [];
     
     const getEl = id => document.getElementById(id);
+    const mainTitle = getEl("mainTitle"), headerImage = getEl("headerImage");
+    const personalizationModal = getEl("personalizationModal"), personalizeBtn = getEl("personalizeBtn"), closePersonalizationModalBtn = getEl("closePersonalizationModalBtn"), personalizationForm = getEl("personalizationForm");
+    const customTitleInput = getEl("customTitleInput"), customImageUrlInput = getEl("customImageUrlInput");
     const body = document.body, stationListUL = getEl("stationList"), audioPlayerContainer = getEl("audioPlayerContainer"),
         audio = getEl("audioPlayer"), stationModal = getEl('stationModal'), closeModalBtn = getEl('closeModalBtn'),
         editStationForm = getEl('editStationForm'), modalStationImage = getEl('modalStationImage'),
@@ -403,11 +435,14 @@
     let currentEditingIndex = null, importedStations = [];
     let hls = null; 
     let currentLang = 'en';
-
     let editButtonHideTimer = null;
     
     const translations = {
         pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
+        personalizeBtn: { en: 'Personalize UI', ar: 'تخصيص الواجهة' },
+        personalizationTitle: { en: 'Personalization', ar: 'تخصيص الواجهة' },
+        customTitleLabel: { en: 'Custom Title', ar: 'عنوان مخصص' },
+        customImageUrlLabel: { en: 'Custom Image URL', ar: 'رابط صورة مخصصة' },
         settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
         appearanceTitle: { en: 'Appearance', ar: 'المظهر' },
         manageListTitle: { en: 'Manage List', ar: 'إدارة القائمة' },
@@ -444,123 +479,22 @@
         deleteConfirmText: { en: 'Are you sure you want to delete "{stationName}"?', ar: 'هل أنت متأكد من حذف "{stationName}"؟' }
     };
 
-    const getStationName = (station) => {
-        if (typeof station.name === 'object' && station.name !== null) {
-            return station.name[currentLang] || station.name['en'];
-        }
-        return station.name;
+    const applyCustomization = (title, imageUrl) => {
+        if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key');
+        } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; }
+        if (imageUrl) {
+            headerImage.src = imageUrl;
+            headerImage.style.display = 'block';
+            headerImage.style.height = '32px'; headerImage.style.width = 'auto'; headerImage.style.maxWidth = '64px';
+        } else { headerImage.style.display = 'none'; }
     };
 
-    const setLanguage = (lang) => {
-        currentLang = lang;
-        localStorage.setItem('language', lang);
-        document.documentElement.lang = lang;
-        body.classList.toggle('lang-ar', lang === 'ar');
-        document.querySelectorAll('[data-lang-key]').forEach(el => {
-            const key = el.getAttribute('data-lang-key');
-            if (translations[key] && translations[key][lang]) {
-                el.textContent = translations[key][lang];
-            }
-        });
-        renderStationList();
-        updateThemeButtonText();
-        updateLangButtonText();
-    };
-    
-    // تم تبسيط الدالة وإزالة عكس المصفوفة
-    const renderStationList = () => {
-        const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url;
-        stationListUL.innerHTML = '';
-        
-        stations.forEach((station, index) => {
-            const li = document.createElement("li");
-            if (station.url === currentlyPlayingUrl) {
-                li.classList.add('active');
-            }
-            li.dataset.url = station.url;
-
-            const stationName = getStationName(station);
-            li.innerHTML = `
-                <img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';">
-                <span class="station-name-text">${stationName}</span>
-                <button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>
-            `;
-
-            li.addEventListener("click", () => playStation(li, station));
-            
-            const editBtn = li.querySelector('.edit-btn');
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEditModal(station, index);
-            });
-
-            stationListUL.appendChild(li);
-        });
-    };
-    
-    const playStation = (li, station) => {
-        const wasActive = li.classList.contains('active');
-    
-        if (!wasActive) {
-            const oldActiveItem = stationListUL.querySelector("li.active");
-            if (oldActiveItem) {
-                oldActiveItem.classList.remove("active", "show-edit-btn");
-            }
-            
-            li.classList.add("active");
-
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-
-            const isM3U8 = station.url.includes('.m3u8');
-            const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
-
-            if (isM3U8 && isProxied && Hls.isSupported()) {
-                player.source = { 
-                    type: 'audio', 
-                    title: getStationName(station), 
-                    sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] 
-                };
-                player.stop();
-
-                const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
-                
-                hls = new Hls({
-                    xhrSetup: function(xhr, url) {
-                        const originalUrl = url;
-                        if (!url.startsWith(proxyUrlBase) && url.includes('http')) {
-                            xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
-                        } else {
-                            xhr.open('GET', originalUrl);
-                        }
-                    }
-                });
-
-                hls.attachMedia(audio);
-                hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url));
-                hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e)));
-
-            } else {
-                player.source = { 
-                    type: 'audio', 
-                    title: getStationName(station), 
-                    sources: [{ 
-                        src: station.url, 
-                        type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' 
-                    }] 
-                };
-                player.play().catch(e => console.warn(`Error playing:`, e));
-            }
-        
-        } else {
-            player.togglePlay();
-        }
-    
-        resetEditButtonTimer();
-    };
-
+    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); applyCustomization(newTitle, newImageUrl); personalizationModal.classList.add('hidden'); };
+    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') || ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') || ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
+    const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
+    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
+    const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", () => playStation(li, station)); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
+    const playStation = (li, station) => { const wasActive = li.classList.contains('active'); if (!wasActive) { const oldActiveItem = stationListUL.querySelector("li.active"); if (oldActiveItem) { oldActiveItem.classList.remove("active", "show-edit-btn"); } li.classList.add("active"); if (hls) { hls.destroy(); hls = null; } const isM3U8 = station.url.includes('.m3u8'); const isProxied = station.url.includes('proxy.iofahmawi.workers.dev'); if (isM3U8 && isProxied && Hls.isSupported()) { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] }; player.stop(); const proxyUrlBase = station.url.split('?url=')[0] + '?url='; hls = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } }); hls.attachMedia(audio); hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url)); hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e))); } else { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } } else { player.togglePlay(); } resetEditButtonTimer(); };
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
@@ -576,67 +510,14 @@
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
     const openResetConfirm = () => { closeSettingsModal(); resetConfirmModal.classList.remove('hidden'); };
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
-    const resetList = () => { localStorage.removeItem('savedStations'); location.reload(); };
+    const resetList = () => { localStorage.removeItem('savedStations'); localStorage.removeItem('customTitle'); localStorage.removeItem('customImageUrl'); location.reload(); };
     const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
-
-    const handleFileImport = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        closeSettingsModal();
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const content = ev.target.result;
-            try {
-                if (file.name.endsWith('.json')) {
-                    const rawData = JSON.parse(content);
-                    const rawStations = Array.isArray(rawData) ? rawData : [rawData];
-                    
-                    const findValue = (obj, possibleKeys, defaultValue = '') => {
-                        for (const key of possibleKeys) {
-                            if (obj[key] && typeof obj[key] === 'string') return obj[key].trim();
-                        }
-                        return defaultValue;
-                    };
-                    
-                    importedStations = rawStations.map(station => {
-                        const name = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown');
-                        const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']);
-                        const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']);
-                        
-                        if (!url) return null;
-
-                        return {
-                            name: { en: name, ar: name },
-                            url: url,
-                            logoUrl: logoUrl,
-                            streamType: findValue(station, ['streamType', 'type', 'description'], '')
-                        };
-                    }).filter(Boolean);
-
-                } else if (file.name.match(/\.m3u8?$/)) {
-                    importedStations = parseM3U(content);
-                } else {
-                    return alert(translations.alertUnsupported[currentLang]);
-                }
-
-                if (!Array.isArray(importedStations) || !importedStations.length) {
-                    return alert(translations.alertInvalid[currentLang]);
-                }
-                importConfirmModal.classList.remove('hidden');
-            } catch (err) {
-                alert(translations.alertParseFail[currentLang]);
-                console.error("Import Error:", err);
-            }
-        };
-        reader.readAsText(file);
-        fileInput.value = '';
-    };
-
+    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) { const rawData = JSON.parse(content); const rawStations = Array.isArray(rawData) ? rawData : [rawData]; const findValue = (obj, possibleKeys, defaultValue = '') => { for (const key of possibleKeys) { if (obj[key] && typeof obj[key] === 'string') return obj[key].trim(); } return defaultValue; }; importedStations = rawStations.map(station => { let name; if (typeof station.name === 'object' && station.name !== null) { name = station.name; } else { const nameStr = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown'); name = { en: nameStr, ar: nameStr }; } const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']); const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']); if (!url) return null; return { name: name, url: url, logoUrl: logoUrl, streamType: findValue(station, ['streamType', 'type', 'description'], '') }; }).filter(Boolean); } else if (file.name.match(/\.m3u8?$/)) { importedStations = parseM3U(content); } else { return alert(translations.alertUnsupported[currentLang]); } if (!Array.isArray(importedStations) || !importedStations.length) { return alert(translations.alertInvalid[currentLang]); } importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error("Import Error:", err); } }; reader.readAsText(file); fileInput.value = ''; };
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
@@ -645,25 +526,29 @@
     const closeExportModal = () => exportModal.classList.add('hidden');
     const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${getStationName(s)}" tvg-logo="${s.logoUrl}",${getStationName(s)}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
-    
-    function resetEditButtonTimer() {
-        clearTimeout(editButtonHideTimer);
-        const activeItem = stationListUL.querySelector('li.active');
-        if (activeItem) {
-            activeItem.classList.add('show-edit-btn');
-            editButtonHideTimer = setTimeout(() => {
-                activeItem.classList.remove('show-edit-btn');
-            }, 5000);
-        }
-    }
+    function resetEditButtonTimer() { clearTimeout(editButtonHideTimer); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) { activeItem.classList.add('show-edit-btn'); editButtonHideTimer = setTimeout(() => { activeItem.classList.remove('show-edit-btn'); }, 5000); } }
 
     const initialize = () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
         stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
-        if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         
-        player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
+        const savedTitle = localStorage.getItem('customTitle');
+        const savedImageUrl = localStorage.getItem('customImageUrl');
+        if (localStorage.getItem('customTitle') !== null || localStorage.getItem('customImageUrl') !== null) {
+            applyCustomization(savedTitle, savedImageUrl);
+        } else {
+            headerImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png";
+            headerImage.style.display = 'block';
+            // إعادة الحجم الافتراضي للعلم
+            headerImage.style.height = '21px'; headerImage.style.width = '42px';
+        }
 
+        if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
+        player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
+        personalizeBtn.addEventListener('click', openPersonalizationModal);
+        closePersonalizationModalBtn.addEventListener('click', () => personalizationModal.classList.add('hidden'));
+        personalizationModal.addEventListener('click', e => e.target === personalizationModal && personalizationModal.classList.add('hidden'));
+        personalizationForm.addEventListener('submit', saveCustomization);
         closeModalBtn.addEventListener('click', closeEditModal);
         closeAddModalBtn.addEventListener('click', closeAddModal);
         closeSettingsBtn.addEventListener('click', closeSettingsModal);
@@ -694,24 +579,9 @@
         confirmExportBtn.addEventListener('click', handleExport);
         confirmDeleteBtn.addEventListener('click', deleteStation);
         confirmResetBtn.addEventListener('click', resetList);
-
-        // تم تبسيط دالة onEnd هنا
-        new Sortable(stationListUL, {
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            delay: 250,
-            delayOnTouchOnly: true,
-            filter: '.edit-btn',
-            onEnd: function (evt) {
-                const movedItem = stations.splice(evt.oldIndex, 1)[0];
-                stations.splice(evt.newIndex, 0, movedItem);
-                saveStations();
-            },
-        });
-
+        new Sortable(stationListUL, { animation: 150, ghostClass: 'sortable-ghost', delay: 250, delayOnTouchOnly: true, filter: '.edit-btn', onEnd: function (evt) { const movedItem = stations.splice(evt.oldIndex, 1)[0]; stations.splice(evt.newIndex, 0, movedItem); saveStations(); }, });
         document.addEventListener('mousemove', resetEditButtonTimer);
         document.addEventListener('touchstart', resetEditButtonTimer);
-
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
     };
