@@ -106,7 +106,7 @@
       padding: 0.5rem;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.2s; /* ===> تم الإصلاح هنا <=== */
+      transition: background-color 0.2s;
     }
     .station-list li.active {
       background-color: var(--station-item-active-bg);
@@ -398,7 +398,7 @@
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
-    let hls = null; // <-- (1) هذا هو السطر الذي تمت إضافته
+    let hls = null; // <-- (1) التعديل الأول
     let currentLang = 'en';
 
     // === START: TIMER FOR AUTO-HIDING EDIT BUTTON ===
@@ -495,7 +495,7 @@
         });
     };
     
-    // (2) تم استبدال هذه الدالة بالكامل
+    // === (2) الدالة playStation مع تعديل xhrSetup ===
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
     
@@ -516,66 +516,50 @@
             }
 
             const isM3U8 = station.url.includes('.m3u8');
-            // Check if it's both M3U8 AND proxied
-            const isProxied = isM3U8 && station.url.includes('proxy.iofahmawi.workers.dev');
+            const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
 
-            if (isProxied && window.Hls) {
-                // === MANUAL HLS.js SETUP FOR PROXIED STREAMS ===
+            if (isM3U8 && isProxied && window.Hls) {
+                // === MANUAL HLS.js SETUP WITH XHR INCEPTION ===
                 
-                // Set Plyr's source, but with a dummy src.
-                // This updates the UI (title) without triggering Plyr's own HLS.
                 player.source = { 
                     type: 'audio', 
                     title: getStationName(station), 
-                    sources: [{ 
-                        src: 'blank.mp3', // A dummy src
-                        type: 'audio/mpeg' // A dummy type
-                    }] 
+                    sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] 
                 };
-                player.stop(); // Stop it from trying to play the dummy file
+                player.stop();
 
                 // Extract the proxy base URL
                 const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
                 
-                // Create our custom HLS instance
                 hls = new Hls({
-                    loader: class ProxiedLoader extends Hls.DefaultConfig.loader {
-                        constructor(config) {
-                            super(config);
-                            this.proxyBase = proxyUrlBase;
-                        }
-
-                        load(context, config, callbacks) {
-                            let url = context.url;
-                            
-                            // If it's NOT the first manifest load AND it's an absolute URL
-                            if (context.type !== 'manifest' && url.startsWith('http')) {
-                                // This is a segment or sub-playlist, proxy it.
-                                context.url = this.proxyBase + encodeURIComponent(url);
-                            } else {
-                                // This is the initial manifest load (station.url), let it pass.
-                                context.url = url;
-                            }
-                            
-                            super.load(context, config, callbacks);
+                    // Use xhrSetup to intercept and modify all requests (segments and manifests)
+                    xhrSetup: function(xhr, url) {
+                        const originalUrl = url;
+                        // Only intercept if the URL is not already the main proxied URL
+                        // AND it's an absolute stream segment URL (which should be proxied)
+                        if (!url.startsWith(proxyUrlBase) && url.includes('http')) {
+                            // This is an absolute segment URL, force it through the proxy
+                            xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
+                        } else {
+                            // This is the initial proxied M3U8 URL, or a relative URL
+                            // which HLS.js resolves, so we use the original URL (which is already proxied)
+                            xhr.open('GET', originalUrl);
                         }
                     }
                 });
 
-                // Attach *our* HLS.js to the <audio> element
                 hls.attachMedia(audio);
                 
                 hls.on(Hls.Events.MEDIA_ATTACHED, () => {
                     hls.loadSource(station.url);
                 });
                 
-                // When it's ready, *then* tell Plyr to play
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     player.play().catch(e => console.warn(`Error playing:`, e));
                 });
 
             } else {
-                // === STANDARD PLAYBACK (MP3, or non-proxied M3U8) ===
+                // === STANDARD PLAYBACK ===
                 // Let Plyr handle it normally.
                 player.source = { 
                     type: 'audio', 
@@ -596,6 +580,7 @@
         // In both cases (new station or interaction with old), reset the timer.
         resetEditButtonTimer();
     };
+    // === نهاية الدالة playStation ===
 
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
