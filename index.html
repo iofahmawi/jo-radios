@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Web Jordan Radios</title>
   
+  <!-- === PWA Additions === -->
   <meta name="theme-color" content="#F8F9FA">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-1024.png">
   <link rel="apple-touch-icon" href="icon-1024.png">
+  <!-- ============================= -->
+  	
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
@@ -398,12 +401,10 @@
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
-    let hls = null;
+    let hls = null; 
     let currentLang = 'en';
 
-    // === START: TIMER FOR AUTO-HIDING EDIT BUTTON ===
     let editButtonHideTimer = null;
-    // === END: TIMER ===
     
     const translations = {
         pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
@@ -478,7 +479,7 @@
 
             const stationName = getStationName(station);
             li.innerHTML = `
-                <img src="${station.logoUrl}" class="station-logo">
+                <img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';">
                 <span class="station-name-text">${stationName}</span>
                 <button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>
             `;
@@ -495,20 +496,18 @@
         });
     };
     
+    // === النسخة الكاملة والصحيحة من الدالة ===
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
-
+    
         if (!wasActive) {
-            // Deactivate the old station
             const oldActiveItem = stationListUL.querySelector("li.active");
             if (oldActiveItem) {
                 oldActiveItem.classList.remove("active", "show-edit-btn");
             }
-
-            // Activate the new station
+            
             li.classList.add("active");
 
-            // Destroy previous HLS instance if it exists
             if (hls) {
                 hls.destroy();
                 hls = null;
@@ -517,8 +516,8 @@
             const isM3U8 = station.url.includes('.m3u8');
             const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
 
-            if (isM3U8 && window.Hls && !audio.canPlayType('application/vnd.apple.mpegurl')) {
-                // Manual HLS.js setup for .m3u8 streams (with or without proxy)
+            if (isM3U8 && isProxied && Hls.isSupported()) {
+                // هذا هو الكود الذي أعيد لضمان عمل البروكسي
                 player.source = { 
                     type: 'audio', 
                     title: getStationName(station), 
@@ -526,49 +525,25 @@
                 };
                 player.stop();
 
-                const proxyUrlBase = 'https://proxy.iofahmawi.workers.dev/?url=';
-
+                const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
+                
                 hls = new Hls({
-                    debug: true, // Enable debug mode for detailed logging
                     xhrSetup: function(xhr, url) {
-                        console.log('HLS Request URL:', url);
-                        if (isProxied && url.match(/^https?:\/\//) && !url.startsWith(proxyUrlBase)) {
-                            const proxiedUrl = proxyUrlBase + encodeURIComponent(url);
-                            console.log('Proxied URL:', proxiedUrl);
-                            xhr.open('GET', proxiedUrl);
+                        const originalUrl = url;
+                        if (!url.startsWith(proxyUrlBase) && url.includes('http')) {
+                            xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
                         } else {
-                            console.log('Direct URL:', url);
-                            xhr.open('GET', url);
+                            xhr.open('GET', originalUrl);
                         }
-                        // Add headers to improve compatibility
-                        xhr.setRequestHeader('Accept', '*/*');
-                        xhr.setRequestHeader('Cache-Control', 'no-cache');
                     }
                 });
 
                 hls.attachMedia(audio);
+                hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url));
+                hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e)));
 
-                hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                    console.log('HLS Media Attached');
-                    hls.loadSource(station.url);
-                });
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    console.log('HLS Manifest Parsed');
-                    player.play().catch(e => console.error('Error playing HLS:', e));
-                });
-
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    console.error('HLS Error:', data);
-                    if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                        console.error('Network error details:', data.details, 'URL:', data.url);
-                    } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-                        console.error('Media error details:', data.details);
-                    }
-                });
             } else {
-                // Native HLS or standard playback
-                console.log('Using native HLS or standard playback for:', station.url);
+                // المعالجة العادية لباقي الروابط
                 player.source = { 
                     type: 'audio', 
                     title: getStationName(station), 
@@ -577,21 +552,20 @@
                         type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' 
                     }] 
                 };
-                player.play().catch(e => console.error('Error playing:', e));
+                player.play().catch(e => console.warn(`Error playing:`, e));
             }
+        
         } else {
-            // If it was already active, just toggle play
             player.togglePlay();
         }
-
-        // Reset edit button timer
+    
         resetEditButtonTimer();
     };
 
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
-    const openDeleteConfirm = () => { deleteConfirmModal.classList.remove('hidden'); };
+    const openDeleteConfirm = (station, index) => { currentEditingIndex = index; const stationName = getStationName(station); deleteConfirmText.textContent = translations.deleteConfirmText[currentLang].replace('{stationName}', stationName); deleteConfirmModal.classList.remove('hidden'); };
     const closeEditModal = () => stationModal.classList.add('hidden');
     const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) { return alert(translations.alertRequired[currentLang]); } if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.streamType = editStreamType.value.trim(); saveAndRerender(); closeEditModal(); };
     const closeDeleteConfirm = () => deleteConfirmModal.classList.add('hidden');
@@ -610,7 +584,60 @@
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
-    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { const content = ev.target.result; try { if (file.name.endsWith('.json')) importedStations = JSON.parse(content); else if (file.name.match(/\.m3u8?$/)) importedStations = parseM3U(content); else return alert(translations.alertUnsupported[currentLang]); if (!Array.isArray(importedStations) || !importedStations.length) return alert(translations.alertInvalid[currentLang]); importConfirmModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error(err); } }; reader.readAsText(file); fileInput.value = ''; };
+
+    const handleFileImport = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        closeSettingsModal();
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const content = ev.target.result;
+            try {
+                if (file.name.endsWith('.json')) {
+                    const rawData = JSON.parse(content);
+                    const rawStations = Array.isArray(rawData) ? rawData : [rawData];
+                    
+                    const findValue = (obj, possibleKeys, defaultValue = '') => {
+                        for (const key of possibleKeys) {
+                            if (obj[key] && typeof obj[key] === 'string') return obj[key].trim();
+                        }
+                        return defaultValue;
+                    };
+                    
+                    importedStations = rawStations.map(station => {
+                        const name = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown');
+                        const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']);
+                        const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']);
+                        
+                        if (!url) return null;
+
+                        return {
+                            name: { en: name, ar: name },
+                            url: url,
+                            logoUrl: logoUrl,
+                            streamType: findValue(station, ['streamType', 'type', 'description'], '')
+                        };
+                    }).filter(Boolean);
+
+                } else if (file.name.match(/\.m3u8?$/)) {
+                    importedStations = parseM3U(content);
+                } else {
+                    return alert(translations.alertUnsupported[currentLang]);
+                }
+
+                if (!Array.isArray(importedStations) || !importedStations.length) {
+                    return alert(translations.alertInvalid[currentLang]);
+                }
+                importConfirmModal.classList.remove('hidden');
+            } catch (err) {
+                alert(translations.alertParseFail[currentLang]);
+                console.error("Import Error:", err);
+            }
+        };
+        reader.readAsText(file);
+        fileInput.value = '';
+    };
+
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url, streamType: '' }); } } return p; };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
@@ -620,7 +647,6 @@
     const handleExport = () => { const format = document.querySelector('input[name="exportFormat"]:checked').value; const filename = `stations.${format}`; let content = '', type = ''; if (format === 'json') { content = JSON.stringify(stations, null, 2); type = 'application/json'; } else { content = "#EXTM3U\n"; stations.forEach(s => { content += `#EXTINF:-1 tvg-name="${getStationName(s)}" tvg-logo="${s.logoUrl}",${getStationName(s)}\n${s.url}\n`; }); type = 'audio/x-mpegurl'; } downloadFile(content, filename, type); closeExportModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
     
-    // === START: AUTO-HIDE LOGIC ===
     function resetEditButtonTimer() {
         clearTimeout(editButtonHideTimer);
         const activeItem = stationListUL.querySelector('li.active');
@@ -631,7 +657,6 @@
             }, 5000);
         }
     }
-    // === END: AUTO-HIDE LOGIC ===
 
     const initialize = () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
@@ -655,7 +680,7 @@
         deleteConfirmModal.addEventListener('click', e => e.target === deleteConfirmModal && closeDeleteConfirm());
         resetConfirmModal.addEventListener('click', e => e.target === resetConfirmModal && closeResetConfirm());
         editStationForm.addEventListener('submit', saveStationChanges);
-        deleteStationBtn.addEventListener('click', openDeleteConfirm);
+        deleteStationBtn.addEventListener('click', () => openDeleteConfirm(stations[currentEditingIndex], currentEditingIndex));
         settingsBtn.addEventListener('click', openSettingsModal);
         themeToggleBtn.addEventListener('click', toggleThemeAndClose);
         langToggleBtn.addEventListener('click', toggleLanguageAndClose);
@@ -684,7 +709,6 @@
             },
         });
 
-        // Add event listeners to reset timer on user activity
         document.addEventListener('mousemove', resetEditButtonTimer);
         document.addEventListener('touchstart', resetEditButtonTimer);
 
