@@ -398,7 +398,7 @@
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
-    let hls = null; // <-- (1) التعديل الأول
+    let hls = null;
     let currentLang = 'en';
 
     // === START: TIMER FOR AUTO-HIDING EDIT BUTTON ===
@@ -495,21 +495,20 @@
         });
     };
     
-    // === (2) الدالة playStation مع تعديل xhrSetup ===
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
-    
+
         if (!wasActive) {
             // Deactivate the old station
             const oldActiveItem = stationListUL.querySelector("li.active");
             if (oldActiveItem) {
                 oldActiveItem.classList.remove("active", "show-edit-btn");
             }
-            
+
             // Activate the new station
             li.classList.add("active");
 
-            // Destroy previous manual HLS instance if it exists
+            // Destroy previous HLS instance if it exists
             if (hls) {
                 hls.destroy();
                 hls = null;
@@ -518,9 +517,8 @@
             const isM3U8 = station.url.includes('.m3u8');
             const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
 
-            if (isM3U8 && isProxied && window.Hls) {
-                // === MANUAL HLS.js SETUP WITH XHR INCEPTION ===
-                
+            if (isM3U8 && window.Hls && !audio.canPlayType('application/vnd.apple.mpegurl')) {
+                // Manual HLS.js setup for .m3u8 streams (with or without proxy)
                 player.source = { 
                     type: 'audio', 
                     title: getStationName(station), 
@@ -528,39 +526,49 @@
                 };
                 player.stop();
 
-                // Extract the proxy base URL
-                const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
-                
+                const proxyUrlBase = 'https://proxy.iofahmawi.workers.dev/?url=';
+
                 hls = new Hls({
-                    // Use xhrSetup to intercept and modify all requests (segments and manifests)
+                    debug: true, // Enable debug mode for detailed logging
                     xhrSetup: function(xhr, url) {
-                        const originalUrl = url;
-                        // Only intercept if the URL is not already the main proxied URL
-                        // AND it's an absolute stream segment URL (which should be proxied)
-                        if (!url.startsWith(proxyUrlBase) && url.includes('http')) {
-                            // This is an absolute segment URL, force it through the proxy
-                            xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
+                        console.log('HLS Request URL:', url);
+                        if (isProxied && url.match(/^https?:\/\//) && !url.startsWith(proxyUrlBase)) {
+                            const proxiedUrl = proxyUrlBase + encodeURIComponent(url);
+                            console.log('Proxied URL:', proxiedUrl);
+                            xhr.open('GET', proxiedUrl);
                         } else {
-                            // This is the initial proxied M3U8 URL, or a relative URL
-                            // which HLS.js resolves, so we use the original URL (which is already proxied)
-                            xhr.open('GET', originalUrl);
+                            console.log('Direct URL:', url);
+                            xhr.open('GET', url);
                         }
+                        // Add headers to improve compatibility
+                        xhr.setRequestHeader('Accept', '*/*');
+                        xhr.setRequestHeader('Cache-Control', 'no-cache');
                     }
                 });
 
                 hls.attachMedia(audio);
-                
+
                 hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                    console.log('HLS Media Attached');
                     hls.loadSource(station.url);
                 });
-                
+
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    player.play().catch(e => console.warn(`Error playing:`, e));
+                    console.log('HLS Manifest Parsed');
+                    player.play().catch(e => console.error('Error playing HLS:', e));
                 });
 
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    console.error('HLS Error:', data);
+                    if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                        console.error('Network error details:', data.details, 'URL:', data.url);
+                    } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                        console.error('Media error details:', data.details);
+                    }
+                });
             } else {
-                // === STANDARD PLAYBACK ===
-                // Let Plyr handle it normally.
+                // Native HLS or standard playback
+                console.log('Using native HLS or standard playback for:', station.url);
                 player.source = { 
                     type: 'audio', 
                     title: getStationName(station), 
@@ -569,18 +577,16 @@
                         type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' 
                     }] 
                 };
-                player.play().catch(e => console.warn(`Error playing:`, e));
+                player.play().catch(e => console.error('Error playing:', e));
             }
-        
         } else {
             // If it was already active, just toggle play
             player.togglePlay();
         }
-    
-        // In both cases (new station or interaction with old), reset the timer.
+
+        // Reset edit button timer
         resetEditButtonTimer();
     };
-    // === نهاية الدالة playStation ===
 
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
