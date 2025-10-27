@@ -1,3 +1,5 @@
+تفضل، هذا هو الكود الكامل للملف بعد تطبيق التعديلات.
+لقد قمت بإضافة السطر let hls = null; (سطر 321) واستبدلت الدالة playStation بالكامل (تبدأ الآن من سطر 349) بالكود الجديد الذي يعالج مشكلة البروكسي مع ملفات HLS.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Web Jordan Radios</title>
   
-  <!-- === PWA Additions === -->
   <meta name="theme-color" content="#F8F9FA">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-1024.png">
   <link rel="apple-touch-icon" href="icon-1024.png">
-  <!-- ============================= -->
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <!-- === SORTABLEJS LIBRARY === -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
   <style>
@@ -402,6 +400,7 @@
     
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
+    let hls = null; // <-- (1) هذا هو السطر الذي تمت إضافته
     let currentLang = 'en';
 
     // === START: TIMER FOR AUTO-HIDING EDIT BUTTON ===
@@ -498,6 +497,7 @@
         });
     };
     
+    // (2) تم استبدال هذه الدالة بالكامل
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
     
@@ -510,8 +510,86 @@
             
             // Activate the new station
             li.classList.add("active");
-            player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: station.url.includes('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg' }] };
-            player.play().catch(e => console.warn(`Error playing:`, e));
+
+            // Destroy previous manual HLS instance if it exists
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+
+            const isM3U8 = station.url.includes('.m3u8');
+            // Check if it's both M3U8 AND proxied
+            const isProxied = isM3U8 && station.url.includes('proxy.iofahmawi.workers.dev');
+
+            if (isProxied && window.Hls) {
+                // === MANUAL HLS.js SETUP FOR PROXIED STREAMS ===
+                
+                // Set Plyr's source, but with a dummy src.
+                // This updates the UI (title) without triggering Plyr's own HLS.
+                player.source = { 
+                    type: 'audio', 
+                    title: getStationName(station), 
+                    sources: [{ 
+                        src: 'blank.mp3', // A dummy src
+                        type: 'audio/mpeg' // A dummy type
+                    }] 
+                };
+                player.stop(); // Stop it from trying to play the dummy file
+
+                // Extract the proxy base URL
+                const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
+                
+                // Create our custom HLS instance
+                hls = new Hls({
+                    loader: class ProxiedLoader extends Hls.DefaultConfig.loader {
+                        constructor(config) {
+                            super(config);
+                            this.proxyBase = proxyUrlBase;
+                        }
+
+                        load(context, config, callbacks) {
+                            let url = context.url;
+                            
+                            // If it's NOT the first manifest load AND it's an absolute URL
+                            if (context.type !== 'manifest' && url.startsWith('http')) {
+                                // This is a segment or sub-playlist, proxy it.
+                                context.url = this.proxyBase + encodeURIComponent(url);
+                            } else {
+                                // This is the initial manifest load (station.url), let it pass.
+                                context.url = url;
+                            }
+                            
+                            super.load(context, config, callbacks);
+                        }
+                    }
+                });
+
+                // Attach *our* HLS.js to the <audio> element
+                hls.attachMedia(audio);
+                
+                hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                    hls.loadSource(station.url);
+                });
+                
+                // When it's ready, *then* tell Plyr to play
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    player.play().catch(e => console.warn(`Error playing:`, e));
+                });
+
+            } else {
+                // === STANDARD PLAYBACK (MP3, or non-proxied M3U8) ===
+                // Let Plyr handle it normally.
+                player.source = { 
+                    type: 'audio', 
+                    title: getStationName(station), 
+                    sources: [{ 
+                        src: station.url, 
+                        type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' 
+                    }] 
+                };
+                player.play().catch(e => console.warn(`Error playing:`, e));
+            }
+        
         } else {
             // If it was already active, just toggle play
             player.togglePlay();
@@ -633,3 +711,4 @@
   </script>
 </body>
 </html>
+
