@@ -215,7 +215,11 @@
     .modal-close-btn i { font-size: 1.5rem; }
     .settings-section { display: flex; flex-direction: column; gap: 0.75rem; }
     .settings-section-title { font-weight: 700; font-size: 1.1rem; color: var(--title-color); border-bottom: 1px solid var(--divider-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
-    .confirm-text { text-align: center; font-size: 1.1rem; margin: 0.5rem 0; }
+    .confirm-text {
+      font-size: 1.1rem;
+      margin: 0.3rem 0 1.3rem;
+      text-align: left;
+    }
     .export-options { display: flex; justify-content: space-around; padding: 0.5rem 0; }
     .export-options label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
 
@@ -225,6 +229,7 @@
     body.lang-ar .modal-content { direction: rtl; }
     body.lang-ar .modal-close-btn { right: auto; left: 0.75rem; }
     body.lang-ar #editStationForm .modal-actions { flex-direction: row-reverse; }
+    body.lang-ar .confirm-text { text-align: right; }
     
   </style>
 </head>
@@ -326,20 +331,32 @@
         <h3 class="modal-title" data-lang-key="importOptionsTitle">Choose Import Type</h3>
         <div class="modal-actions" style="flex-direction: column;">
             <button id="importStationsChoiceBtn" class="btn-secondary" data-lang-key="stationsListOnly">Stations List Only</button>
-            <button id="importProfileChoiceBtn" class="btn-primary" data-lang-key="fullProfileBackup">Full Profile (Stations & UI)</button>
+            <button id="importProfileChoiceBtn" class="btn-secondary" data-lang-key="fullProfileBackup">Full Profile (Stations & UI)</button>
         </div>
       </div>
   </div>
   
   <div id="exportOptionsModal" class="modal-overlay hidden">
-      <div class="modal-content">
+    <div class="modal-content">
         <button id="closeExportOptionsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
         <h3 class="modal-title" data-lang-key="exportOptionsTitle">Choose Export Type</h3>
-        <div class="modal-actions" style="flex-direction: column;">
-            <button id="exportStationsChoiceBtn" class="btn-secondary" data-lang-key="stationsListOnly">Stations List Only</button>
-            <button id="exportProfileChoiceBtn" class="btn-primary" data-lang-key="fullProfileBackup">Full Profile (Stations & UI)</button>
+        
+        <div id="exportContentTypeSelection">
+            <div class="modal-actions" style="flex-direction: column;">
+                <button id="exportStationsChoiceBtn" class="btn-secondary" data-lang-key="stationsListOnly">Stations List Only</button>
+                <button id="exportProfileChoiceBtn" class="btn-secondary" data-lang-key="fullProfileBackup">Stations & UI</button>
+            </div>
         </div>
-      </div>
+
+        <div id="exportFormatSelection" class="hidden">
+            <p class="confirm-text" data-lang-key="exportFormatQuestion">Choose the appropriate file type</p>
+            <div class="modal-actions" style="flex-direction: column; gap: 0.75rem;">
+                <button id="exportToJsonBtn" class="btn-secondary">JSON</button>
+                <button id="exportToM3uBtn" class="btn-secondary">M3U</button>
+                <button id="exportToM3u8Btn" class="btn-secondary">M3U8</button>
+            </div>
+        </div>
+    </div>
   </div>
 
   <div id="importConfirmModal" class="modal-overlay hidden">
@@ -441,8 +458,10 @@
         resetConfirmModal = getEl('resetConfirmModal'), cancelResetBtn = getEl('cancelResetBtn'),
         confirmResetBtn = getEl('confirmResetBtn'),
         importOptionsModal = getEl('importOptionsModal'), closeImportOptionsBtn = getEl('closeImportOptionsBtn'), importStationsChoiceBtn = getEl('importStationsChoiceBtn'), importProfileChoiceBtn = getEl('importProfileChoiceBtn'),
-        exportOptionsModal = getEl('exportOptionsModal'), closeExportOptionsBtn = getEl('closeExportOptionsBtn'), exportStationsChoiceBtn = getEl('exportStationsChoiceBtn'), exportProfileChoiceBtn = getEl('exportProfileChoiceBtn');
-    
+        exportOptionsModal = getEl('exportOptionsModal'), closeExportOptionsBtn = getEl('closeExportOptionsBtn'), exportStationsChoiceBtn = getEl('exportStationsChoiceBtn'), exportProfileChoiceBtn = getEl('exportProfileChoiceBtn'),
+        exportContentTypeSelection = getEl('exportContentTypeSelection'), exportFormatSelection = getEl('exportFormatSelection'),
+        exportToJsonBtn = getEl('exportToJsonBtn'), exportToM3uBtn = getEl('exportToM3uBtn'), exportToM3u8Btn = getEl('exportToM3u8Btn');
+
     const player = new Plyr(audio, {});
     let currentEditingIndex = null, importedStations = [];
     let hls = null; 
@@ -459,6 +478,7 @@
         exportOptionsTitle: { en: 'Choose Export Type', ar: 'اختر نوع التصدير' },
         stationsListOnly: { en: 'Stations List Only', ar: 'قائمة المحطات فقط' },
         fullProfileBackup: { en: 'Stations & UI', ar: 'المحطات والواجهة' },
+        exportFormatQuestion: { en: 'Choose the appropriate file type', ar: 'اختر نوع الملف المناسب' },
         settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
         appearanceTitle: { en: 'Appearance', ar: 'المظهر' },
         manageListTitle: { en: 'Manage List', ar: 'إدارة القائمة' },
@@ -526,13 +546,14 @@
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
     const closeImportConfirmModal = () => importConfirmModal.classList.add('hidden');
-    const handleExportStations = () => { const filename = `stations_list.json`; const content = JSON.stringify(stations, null, 2); downloadFile(content, filename, 'application/json'); closeExportOptionsModal(); };
+    const handleExportStationsAsJson = () => { const filename = `stations_list.json`; const content = JSON.stringify(stations, null, 2); downloadFile(content, filename, 'application/json'); closeExportOptionsModal(); };
     const handleExportProfile = () => { const profileData = { profile: { title: localStorage.getItem('customTitle') || '', imageUrl: localStorage.getItem('customImageUrl') || '' }, stations: stations }; const content = JSON.stringify(profileData, null, 2); downloadFile(content, 'radio_profile.json', 'application/json'); closeExportOptionsModal(); };
+    const exportToPlaylist = (format) => { let content = '#EXTM3U\n'; stations.forEach(station => { const stationName = getStationName(station).replace(/"/g, "'"); content += `#EXTINF:-1 tvg-name="${stationName}" tvg-logo="${station.logoUrl || ''}",${stationName}\n`; content += `${station.url}\n`; }); const filename = `stations_list.${format}`; downloadFile(content, filename, 'audio/x-mpegurl'); closeExportOptionsModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
     function resetEditButtonTimer() { clearTimeout(editButtonHideTimer); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) { activeItem.classList.add('show-edit-btn'); editButtonHideTimer = setTimeout(() => { activeItem.classList.remove('show-edit-btn'); }, 5000); } }
     const openImportOptionsModal = () => { settingsModal.classList.add('hidden'); importOptionsModal.classList.remove('hidden'); };
     const closeImportOptionsModal = () => importOptionsModal.classList.add('hidden');
-    const openExportOptionsModal = () => { settingsModal.classList.add('hidden'); exportOptionsModal.classList.remove('hidden'); };
+    const openExportOptionsModal = () => { settingsModal.classList.add('hidden'); exportContentTypeSelection.classList.remove('hidden'); exportFormatSelection.classList.add('hidden'); exportOptionsModal.classList.remove('hidden'); };
     const closeExportOptionsModal = () => exportOptionsModal.classList.add('hidden');
 
     const initialize = () => {
@@ -578,8 +599,11 @@
         closeExportOptionsBtn.addEventListener('click', closeExportOptionsModal);
         importStationsChoiceBtn.addEventListener('click', () => { fileInput.dataset.importType = 'stations'; fileInput.click(); closeImportOptionsModal(); });
         importProfileChoiceBtn.addEventListener('click', () => { fileInput.dataset.importType = 'profile'; fileInput.click(); closeImportOptionsModal(); });
-        exportStationsChoiceBtn.addEventListener('click', handleExportStations);
+        exportStationsChoiceBtn.addEventListener('click', () => { exportContentTypeSelection.classList.add('hidden'); exportFormatSelection.classList.remove('hidden'); });
         exportProfileChoiceBtn.addEventListener('click', handleExportProfile);
+        exportToJsonBtn.addEventListener('click', handleExportStationsAsJson);
+        exportToM3uBtn.addEventListener('click', () => exportToPlaylist('m3u'));
+        exportToM3u8Btn.addEventListener('click', () => exportToPlaylist('m3u8'));
         fileInput.addEventListener('change', handleFileImport);
         resetBtn.addEventListener('click', openResetConfirm);
         mergeBtn.addEventListener('click', mergeLists); 
