@@ -3,7 +3,7 @@
 # إذاعات الأردن &nbsp;&nbsp; 📻 &nbsp;&nbsp; JO Radios
 
 [![version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/iofahmawi/jo-radios)
-[![PWA](https://img.shields.io/badge/PWA-Enabled-brightgreen)](https://iofahmawi.github.io/jo-radios/)
+[![PWA](https://img.shields.io/badge/PWA-Enabled-brightgreen)](https://iofahmawi.github.io/jo-radios/index.html)
 
 مشغل ويب بسيط، أنيق، وقابل للتخصيص بالكامل للاستماع إلى محطات الراديو الأردنية مباشرة. تم بناؤه باستخدام HTML و CSS و JavaScript فقط، دون الحاجة إلى أي إطارات عمل معقدة.
 
@@ -13,7 +13,7 @@
 
 يمكنك تجربة الموقع مباشرة والبدء بالاستماع من خلال الرابط القابل للضغط التالي:
 
-**[https://iofahmawi.github.io/jo-radios/](https://iofahmawi.github.io/jo-radios/)**
+**[https://iofahmawi.github.io/jo-radios/index.html](https://iofahmawi.github.io/jo-radios/index.html)**
 
 <br>
 
@@ -52,7 +52,7 @@
 
 ## 🚀 &nbsp;&nbsp; كيفية الاستخدام
 
-1.  افتح [رابط الموقع](https://iofahmawi.github.io/jo-radios/).
+1.  افتح [رابط الموقع](https://iofahmawi.github.io/jo-radios/index.html).
 2.  اضغط على أي إذاعة لبدء الاستماع.
 3.  للتخصيص، اضغط على أيقونة الترس (`⚙️`) في الزاوية العلوية للوصول إلى الإعدادات.
 4.  من الإعدادات، يمكنك تغيير المظهر، اللغة، إدارة القنوات، وتخصيص الواجهة بالكامل.
