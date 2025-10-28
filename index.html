@@ -88,7 +88,7 @@
       object-fit: contain;
       flex-shrink: 0;
     }
-    .main-title { font-size: 1.75rem; font-weight: 700; color: var(--title-color); white-space: nowrap; }
+    .main-title { font-size: var(--main-title-font-size, 1.75rem); font-weight: 700; color: var(--title-color); white-space: nowrap; }
     #settingsBtn { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--icon-color); transition: background-color 0.2s, color 0.2s; }
     #settingsBtn:hover { background-color: var(--icon-hover-bg); color: var(--icon-hover-color); }
     #settingsBtn i { font-size: 1.5rem; }
@@ -136,7 +136,7 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .station-name-text {
-      font-size: 0.875rem;
+      font-size: var(--station-name-font-size, 0.875rem);
       font-weight: 500;
       text-align: center;
       color: var(--text-color);
@@ -201,6 +201,7 @@
     form.modal-form { margin-bottom: -0.3rem; }
     .modal-form label { display: block; font-weight: 500; margin-bottom: 0.5rem; }
     .modal-form input { width: 100%; padding: 0.75rem; border: 1px solid var(--input-border-color); background-color: var(--input-bg-color); color: var(--text-color); border-radius: 6px; box-sizing: border-box; }
+    .modal-form .form-note { font-size: 0.8rem; color: var(--secondary-text-color); margin-top: 0.4rem; }
     .modal-form .modal-actions { margin-top: 0.5rem; }
     .modal-actions { display: flex; justify-content: center; gap: 0.75rem; }
     .modal-actions button, .settings-section button { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
@@ -316,6 +317,27 @@
             <div>
                 <label for="customImageUrlInput" data-lang-key="customImageUrlLabel">Custom Image URL</label>
                 <input type="text" id="customImageUrlInput" placeholder="https://example.com/image.png (optional)">
+            </div>
+            <div>
+                <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label for="customImageWidthInput" data-lang-key="customImageWidthLabel">Image Width (px)</label>
+                        <input type="number" id="customImageWidthInput" data-lang-placeholder-key="customImageWidthPlaceholder">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="customImageHeightInput" data-lang-key="customImageHeightLabel">Image Height (px)</label>
+                        <input type="number" id="customImageHeightInput" data-lang-placeholder-key="customImageHeightPlaceholder">
+                    </div>
+                </div>
+                <p class="form-note" data-lang-key="dimensionsNote"></p>
+            </div>
+            <div>
+                <label for="customTitleFontSizeInput" data-lang-key="titleFontSizeLabel">Title Font Size (rem)</label>
+                <input type="number" id="customTitleFontSizeInput" placeholder="Default: 1.75" step="0.05">
+            </div>
+            <div>
+                <label for="customStationFontSizeInput" data-lang-key="stationFontSizeLabel">Station Font Size (rem)</label>
+                <input type="number" id="customStationFontSizeInput" placeholder="Default: 0.875" step="0.05">
             </div>
             <div class="modal-actions">
                 <button type="submit" class="btn-primary" data-lang-key="saveBtn">Save</button>
@@ -436,7 +458,7 @@
     const getEl = id => document.getElementById(id);
     const mainTitle = getEl("mainTitle"), headerImage = getEl("headerImage");
     const personalizationModal = getEl("personalizationModal"), personalizeBtn = getEl("personalizeBtn"), closePersonalizationModalBtn = getEl("closePersonalizationModalBtn"), personalizationForm = getEl("personalizationForm");
-    const customTitleInput = getEl("customTitleInput"), customImageUrlInput = getEl("customImageUrlInput");
+    const customTitleInput = getEl("customTitleInput"), customImageUrlInput = getEl("customImageUrlInput"), customImageWidthInput = getEl("customImageWidthInput"), customImageHeightInput = getEl("customImageHeightInput"), customTitleFontSizeInput = getEl("customTitleFontSizeInput"), customStationFontSizeInput = getEl("customStationFontSizeInput");
     const body = document.body, stationListUL = getEl("stationList"), audioPlayerContainer = getEl("audioPlayerContainer"),
         audio = getEl("audioPlayer"), stationModal = getEl('stationModal'), closeModalBtn = getEl('closeModalBtn'),
         editStationForm = getEl('editStationForm'), modalStationImage = getEl('modalStationImage'),
@@ -473,6 +495,13 @@
         personalizationTitle: { en: 'Personalization', ar: 'تخصيص الواجهة' },
         customTitleLabel: { en: 'Custom Title', ar: 'عنوان مخصص' },
         customImageUrlLabel: { en: 'Custom Image URL', ar: 'رابط صورة مخصصة' },
+        customImageWidthLabel: { en: 'Image Width (px)', ar: 'عرض الصورة (بكسل)' },
+        customImageHeightLabel: { en: 'Image Height (px)', ar: 'ارتفاع الصورة (بكسل)' },
+        customImageWidthPlaceholder: { en: 'Default: auto', ar: 'الافتراضي: تلقائي' },
+        customImageHeightPlaceholder: { en: 'Default: 21', ar: 'الافتراضي: 21' },
+        dimensionsNote: { en: 'Tip: If only height is set, width adjusts automatically.', ar: 'نصيحة: إذا تم ضبط الارتفاع فقط، يتم ضبط العرض تلقائيًا.' },
+        titleFontSizeLabel: { en: 'Title Font Size (rem)', ar: 'حجم خط العنوان (rem)' },
+        stationFontSizeLabel: { en: 'Station Font Size (rem)', ar: 'حجم خط الإذاعة (rem)' },
         importOptionsTitle: { en: 'Choose Import Type', ar: 'اختر نوع الاستيراد' },
         exportOptionsTitle: { en: 'Choose Export Type', ar: 'اختر نوع التصدير' },
         stationsListOnly: { en: 'Stations List Only', ar: 'قائمة المحطات فقط' },
@@ -510,12 +539,13 @@
         alertParseFail: { en: 'Failed to parse the file.', ar: 'فشل في تحليل الملف.' },
         deleteConfirmText: { en: 'Are you sure you want to delete "{stationName}"?', ar: 'هل أنت متأكد من حذف "{stationName}"؟' }
     };
-
-    const applyCustomization = (title, imageUrl) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = '32px'; headerImage.style.width = 'auto'; headerImage.style.maxWidth = '64px'; } else { headerImage.style.display = 'none'; } };
-    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); applyCustomization(newTitle, newImageUrl); personalizationModal.classList.add('hidden'); };
-    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') || ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') || ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
+    
+    const applyFontSizes = () => { const titleSize = localStorage.getItem('customTitleFontSize'); const stationSize = localStorage.getItem('customStationFontSize'); if (titleSize) { document.documentElement.style.setProperty('--main-title-font-size', titleSize + 'rem'); } else { document.documentElement.style.removeProperty('--main-title-font-size'); } if (stationSize) { document.documentElement.style.setProperty('--station-name-font-size', stationSize + 'rem'); } else { document.documentElement.style.removeProperty('--station-name-font-size'); } };
+    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : '21px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
+    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); personalizationModal.classList.add('hidden'); };
+    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') || ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') || ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') || ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') || ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') || ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') || ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
-    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
+    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
     const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", () => playStation(li, station)); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
     const playStation = (li, station) => { const wasActive = li.classList.contains('active'); if (!wasActive) { const oldActiveItem = stationListUL.querySelector("li.active"); if (oldActiveItem) { oldActiveItem.classList.remove("active", "show-edit-btn"); } li.classList.add("active"); if (hls) { hls.destroy(); hls = null; } const isM3U8 = station.url.includes('.m3u8'); const isProxied = station.url.includes('proxy.iofahmawi.workers.dev'); if (isM3U8 && isProxied && Hls.isSupported()) { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] }; player.stop(); const proxyUrlBase = station.url.split('?url=')[0] + '?url='; hls = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } }); hls.attachMedia(audio); hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url)); hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e))); } else { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } } else { player.togglePlay(); } resetEditButtonTimer(); };
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
@@ -533,7 +563,7 @@
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
     const openResetConfirm = () => { closeSettingsModal(); resetConfirmModal.classList.remove('hidden'); };
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
-    const resetList = () => { localStorage.removeItem('savedStations'); localStorage.removeItem('customTitle'); localStorage.removeItem('customImageUrl'); location.reload(); };
+    const resetList = () => { localStorage.removeItem('savedStations'); localStorage.removeItem('customTitle'); localStorage.removeItem('customImageUrl'); localStorage.removeItem('customImageWidth'); localStorage.removeItem('customImageHeight'); localStorage.removeItem('customTitleFontSize'); localStorage.removeItem('customStationFontSize'); location.reload(); };
     const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
@@ -560,12 +590,15 @@
         stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
         const savedTitle = localStorage.getItem('customTitle');
         const savedImageUrl = localStorage.getItem('customImageUrl');
+        const savedImageWidth = localStorage.getItem('customImageWidth');
+        const savedImageHeight = localStorage.getItem('customImageHeight');
         if (localStorage.getItem('customTitle') !== null || localStorage.getItem('customImageUrl') !== null) {
-            applyCustomization(savedTitle, savedImageUrl);
+            applyCustomization(savedTitle, savedImageUrl, savedImageWidth, savedImageHeight);
         } else {
             headerImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png";
             headerImage.style.display = 'block';
-            headerImage.style.height = '21px'; headerImage.style.width = '42px';
+            headerImage.style.height = '21px';
+            headerImage.style.width = '42px';
         }
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
@@ -614,6 +647,7 @@
         document.addEventListener('touchstart', resetEditButtonTimer);
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
+        applyFontSizes();
     };
 
     initialize();
