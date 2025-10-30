@@ -752,7 +752,7 @@
 
     const initialize = async () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
-        if (savedStationsJSON) { stations = JSON.parse(savedStationsJSON); } else { try { const response = await fetch('https://iofahmawi.github.io/jo-radios/stations_list.json'); if (!response.ok) { throw new Error('Network response was not ok'); } const defaultStations = await response.json(); stations = defaultStations; saveStations(); } catch (error) { console.error("Failed to fetch default stations:", error); stations = []; } }
+        if (savedStationsJSON) { stations = JSON.parse(savedStationsJSON); } else { try { const response = await fetch('https://iofahmawi.github.io/jo-radios/stations_list_inverse.json'); if (!response.ok) { throw new Error('Network response was not ok'); } const defaultStations = await response.json(); stations = defaultStations; saveStations(); } catch (error) { console.error("Failed to fetch default stations:", error); stations = []; } }
 
         const savedTitle = localStorage.getItem('customTitle');
         const savedImageUrl = localStorage.getItem('customImageUrl');
