@@ -99,6 +99,7 @@
       gap: 1rem;
       padding: 1rem;
       max-height: 528px;
+      /* min-height has been removed to bring back the jump effect */
       overflow-y: auto;
       scrollbar-width: none;
     }
@@ -194,7 +195,28 @@
     .dark-mode .plyr--audio { --plyr-audio-controls-background: var(--card-bg-color); --plyr-audio-control-color: var(--icon-color); --plyr-audio-control-color-hover: var(--icon-hover-color); --plyr-audio-control-background-hover: var(--icon-hover-bg); --plyr-color-main: var(--button-primary-bg); }
     .dark-mode #audioPlayerContainer .plyr__controls::before { color: #f43f5e; background-color: rgba(244, 63, 94, 0.2); }
 
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: grid; place-items: center; z-index: 1000; }
+    /* --- START: MODIFIED CSS FOR MODALS --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      display: grid;
+      place-items: center; /* This centers everything by default */
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    /* This new class is added ONLY to small modals to adjust their vertical alignment */
+    .modal-overlay-small {
+      align-items: start;
+      padding-top: 20vh;
+    }
+    /* --- END: MODIFIED CSS FOR MODALS --- */
+
     .modal-content { position: relative; background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--title-color); }
     .modal-form { display: flex; flex-direction: column; gap: 1rem; }
@@ -245,7 +267,7 @@
         <button id="settingsBtn" title="Settings"><i class="ph ph-gear"></i></button>
       </div>
       <ul id="stationList" class="station-list"></ul>
-      <div id="audioPlayerContainer" class="hidden"><audio id="audioPlayer" class="plyr-audio" controls></audio></div>
+      <div id="audioPlayerContainer"><audio id="audioPlayer" class="plyr-audio"></audio></div>
     </div>
   </main>
   
@@ -346,7 +368,8 @@
       </div>
   </div>
 
-  <div id="importOptionsModal" class="modal-overlay hidden">
+  <!-- START: MODIFIED SMALL MODALS -->
+  <div id="importOptionsModal" class="modal-overlay modal-overlay-small hidden">
       <div class="modal-content">
         <button id="closeImportOptionsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
         <h3 class="modal-title" data-lang-key="importOptionsTitle">Choose Import Type</h3>
@@ -357,7 +380,7 @@
       </div>
   </div>
   
-  <div id="exportOptionsModal" class="modal-overlay hidden">
+  <div id="exportOptionsModal" class="modal-overlay modal-overlay-small hidden">
     <div class="modal-content">
         <button id="closeExportOptionsBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
         <h3 class="modal-title" data-lang-key="exportOptionsTitle">Choose Export Type</h3>
@@ -380,7 +403,7 @@
     </div>
   </div>
 
-  <div id="importConfirmModal" class="modal-overlay hidden">
+  <div id="importConfirmModal" class="modal-overlay modal-overlay-small hidden">
       <div class="modal-content">
           <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
           <h3 class="modal-title" data-lang-key="importModalTitle">Import List</h3>
@@ -391,7 +414,7 @@
           </div>
       </div>
   </div>
-  <div id="deleteConfirmModal" class="modal-overlay hidden">
+  <div id="deleteConfirmModal" class="modal-overlay modal-overlay-small hidden">
       <div class="modal-content">
           <button id="cancelDeleteBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
           <h3 class="modal-title" data-lang-key="deleteModalTitle">Confirm Deletion</h3>
@@ -401,7 +424,7 @@
           </div>
       </div>
   </div>
-  <div id="resetConfirmModal" class="modal-overlay hidden">
+  <div id="resetConfirmModal" class="modal-overlay modal-overlay-small hidden">
       <div class="modal-content">
           <button id="cancelResetBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
           <h3 class="modal-title" data-lang-key="resetModalTitle">Confirm Reset</h3>
@@ -411,48 +434,11 @@
           </div>
       </div>
   </div>
+  <!-- END: MODIFIED SMALL MODALS -->
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
-    const DEFAULT_STATIONS = [
-      { name: { en: "Watar", ar: "وتر" }, url: "https://securestreams2.autopo.st:1243/live", logoUrl: "https://i.postimg.cc/KzCjdtXy/1000014796.jpg", streamType: "MP3 128k" },
-      { name: { en: "Melody", ar: "ميلودي" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://s3.voscast.com:9966/;", logoUrl: "https://i.postimg.cc/SK3msqg6/1000014834.jpg", streamType: "MP3 192k" },
-      { name: { en: "Radio Fann", ar: "راديو فن" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio2/audio.m3u8", logoUrl: "https://i.postimg.cc/PxvrzNCV/1000014808.jpg", streamType: "AAC 128k" },
-      { name: { en: "Nai", ar: "ناي" }, url: "https://naifm.radioca.st/;", logoUrl: "https://i.postimg.cc/t4DT9K0k/1000014806-1.jpg", streamType: "MP3 64k" },
-      { name: { en: "Mazaj", ar: "مزاج" }, url: "https://mazajfm.ice.infomaniak.ch/mazajfm-192.mp3", logoUrl: "https://i.postimg.cc/8P4DvLyP/1000015658-01.jpg", streamType: "MP3 192k" },
-      { name: { en: "Noon", ar: "نون" }, url: "https://radionoon.radioca.st/;", logoUrl: "https://i.postimg.cc/rwT0VGDV/1000014790.jpg", streamType: "MP3 128k" },
-      { name: { en: "Radio Hala", ar: "راديو هلا" }, url: "https://hala-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/zD6K3nTs/1000023868.jpg", streamType: "MP3 128k" },
-      { name: { en: "Rotana", ar: "روتانا" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205:8000/stream", logoUrl: "https://i.postimg.cc/Z5Ybsw9d/1000014815.jpg", streamType: "MP3 128k" },
-      { name: { en: "Radio Jordan", ar: "الإذاعة الأردنية" }, url: "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/cLJWB6j7/1000014952.jpg", streamType: "AAC 128k" },
-      { name: { en: "Radio Amman", ar: "راديو عمان" }, url: "https://jrtv-live.ercdn.net/jrradio/ammanradiovideo.m3u8", logoUrl: "https://i.postimg.cc/dtjQ9b0F/1000014813.jpg", streamType: "AAC 128k" },
-      { name: { en: "Radio Jordan Quran", ar: "إذاعة القرآن الكريم" }, url: "https://jrtv-live.ercdn.net/jrradio/quranradiovideo.m3u8", logoUrl: "https://i.postimg.cc/fbLby8DN/1000014805.jpg", streamType: "AAC 128k" },
-      { name: { en: "Radio Jordan English", ar: "الإذاعة الأردنية الإنجليزية" }, url: "https://jrtv-live.ercdn.net/jrradio/englishradiovideo.m3u8", logoUrl: "https://i.postimg.cc/02s2DkPZ/1000014812.jpg", streamType: "AAC 128k" },
-      { name: { en: "Jeish", ar: "جيش" }, url: "https://jeishfm-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Cxw5TF2d/1000014803.jpg", streamType: "MP3 96k" },
-      { name: { en: "Radio Al Balad", ar: "راديو البلد" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://s3.voscast.com:8964/;stream1653312509934/1", logoUrl: "https://i.postimg.cc/c1YLvgyr/1000014811.jpg", streamType: "MP3 48k" },
-      { name: { en: "Ain FM", ar: "عين" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://frequencyjo.info:8001/ainfm", logoUrl: "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg", streamType: "MP3 128k" },
-      { name: { en: "Leqaa", ar: "لقاء" }, url: "https://cast6.my-control-panel.com/proxy/leqaafml/stream", logoUrl: "https://i.postimg.cc/NFhGNYTs/1000014809.jpg", streamType: "MP3 192k" },
-      { name: { en: "SSAD", ar: "صاد" }, url: "https://s3.radio.co/s2d881c399/listen", logoUrl: "https://i.postimg.cc/0Q4PzvZG/1000014770.jpg", streamType: "MP3 128k" },
-      { name: { en: "Yaqeen", ar: "يقين" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio4/audio.m3u8", logoUrl: "https://i.postimg.cc/Gp7HxZqt/1000014795.jpg", streamType: "AAC 128k" },
-      { name: { en: "Hayat", ar: "حياة" }, url: "https://dc1.serverse.com/proxy/kjxwtpdt/stream", logoUrl: "https://i.postimg.cc/hjXhyp5r/1000014793.jpg", streamType: "MP3 128k" },
-      { name: { en: "Husna", ar: "حسنى" }, url: "https://s2.voscast.com:10445/stream", logoUrl: "https://i.postimg.cc/DzMwX1wb/1000014807.jpg", streamType: "MP3 128k" },
-      { name: { en: "University of Jordan", ar: "الجامعة الأردنية" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32", logoUrl: "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg", streamType: "MP3 128k" },
-      { name: { en: "Yarmouk University", ar: "جامعة اليرموك" }, url: "https://yufm.yu.edu.jo/broadwave.mp3", logoUrl: "https://i.postimg.cc/brQyWMHQ/1000014810.jpg", streamType: "MP3 56k" },
-      { name: { en: "Al al-Bayt University", ar: "جامعة آل البيت" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://aabufm.aabu.edu.jo/aabufm", logoUrl: "https://i.postimg.cc/5254nZN1/1000014769.jpg", streamType: "MP3 128k" },
-      { name: { en: "Tafila Technical University", ar: "جامعة الطفيلة التقنية" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1", logoUrl: "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg", streamType: "MP3 24k" },
-      { name: { en: "Talal Abu Ghazaleh", ar: "طلال أبو غزالة" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://89.28.216.245:8000/tagbc", logoUrl: "https://i.postimg.cc/L4rg7FRZ/1000014779.jpg", streamType: "MP3 128k" },
-      { name: { en: "Jordan Academy of Arabic", ar: "مجمع اللغة العربية الأردني" }, url: "https://eu9.fastcast4u.com/proxy/arabicla?mp=/1", logoUrl: "https://i.postimg.cc/SsGyw3yt/1000082596-converted.jpg", streamType: "MP3 32k" },
-      { name: { en: "Rotana Tarab", ar: "روتانا طرب" }, url: "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio3/audio.m3u8", logoUrl: "https://i.postimg.cc/YCx4h4F1/1000014791.jpg", streamType: "AAC 128k" },
-      { name: { en: "Radio Dahab", ar: "راديو دهب" }, url: "https://mazajgoldhits.ice.infomaniak.ch/mazajgoldhits-192.mp3", logoUrl: "https://i.postimg.cc/QMxF5Xgv/1000014792.jpg", streamType: "MP3 128k" },
-      { name: { en: "Sout Al Khaleej", ar: "صوت الخليج" }, url: "https://live.kwikmotion.com/qmcslkrradiolive/slkrradio/playlist.m3u8", logoUrl: "https://i.postimg.cc/g0nYmrHc/1000014830.jpg", streamType: "AAC 128k" },
-      { name: { en: "Hawa Dijlah", ar: "هوا دجلة" }, url: "https://listen.radioking.com/radio/96766/stream/136030", logoUrl: "https://i.postimg.cc/2j4CzshW/1000014856.jpg", streamType: "MP3 192k" },
-      { name: { en: "Monte Carlo Doualiya", ar: "مونت كارلو الدولية" }, url: "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3", logoUrl: "https://i.postimg.cc/Hn4mBMdz/1000014841-1.jpg", streamType: "MP3 128k" },
-      { name: { en: "Kids", ar: "كيدز" }, url: "https://dahab.ice.infomaniak.ch/dahab-192.mp3", logoUrl: "https://i.postimg.cc/3Jm0QfJf/1000014788-1.jpg", streamType: "MP3 192k" },
-      { name: { en: "Mood", ar: "مود" }, url: "https://securestreams2.autopo.st:1241/live", logoUrl: "https://i.postimg.cc/prtxfCby/1000014849.jpg", streamType: "MP3 128k" },
-      { name: { en: "Beat", ar: "بيت" }, url: "https://securestreams2.autopo.st:1242/live", logoUrl: "https://i.postimg.cc/mZcF8gxs/1000014775.jpg", streamType: "MP3 128k" },
-      { name: { en: "Play", ar: "بلاي" }, url: "https://play995.radioca.st/;", logoUrl: "https://i.postimg.cc/4x8JDptF/1000014829.jpg", streamType: "MP3 128k" },
-      { name: { en: "Bliss", ar: "بلييز" }, url: "https://bliss1-alrayamedia.radioca.st/;", logoUrl: "https://i.postimg.cc/Hn5nHjH8/1000014797.jpg", streamType: "MP3 48k" }
-    ];
     let stations = [];
     
     const getEl = id => document.getElementById(id);
@@ -547,7 +533,48 @@
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
     const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
     const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", () => playStation(li, station)); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
-    const playStation = (li, station) => { const wasActive = li.classList.contains('active'); if (!wasActive) { const oldActiveItem = stationListUL.querySelector("li.active"); if (oldActiveItem) { oldActiveItem.classList.remove("active", "show-edit-btn"); } li.classList.add("active"); if (hls) { hls.destroy(); hls = null; } const isM3U8 = station.url.includes('.m3u8'); const isProxied = station.url.includes('proxy.iofahmawi.workers.dev'); if (isM3U8 && isProxied && Hls.isSupported()) { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] }; player.stop(); const proxyUrlBase = station.url.split('?url=')[0] + '?url='; hls = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } }); hls.attachMedia(audio); hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url)); hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e))); } else { player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; player.play().catch(e => console.warn(`Error playing:`, e)); } } else { player.togglePlay(); } resetEditButtonTimer(); };
+    
+    const playStation = (li, station) => {
+      const wasActive = li.classList.contains('active');
+      if (!wasActive) {
+          const oldActiveItem = stationListUL.querySelector("li.active");
+          if (oldActiveItem) {
+              oldActiveItem.classList.remove("active", "show-edit-btn");
+          }
+          li.classList.add("active");
+          if (hls) {
+              hls.destroy();
+              hls = null;
+          }
+          const isM3U8 = station.url.includes('.m3u8');
+          const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
+          if (isM3U8 && isProxied && Hls.isSupported()) {
+              player.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
+              player.stop();
+              const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
+              hls = new Hls({
+                  xhrSetup: function(xhr, url) {
+                      const originalUrl = url;
+                      if (!url.startsWith(proxyUrlBase) && url.includes('http')) {
+                          xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
+                      } else {
+                          xhr.open('GET', originalUrl);
+                      }
+                  }
+              });
+              hls.attachMedia(audio);
+              hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(station.url));
+              hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(e => console.warn(`Error playing:`, e)));
+          } else {
+              player.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] };
+              player.play().catch(e => console.warn(`Error playing:`, e));
+          }
+      } else {
+          player.togglePlay();
+      }
+      resetEditButtonTimer();
+    };
+
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStreamType.value = station.streamType || ''; stationModal.classList.remove('hidden'); };
@@ -585,9 +612,26 @@
     const openExportOptionsModal = () => { settingsModal.classList.add('hidden'); exportContentTypeSelection.classList.remove('hidden'); exportFormatSelection.classList.add('hidden'); exportOptionsModal.classList.remove('hidden'); };
     const closeExportOptionsModal = () => exportOptionsModal.classList.add('hidden');
 
-    const initialize = () => {
+    const initialize = async () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
-        stations = savedStationsJSON ? JSON.parse(savedStationsJSON) : DEFAULT_STATIONS.map(s => ({...s}));
+
+        if (savedStationsJSON) {
+            stations = JSON.parse(savedStationsJSON);
+        } else {
+            try {
+                const response = await fetch('https://iofahmawi.github.io/jo-radios/stations_list.json');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const defaultStations = await response.json();
+                stations = defaultStations;
+                saveStations();
+            } catch (error) {
+                console.error("Failed to fetch default stations:", error);
+                stations = []; 
+            }
+        }
+
         const savedTitle = localStorage.getItem('customTitle');
         const savedImageUrl = localStorage.getItem('customImageUrl');
         const savedImageWidth = localStorage.getItem('customImageWidth');
@@ -601,7 +645,7 @@
             headerImage.style.width = '42px';
         }
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
-        player.on('ready', () => audioPlayerContainer.classList.remove('hidden'));
+        
         personalizeBtn.addEventListener('click', openPersonalizationModal);
         closePersonalizationModalBtn.addEventListener('click', () => personalizationModal.classList.add('hidden'));
         personalizationModal.addEventListener('click', e => e.target === personalizationModal && personalizationModal.classList.add('hidden'));
