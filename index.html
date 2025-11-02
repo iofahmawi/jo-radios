@@ -232,6 +232,11 @@
 
     .modal-content { position: relative; background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 1.4rem; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--title-color); }
+    /* Added padding-bottom as requested */
+    #importOptionsModal .modal-title,
+    #exportOptionsModal .modal-title {
+      padding-bottom: 0.3rem;
+    }
     .modal-form { display: flex; flex-direction: column; gap: 1rem; }
     form.modal-form { margin-bottom: -0.3rem; }
     .modal-form label { display: block; font-weight: 500; margin-bottom: 0.5rem; }
@@ -313,12 +318,6 @@
         overflow: hidden;
         border-radius: 12px;
     }
-    
-    #importOptionsModal .modal-title,
-#exportOptionsModal .modal-title {
-  padding-bottom: 0.3rem;
-}
-    
   </style>
 </head>
 <body>
@@ -431,21 +430,21 @@
             <div class="form-row">
                 <div>
                     <label for="customTitleFontSizeInput" data-lang-key="titleFontSizeLabel">Title Font Size</label>
-                    <input type="number" id="customTitleFontSizeInput" placeholder="Default: 1.80" step="0.05">
+                    <input type="number" id="customTitleFontSizeInput" data-lang-placeholder-key="titleFontSizePlaceholder" step="0.05">
                 </div>
                 <div>
                     <label for="customStationFontSizeInput" data-lang-key="stationFontSizeLabel">Station Font Size</label>
-                    <input type="number" id="customStationFontSizeInput" placeholder="Default: 0.875" step="0.05">
+                    <input type="number" id="customStationFontSizeInput" data-lang-placeholder-key="stationFontSizePlaceholder" step="0.05">
                 </div>
             </div>
             <div class="form-row">
                 <div>
                     <label for="customStationWidthInput" data-lang-key="stationLogoWidthLabel">Logo Width (px)</label>
-                    <input type="number" id="customStationWidthInput" placeholder="Default: 58">
+                    <input type="number" id="customStationWidthInput" data-lang-placeholder-key="stationLogoWidthPlaceholder">
                 </div>
                 <div>
                     <label for="customStationHeightInput" data-lang-key="stationLogoHeightLabel">Logo Height (px)</label>
-                    <input type="number" id="customStationHeightInput" placeholder="Default: 58">
+                    <input type="number" id="customStationHeightInput" data-lang-placeholder-key="stationLogoHeightPlaceholder">
                 </div>
             </div>
             <div class="modal-actions">
@@ -491,8 +490,8 @@
         <h3 class="modal-title" data-lang-key="importFromUrlTitle">Import from URL</h3>
         <form id="importUrlForm" class="modal-form">
             <div>
-                <label for="importUrlInput">URL</label>
-                <input type="url" id="importUrlInput" placeholder="https://example.com/stations.json" required>
+                <label for="importUrlInput" data-lang-key="urlLabel">URL</label>
+                <input type="url" id="importUrlInput" data-lang-placeholder-key="urlPlaceholder" required>
             </div>
             <div class="modal-actions">
                 <button type="submit" class="btn-primary" data-lang-key="importBtn">Import</button>
@@ -618,12 +617,18 @@
         stationFontSizeLabel: { en: 'Station Font Size', ar: 'حجم خط الإذاعة' },
         stationLogoWidthLabel: { en: 'Logo Width (px)', ar: 'عرض الشعار (بكسل)' },
         stationLogoHeightLabel: { en: 'Logo Height (px)', ar: 'ارتفاع الشعار (بكسل)' },
+        titleFontSizePlaceholder: { en: 'Default: 1.80', ar: 'الافتراضي: 1.80' },
+        stationFontSizePlaceholder: { en: 'Default: 0.875', ar: 'الافتراضي: 0.875' },
+        stationLogoWidthPlaceholder: { en: 'Default: 58', ar: 'الافتراضي: 58' },
+        stationLogoHeightPlaceholder: { en: 'Default: 58', ar: 'الافتراضي: 58' },
         importOptionsTitle: { en: 'Choose Import Type', ar: 'اختر نوع الاستيراد' },
         exportOptionsTitle: { en: 'Choose Export Type', ar: 'اختر نوع التصدير' },
         stationsListOnly: { en: 'Stations List Only', ar: 'قائمة المحطات فقط' },
         fullProfileBackup: { en: 'Stations & UI', ar: 'المحطات والواجهة' },
         importFromUrlBtn: { en: 'Import from URL', ar: 'استيراد من رابط' },
         importFromUrlTitle: { en: 'Import from URL', ar: 'استيراد من رابط' },
+        urlLabel: { en: 'URL', ar: 'الرابط' },
+        urlPlaceholder: { en: 'https://example.com/stations.json', ar: 'مثال: https://example.com/stations.json' },
         exportFormatQuestion: { en: 'Choose the appropriate file type', ar: 'اختر نوع الملف المناسب' },
         settingsTitle: { en: 'Settings', ar: 'الإعدادات' },
         appearanceTitle: { en: 'Appearance', ar: 'المظهر' },
@@ -669,7 +674,7 @@
     const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); personalizationModal.classList.add('hidden'); };
     const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? DEFAULT_HEADER_IMAGE; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? DEFAULT_HEADER_IMAGE_HEIGHT; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
-    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
+    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } else { el.placeholder = el.getAttribute('placeholder') || ''; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
     const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", (e) => { if (e.target.closest('.edit-btn')) return; playStation(li, station); }); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); let hideTimer = null; li.addEventListener('mouseenter', () => { clearTimeout(hideTimer); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); li.classList.add('show-edit-btn'); }); li.addEventListener('mouseleave', () => { hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 2000); }); li.addEventListener('touchstart', (e) => { if (e.target.closest('.edit-btn')) return; clearTimeout(hideTimer); const isAlreadyShown = li.classList.contains('show-edit-btn'); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); if (!isAlreadyShown) { li.classList.add('show-edit-btn'); hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 4000); } }, { passive: true }); stationListUL.appendChild(li); }); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStationDescription.value = station.description || ''; editMediaType.value = station.type || 'audio'; stationModal.classList.remove('hidden'); };
     const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) return alert(translations.alertRequired[currentLang]); if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.description = editStationDescription.value.trim(); station.type = editMediaType.value; saveAndRerender(); closeEditModal(); };
