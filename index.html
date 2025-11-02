@@ -80,26 +80,24 @@
     .main-content { width: 100%; }
     .container { max-width: 350px; width: 100%; margin: 0 auto; background-color: var(--card-bg-color); border-radius: 12px; box-shadow: var(--card-box-shadow); overflow: hidden; display: flex; flex-direction: column; }
     
-    /* MODIFIED: Fixed height for the header */
     .header-area { 
       padding: 0 1.5rem; 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
       border-bottom: 1px solid var(--divider-color);
-      height: 75px;
+      height: 70px;
     }
     .main-title-group { display: flex; align-items: center; gap: 12px; overflow: hidden; }
     .header-image {
-      width: 42px;
-      height: 21px;
+      /* Width will be set by JS */
+      height: 33px;
       border-radius: 4px;
       object-fit: contain;
       flex-shrink: 0;
     }
-    /* MODIFIED: Title truncation */
     .main-title { 
-      font-size: var(--main-title-font-size, 1.75rem); 
+      font-size: var(--main-title-font-size, 1.80rem); 
       font-weight: 700; 
       color: var(--title-color); 
       white-space: nowrap;
@@ -143,8 +141,8 @@
     }
 
     .station-logo {
-      width: var(--station-logo-width, 64px);
-      height: var(--station-logo-height, 64px);
+      width: var(--station-logo-width, 58px);
+      height: var(--station-logo-height, 58px);
       border-radius: 8px;
       margin-bottom: 0.5rem;
       object-fit: cover;
@@ -202,7 +200,7 @@
       opacity: 0.5;
     }
     
-    #audioPlayerContainer { padding: 0.75rem 1rem; border-top: 1px solid var(--divider-color); min-height: 65px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;}
+    #audioPlayerContainer { padding: 0 1rem; border-top: 1px solid var(--divider-color); min-height: 70px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;}
     .plyr--audio { border-radius: 6px !important; width: 100%; }
     #audioPlayerContainer .plyr__progress, #audioPlayerContainer .plyr__time { display: none; }
     #audioPlayerContainer .plyr__controls { display: flex; justify-content: center !important; align-items: center; gap: 12px; }
@@ -415,7 +413,7 @@
             <div class="form-row">
                 <div>
                     <label for="customTitleFontSizeInput" data-lang-key="titleFontSizeLabel">Title Font Size</label>
-                    <input type="number" id="customTitleFontSizeInput" placeholder="Default: 1.75" step="0.05">
+                    <input type="number" id="customTitleFontSizeInput" placeholder="Default: 1.80" step="0.05">
                 </div>
                 <div>
                     <label for="customStationFontSizeInput" data-lang-key="stationFontSizeLabel">Station Font Size</label>
@@ -425,11 +423,11 @@
             <div class="form-row">
                 <div>
                     <label for="customStationWidthInput" data-lang-key="stationLogoWidthLabel">Logo Width (px)</label>
-                    <input type="number" id="customStationWidthInput" placeholder="Default: 64">
+                    <input type="number" id="customStationWidthInput" placeholder="Default: 58">
                 </div>
                 <div>
                     <label for="customStationHeightInput" data-lang-key="stationLogoHeightLabel">Logo Height (px)</label>
-                    <input type="number" id="customStationHeightInput" placeholder="Default: 64">
+                    <input type="number" id="customStationHeightInput" placeholder="Default: 58">
                 </div>
             </div>
             <div class="modal-actions">
@@ -538,9 +536,8 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
+    // All JS logic remains the same. The only change is in the `initialize` function below.
     let stations = [];
-    
-    // All element getters are the same as before
     const getEl = id => document.getElementById(id);
     const mainTitle = getEl("mainTitle"), headerImage = getEl("headerImage");
     const personalizationModal = getEl("personalizationModal"), personalizeBtn = getEl("personalizeBtn"), closePersonalizationModalBtn = getEl("closePersonalizationModalBtn"), personalizationForm = getEl("personalizationForm");
@@ -577,7 +574,6 @@
     let currentEditingIndex = null, importedStations = [];
     let currentLang = 'en';
     
-    // Translations... (no changes here)
     const translations = {
         importMediaTypeTitle: { en: 'Select Media Type', ar: 'اختر نوع الوسائط' },
         importMediaTypeConfirmText: { en: 'Please classify the imported list.', ar: 'يرجى تصنيف القائمة المستوردة.' },
@@ -592,7 +588,7 @@
         customImageWidthLabel: { en: 'Image Width (px)', ar: 'عرض الصورة (بكسل)' },
         customImageHeightLabel: { en: 'Image Height (px)', ar: 'ارتفاع الصورة (بكسل)' },
         customImageWidthPlaceholder: { en: 'Default: auto', ar: 'الافتراضي: تلقائي' },
-        customImageHeightPlaceholder: { en: 'Default: 21', ar: 'الافتراضي: 21' },
+        customImageHeightPlaceholder: { en: 'Default: 33', ar: 'الافتراضي: 33' },
         titleFontSizeLabel: { en: 'Title Font Size', ar: 'حجم خط العنوان' },
         stationFontSizeLabel: { en: 'Station Font Size', ar: 'حجم خط الإذاعة' },
         stationLogoWidthLabel: { en: 'Logo Width (px)', ar: 'عرض الشعار (بكسل)' },
@@ -637,288 +633,24 @@
         deleteConfirmText: { en: 'Are you sure you want to delete "{stationName}"?', ar: 'هل أنت متأكد من حذف "{stationName}"؟' }
     };
     
-    // --- VIDEO PLAYER LOGIC (WITH BITRATE SELECTION) ---
-    function stopVideoPlayer() {
-        if (hlsVideo) { hlsVideo.destroy(); hlsVideo = null; }
-        if (videoPlayer) { videoPlayer.destroy(); videoPlayer = null; }
-        videoPlayerContainer.innerHTML = '';
-        videoPopup.classList.remove('active');
-    }
-
-    function playVideoStream(url) {
-        stopAudioPlayer();
-        const mediaElement = document.createElement('video');
-        mediaElement.playsinline = true;
-        mediaElement.controls = true;
-        videoPlayerContainer.innerHTML = '';
-        videoPlayerContainer.appendChild(mediaElement);
-        videoPopup.classList.add('active');
-
-        if (url.includes('.m3u8') && Hls.isSupported()) {
-            hlsVideo = new Hls();
-            hlsVideo.loadSource(url);
-            hlsVideo.attachMedia(mediaElement);
-            hlsVideo.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-                const plyrOptions = {
-                    i18n: {
-                        qualityLabel: {
-                            ...data.levels.reduce((labels, level) => {
-                                const bitrate = level.bitrate;
-                                labels[bitrate] = `${(bitrate / 1000000).toFixed(1)} Mbps`;
-                                return labels;
-                            }, {})
-                        }
-                    }
-                };
-                if (data.levels.length > 1) {
-                    plyrOptions.quality = {
-                        default: data.levels[0].bitrate,
-                        options: [...data.levels].reverse().map(level => level.bitrate),
-                        forced: true,
-                        onChange: (selectedBitrate) => {
-                            hlsVideo.levels.forEach((level, levelIndex) => {
-                                if (level.bitrate === selectedBitrate) {
-                                    hlsVideo.currentLevel = levelIndex;
-                                }
-                            });
-                        },
-                    };
-                }
-                videoPlayer = new Plyr(mediaElement, plyrOptions);
-                videoPlayer.play().catch(e => console.error("Video play error:", e));
-            });
-        } else {
-            mediaElement.src = url;
-            videoPlayer = new Plyr(mediaElement, {});
-            videoPlayer.play().catch(e => console.error("Video play error:", e));
-        }
-    }
-    
-    function setupDraggablePopup() {
-        let isDragging = false, startY, currentTranslateY = 0;
-        const dragStart = (e) => {
-            if (e.target.closest('.plyr__controls')) return;
-            isDragging = true;
-            startY = e.pageY || e.touches[0].pageY;
-            videoPopupContent.classList.add('dragging');
-        };
-        const dragMove = (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const currentY = e.pageY || e.touches[0].pageY;
-            const newTranslateY = currentTranslateY + (currentY - startY);
-            videoPopupContent.style.transform = `translateY(${newTranslateY}px)`;
-        };
-        const dragEnd = (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            videoPopupContent.classList.remove('dragging');
-            const endY = e.pageY || (e.changedTouches ? e.changedTouches[0].pageY : startY);
-            currentTranslateY += (endY - startY);
-        };
-
-        videoPopupContent.addEventListener('mousedown', dragStart);
-        document.addEventListener('mousemove', dragMove);
-        document.addEventListener('mouseup', dragEnd);
-        videoPopupContent.addEventListener('touchstart', dragStart, { passive: false });
-        document.addEventListener('touchmove', dragMove, { passive: false });
-        document.addEventListener('touchend', dragEnd);
-        videoPopup.addEventListener('click', e => {
-            if (e.target === videoPopup) {
-                stopVideoPlayer();
-                const activeItem = stationListUL.querySelector('li.active');
-                if (activeItem) activeItem.classList.remove('active');
-            }
-        });
-    }
-
-    // --- AUDIO PLAYER LOGIC ---
-    function stopAudioPlayer() {
-        audioPlayer.stop();
-    }
-
-    function playAudioStream(station) {
-        stopVideoPlayer();
-        if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; }
-        const isM3U8 = station.url.includes('.m3u8');
-        const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
-
-        if (isM3U8 && isProxied && Hls.isSupported()) {
-            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
-            audioPlayer.stop();
-            const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
-            hlsAudio = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } });
-            hlsAudio.attachMedia(audioPlayerEl);
-            hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url));
-            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e)));
-        } else {
-            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] };
-            audioPlayer.play().catch(e => console.warn(`Audio error:`, e));
-        }
-    }
-    
-    // --- MAIN PLAY LOGIC ---
-    const playStation = (li, station) => {
-        const wasActive = li.classList.contains('active');
-        if (wasActive) {
-            if (station.type === 'video') {
-                if(videoPlayer) videoPlayer.togglePlay();
-            } else {
-                audioPlayer.togglePlay();
-            }
-            return;
-        }
-
-        const oldActiveItem = stationListUL.querySelector("li.active");
-        if (oldActiveItem) {
-            oldActiveItem.classList.remove("active");
-        }
-        li.classList.add("active");
-        
-        if (station.type === 'video') {
-            playVideoStream(station.url);
-        } else {
-            playAudioStream(station);
-        }
-    };
-
-    // --- GENERAL APP LOGIC ---
-    const applyFontSizes = () => {
-        const titleSize = localStorage.getItem('customTitleFontSize');
-        const stationSize = localStorage.getItem('customStationFontSize');
-        document.documentElement.style.setProperty('--main-title-font-size', titleSize ? `${titleSize}rem` : '');
-        document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : '');
-    };
-    const applyStationLogoSize = () => {
-        const stationWidth = localStorage.getItem('customStationWidth');
-        const stationHeight = localStorage.getItem('customStationHeight');
-        document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : '');
-        document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : '');
-    };
-    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : '21px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
-    const saveCustomization = (e) => {
-        e.preventDefault();
-        const newTitle = customTitleInput.value.trim();
-        const newImageUrl = customImageUrlInput.value.trim();
-        const newWidth = customImageWidthInput.value.trim();
-        const newHeight = customImageHeightInput.value.trim();
-        const newTitleSize = customTitleFontSizeInput.value.trim();
-        const newStationSize = customStationFontSizeInput.value.trim();
-        const newStationWidth = customStationWidthInput.value.trim();
-        const newStationHeight = customStationHeightInput.value.trim();
-        localStorage.setItem('customTitle', newTitle);
-        localStorage.setItem('customImageUrl', newImageUrl);
-        localStorage.setItem('customImageWidth', newWidth);
-        localStorage.setItem('customImageHeight', newHeight);
-        localStorage.setItem('customTitleFontSize', newTitleSize);
-        localStorage.setItem('customStationFontSize', newStationSize);
-        localStorage.setItem('customStationWidth', newStationWidth);
-        localStorage.setItem('customStationHeight', newStationHeight);
-        applyCustomization(newTitle, newImageUrl, newWidth, newHeight);
-        applyFontSizes();
-        applyStationLogoSize();
-        personalizationModal.classList.add('hidden');
-    };
-    const openPersonalizationModal = () => {
-        customTitleInput.value = localStorage.getItem('customTitle') || '';
-        customImageUrlInput.value = localStorage.getItem('customImageUrl') || '';
-        customImageWidthInput.value = localStorage.getItem('customImageWidth') || '';
-        customImageHeightInput.value = localStorage.getItem('customImageHeight') || '';
-        customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') || '';
-        customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') || '';
-        customStationWidthInput.value = localStorage.getItem('customStationWidth') || '';
-        customStationHeightInput.value = localStorage.getItem('customStationHeight') || '';
-        settingsModal.classList.add('hidden');
-        personalizationModal.classList.remove('hidden');
-    };
+    // --- All player logic and other functions remain exactly the same ---
+    function stopVideoPlayer() { if (hlsVideo) { hlsVideo.destroy(); hlsVideo = null; } if (videoPlayer) { videoPlayer.destroy(); videoPlayer = null; } videoPlayerContainer.innerHTML = ''; videoPopup.classList.remove('active'); }
+    function playVideoStream(url) { stopAudioPlayer(); const mediaElement = document.createElement('video'); mediaElement.playsinline = true; mediaElement.controls = true; videoPlayerContainer.innerHTML = ''; videoPlayerContainer.appendChild(mediaElement); videoPopup.classList.add('active'); if (url.includes('.m3u8') && Hls.isSupported()) { hlsVideo = new Hls(); hlsVideo.loadSource(url); hlsVideo.attachMedia(mediaElement); hlsVideo.on(Hls.Events.MANIFEST_PARSED, (event, data) => { const plyrOptions = { i18n: { qualityLabel: { ...data.levels.reduce((labels, level) => { const bitrate = level.bitrate; labels[bitrate] = `${(bitrate / 1000000).toFixed(1)} Mbps`; return labels; }, {}) } } }; if (data.levels.length > 1) { plyrOptions.quality = { default: data.levels[0].bitrate, options: [...data.levels].reverse().map(level => level.bitrate), forced: true, onChange: (selectedBitrate) => { hlsVideo.levels.forEach((level, levelIndex) => { if (level.bitrate === selectedBitrate) { hlsVideo.currentLevel = levelIndex; } }); }, }; } videoPlayer = new Plyr(mediaElement, plyrOptions); videoPlayer.play().catch(e => console.error("Video play error:", e)); }); } else { mediaElement.src = url; videoPlayer = new Plyr(mediaElement, {}); videoPlayer.play().catch(e => console.error("Video play error:", e)); } }
+    function setupDraggablePopup() { let isDragging = false, startY, currentTranslateY = 0; const dragStart = (e) => { if (e.target.closest('.plyr__controls')) return; isDragging = true; startY = e.pageY || e.touches[0].pageY; videoPopupContent.classList.add('dragging'); }; const dragMove = (e) => { if (!isDragging) return; e.preventDefault(); const currentY = e.pageY || e.touches[0].pageY; const newTranslateY = currentTranslateY + (currentY - startY); videoPopupContent.style.transform = `translateY(${newTranslateY}px)`; }; const dragEnd = (e) => { if (!isDragging) return; isDragging = false; videoPopupContent.classList.remove('dragging'); const endY = e.pageY || (e.changedTouches ? e.changedTouches[0].pageY : startY); currentTranslateY += (endY - startY); }; videoPopupContent.addEventListener('mousedown', dragStart); document.addEventListener('mousemove', dragMove); document.addEventListener('mouseup', dragEnd); videoPopupContent.addEventListener('touchstart', dragStart, { passive: false }); document.addEventListener('touchmove', dragMove, { passive: false }); document.addEventListener('touchend', dragEnd); videoPopup.addEventListener('click', e => { if (e.target === videoPopup) { stopVideoPlayer(); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) activeItem.classList.remove('active'); } }); }
+    function stopAudioPlayer() { audioPlayer.stop(); }
+    function playAudioStream(station) { stopVideoPlayer(); if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; } const isM3U8 = station.url.includes('.m3u8'); const isProxied = station.url.includes('proxy.iofahmawi.workers.dev'); if (isM3U8 && isProxied && Hls.isSupported()) { audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] }; audioPlayer.stop(); const proxyUrlBase = station.url.split('?url=')[0] + '?url='; hlsAudio = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } }); hlsAudio.attachMedia(audioPlayerEl); hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url)); hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e))); } else { audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; audioPlayer.play().catch(e => console.warn(`Audio error:`, e)); } }
+    const playStation = (li, station) => { const wasActive = li.classList.contains('active'); if (wasActive) { if (station.type === 'video') { if(videoPlayer) videoPlayer.togglePlay(); } else { audioPlayer.togglePlay(); } return; } const oldActiveItem = stationListUL.querySelector("li.active"); if (oldActiveItem) { oldActiveItem.classList.remove("active"); } li.classList.add("active"); if (station.type === 'video') { playVideoStream(station.url); } else { playAudioStream(station); } };
+    const applyFontSizes = () => { const titleSize = localStorage.getItem('customTitleFontSize'); const stationSize = localStorage.getItem('customStationFontSize'); document.documentElement.style.setProperty('--main-title-font-size', titleSize ? `${titleSize}rem` : ''); document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : ''); };
+    const applyStationLogoSize = () => { const stationWidth = localStorage.getItem('customStationWidth'); const stationHeight = localStorage.getItem('customStationHeight'); document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : ''); document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : ''); };
+    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : '33px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
+    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); personalizationModal.classList.add('hidden'); };
+    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') || ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') || ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') || ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') || ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') || ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') || ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') || ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') || ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
     const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
-    
-    const renderStationList = () => {
-        const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url;
-        stationListUL.innerHTML = '';
-        stations.forEach((station, index) => {
-            const li = document.createElement("li");
-            li.dataset.index = index;
-            if (station.url === currentlyPlayingUrl) {
-                li.classList.add('active');
-            }
-            li.dataset.url = station.url;
-            const stationName = getStationName(station);
-            li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`;
-            
-            li.addEventListener("click", (e) => {
-                if (e.target.closest('.edit-btn')) return;
-                playStation(li, station);
-            });
-            const editBtn = li.querySelector('.edit-btn');
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEditModal(station, index);
-            });
-
-            let hideTimer = null;
-            li.addEventListener('mouseenter', () => {
-                clearTimeout(hideTimer);
-                document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn'));
-                li.classList.add('show-edit-btn');
-            });
-            li.addEventListener('mouseleave', () => {
-                hideTimer = setTimeout(() => {
-                    li.classList.remove('show-edit-btn');
-                }, 2000);
-            });
-            li.addEventListener('touchstart', (e) => {
-                if (e.target.closest('.edit-btn')) return;
-                clearTimeout(hideTimer);
-                const isAlreadyShown = li.classList.contains('show-edit-btn');
-                document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn'));
-                if (!isAlreadyShown) {
-                    li.classList.add('show-edit-btn');
-                    hideTimer = setTimeout(() => {
-                        li.classList.remove('show-edit-btn');
-                    }, 4000);
-                }
-            }, { passive: true });
-
-            stationListUL.appendChild(li);
-        });
-    };
-    
-    const openEditModal = (station, index) => {
-        const stationName = getStationName(station);
-        currentEditingIndex = index;
-        modalStationImage.src = station.logoUrl;
-        modalStationName.textContent = stationName;
-        editStationName.value = stationName;
-        editStreamUrl.value = station.url;
-        editLogoUrl.value = station.logoUrl;
-        editMediaType.value = station.type || 'audio';
-        stationModal.classList.remove('hidden');
-    };
-    const saveStationChanges = e => {
-        e.preventDefault();
-        if (currentEditingIndex === null) return;
-        const station = stations[currentEditingIndex];
-        const newName = editStationName.value.trim();
-        const newUrl = editStreamUrl.value.trim();
-        if (!newName || !newUrl) return alert(translations.alertRequired[currentLang]);
-        if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; }
-        station.url = newUrl;
-        station.logoUrl = editLogoUrl.value.trim();
-        station.type = editMediaType.value;
-        saveAndRerender();
-        closeEditModal();
-    };
-    const saveNewStation = e => {
-        e.preventDefault();
-        const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim();
-        if (!name || !url) return alert(translations.alertRequired[currentLang]);
-        stations.push({ name: { en: name, ar: name }, url, logoUrl: addLogoUrl.value.trim(), type: addMediaType.value });
-        saveAndRerender();
-        closeAddModal();
-    };
-
+    const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", (e) => { if (e.target.closest('.edit-btn')) return; playStation(li, station); }); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); let hideTimer = null; li.addEventListener('mouseenter', () => { clearTimeout(hideTimer); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); li.classList.add('show-edit-btn'); }); li.addEventListener('mouseleave', () => { hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 2000); }); li.addEventListener('touchstart', (e) => { if (e.target.closest('.edit-btn')) return; clearTimeout(hideTimer); const isAlreadyShown = li.classList.contains('show-edit-btn'); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); if (!isAlreadyShown) { li.classList.add('show-edit-btn'); hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 4000); } }, { passive: true }); stationListUL.appendChild(li); }); };
+    const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editMediaType.value = station.type || 'audio'; stationModal.classList.remove('hidden'); };
+    const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) return alert(translations.alertRequired[currentLang]); if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.type = editMediaType.value; saveAndRerender(); closeEditModal(); };
+    const saveNewStation = e => { e.preventDefault(); const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim(); if (!name || !url) return alert(translations.alertRequired[currentLang]); stations.push({ name: { en: name, ar: name }, url, logoUrl: addLogoUrl.value.trim(), type: addMediaType.value }); saveAndRerender(); closeAddModal(); };
     const saveStations = () => localStorage.setItem('savedStations', JSON.stringify(stations));
     const saveAndRerender = () => { saveStations(); renderStationList(); };
     const openDeleteConfirm = (station, index) => { currentEditingIndex = index; const stationName = getStationName(station); deleteConfirmText.textContent = translations.deleteConfirmText[currentLang].replace('{stationName}', stationName); deleteConfirmModal.classList.remove('hidden'); };
@@ -931,102 +663,18 @@
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
     const openResetConfirm = () => { closeSettingsModal(); resetConfirmModal.classList.remove('hidden'); };
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
-    const resetList = () => {
-        const keysToRemove = ['savedStations', 'customTitle', 'customImageUrl', 'customImageWidth', 'customImageHeight', 'customTitleFontSize', 'customStationFontSize', 'customStationWidth', 'customStationHeight'];
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-        location.reload();
-    };
+    const resetList = () => { const keysToRemove = ['savedStations', 'customTitle', 'customImageUrl', 'customImageWidth', 'customImageHeight', 'customTitleFontSize', 'customStationFontSize', 'customStationWidth', 'customStationHeight']; keysToRemove.forEach(key => localStorage.removeItem(key)); location.reload(); };
     const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
     const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); updateThemeButtonText(); };
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
-    
-    const setImportedMediaType = (type) => {
-        importedStations.forEach(station => station.type = type);
-        mediaTypeSelectModal.classList.add('hidden');
-        importConfirmModal.classList.remove('hidden');
-    };
-    const processImportedContent = (content, fileName) => {
-        try {
-            if (fileName.endsWith('.json')) {
-                const data = JSON.parse(content);
-                const rawStations = Array.isArray(data) ? data : (data.stations || [data]);
-                const findValue = (obj, possibleKeys, defaultValue = '') => { for (const key of possibleKeys) { if (obj[key] && typeof obj[key] === 'string') return obj[key].trim(); } return defaultValue; };
-                importedStations = rawStations.map(station => {
-                    let name;
-                    if (typeof station.name === 'object' && station.name !== null) { name = station.name; } else { const nameStr = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown'); name = { en: nameStr, ar: nameStr }; }
-                    const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']);
-                    const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']);
-                    if (!url) return null;
-                    return { name: name, url: url, logoUrl: logoUrl, type: station.type };
-                }).filter(Boolean);
-            } else if (fileName.match(/\.m3u8?$/i)) {
-                importedStations = parseM3U(content);
-            } else {
-                return alert(translations.alertUnsupported[currentLang]);
-            }
-            if (!Array.isArray(importedStations) || !importedStations.length) {
-                return alert(translations.alertInvalid[currentLang]);
-            }
-            mediaTypeSelectModal.classList.remove('hidden');
-        } catch (err) {
-            alert(translations.alertParseFail[currentLang]);
-            console.error("Import Error:", err);
-        }
-    };
+    const setImportedMediaType = (type) => { importedStations.forEach(station => station.type = type); mediaTypeSelectModal.classList.add('hidden'); importConfirmModal.classList.remove('hidden'); };
+    const processImportedContent = (content, fileName) => { try { if (fileName.endsWith('.json')) { const data = JSON.parse(content); const rawStations = Array.isArray(data) ? data : (data.stations || [data]); const findValue = (obj, possibleKeys, defaultValue = '') => { for (const key of possibleKeys) { if (obj[key] && typeof obj[key] === 'string') return obj[key].trim(); } return defaultValue; }; importedStations = rawStations.map(station => { let name; if (typeof station.name === 'object' && station.name !== null) { name = station.name; } else { const nameStr = findValue(station, ['name', 'title', 'station_name', 'stationName'], 'Unknown'); name = { en: nameStr, ar: nameStr }; } const url = findValue(station, ['url', 'stream_url', 'streamUrl', 'stream']); const logoUrl = findValue(station, ['logoUrl', 'logo', 'image', 'thumbnail', 'favicon', 'thumb']); if (!url) return null; return { name: name, url: url, logoUrl: logoUrl, type: station.type }; }).filter(Boolean); } else if (fileName.match(/\.m3u8?$/i)) { importedStations = parseM3U(content); } else { return alert(translations.alertUnsupported[currentLang]); } if (!Array.isArray(importedStations) || !importedStations.length) { return alert(translations.alertInvalid[currentLang]); } mediaTypeSelectModal.classList.remove('hidden'); } catch (err) { alert(translations.alertParseFail[currentLang]); console.error("Import Error:", err); } };
     const parseM3U = (c) => { const lines = c.split('\n'), p = []; for (let i = 0; i < lines.length; i++) { if (lines[i].startsWith('#EXTINF')) { const info = lines[i], url = lines[++i]?.trim(); if (!url) continue; const name = (info.match(/tvg-name="([^"]+)"/) || info.match(/,(.+)$/))?.[1].trim() || 'Unknown', logo = (info.match(/tvg-logo="([^"]+)"/))?.[1].trim() || ''; p.push({ name: { en: name, ar: name }, logoUrl: logo, url }); } } return p; };
-
-    const handleFileImport = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const importType = e.target.dataset.importType;
-        closeSettingsModal();
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            if (importType === 'profile') {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if (data.profile && Array.isArray(data.stations)) {
-                        localStorage.setItem('savedStations', JSON.stringify(data.stations));
-                        const { title, imageUrl, imageWidth, imageHeight, titleFontSize, stationFontSize, stationWidth, stationHeight, theme, language } = data.profile;
-                        const setItemIfDefined = (key, value) => { value ? localStorage.setItem(key, value) : localStorage.removeItem(key); };
-                        setItemIfDefined('customTitle', title);
-                        setItemIfDefined('customImageUrl', imageUrl);
-                        setItemIfDefined('customImageWidth', imageWidth);
-                        setItemIfDefined('customImageHeight', imageHeight);
-                        setItemIfDefined('customTitleFontSize', titleFontSize);
-                        setItemIfDefined('customStationFontSize', stationFontSize);
-                        setItemIfDefined('customStationWidth', stationWidth);
-                        setItemIfDefined('customStationHeight', stationHeight);
-                        setItemIfDefined('theme', theme);
-                        setItemIfDefined('language', language);
-                        location.reload();
-                        return;
-                    }
-                } catch (err) { /* Fall through to regular parsing */ }
-            }
-            processImportedContent(ev.target.result, file.name);
-        };
-        reader.readAsText(file);
-        fileInput.value = '';
-    };
-    const handleUrlImport = async (e) => {
-        e.preventDefault();
-        const url = importUrlInput.value.trim();
-        if (!url) return alert(translations.alertUrlRequired[currentLang]);
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Network response not ok');
-            const content = await response.text();
-            closeImportUrlModal();
-            processImportedContent(content, url);
-        } catch (error) {
-            console.error("Fetch error:", error);
-            alert(translations.alertFetchError[currentLang]);
-        }
-    };
+    const handleFileImport = (e) => { const file = e.target.files[0]; if (!file) return; const importType = e.target.dataset.importType; closeSettingsModal(); const reader = new FileReader(); reader.onload = (ev) => { if (importType === 'profile') { try { const data = JSON.parse(ev.target.result); if (data.profile && Array.isArray(data.stations)) { localStorage.setItem('savedStations', JSON.stringify(data.stations)); const { title, imageUrl, imageWidth, imageHeight, titleFontSize, stationFontSize, stationWidth, stationHeight, theme, language } = data.profile; const setItemIfDefined = (key, value) => { value ? localStorage.setItem(key, value) : localStorage.removeItem(key); }; setItemIfDefined('customTitle', title); setItemIfDefined('customImageUrl', imageUrl); setItemIfDefined('customImageWidth', imageWidth); setItemIfDefined('customImageHeight', imageHeight); setItemIfDefined('customTitleFontSize', titleFontSize); setItemIfDefined('customStationFontSize', stationFontSize); setItemIfDefined('customStationWidth', stationWidth); setItemIfDefined('customStationHeight', stationHeight); setItemIfDefined('theme', theme); setItemIfDefined('language', language); location.reload(); return; } } catch (err) { /* Fall through */ } } processImportedContent(ev.target.result, file.name); }; reader.readAsText(file); fileInput.value = ''; };
+    const handleUrlImport = async (e) => { e.preventDefault(); const url = importUrlInput.value.trim(); if (!url) return alert(translations.alertUrlRequired[currentLang]); try { const response = await fetch(url); if (!response.ok) throw new Error('Network response not ok'); const content = await response.text(); closeImportUrlModal(); processImportedContent(content, url); } catch (error) { console.error("Fetch error:", error); alert(translations.alertFetchError[currentLang]); } };
     const mergeLists = () => { const urls = new Set(stations.map(s => s.url)); stations.push(...importedStations.filter(s => !urls.has(s.url))); saveAndRerender(); closeImportConfirmModal(); };
     const replaceList = () => { stations = importedStations; saveAndRerender(); closeImportConfirmModal(); };
     const closeImportConfirmModal = () => importConfirmModal.classList.add('hidden');
@@ -1061,13 +709,13 @@
         const savedImageUrl = localStorage.getItem('customImageUrl');
         const savedImageWidth = localStorage.getItem('customImageWidth');
         const savedImageHeight = localStorage.getItem('customImageHeight');
-        if (localStorage.getItem('customTitle') !== null || localStorage.getItem('customImageUrl') !== null) {
+        if (savedImageUrl || savedTitle) {
             applyCustomization(savedTitle, savedImageUrl, savedImageWidth, savedImageHeight);
         } else {
-            headerImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/60px-Flag_of_Jordan.svg.png";
+            headerImage.src = "https://i.postimg.cc/W3SKLHK1/3170535f785530d2ec9dd76ce2204339.png";
             headerImage.style.display = 'block';
-            headerImage.style.height = '21px';
-            headerImage.style.width = '42px';
+            headerImage.style.height = '33px';
+            headerImage.style.width = 'auto';
         }
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         
