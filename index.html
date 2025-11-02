@@ -79,7 +79,16 @@
     }
     .main-content { width: 100%; }
     .container { max-width: 350px; width: 100%; margin: 0 auto; background-color: var(--card-bg-color); border-radius: 12px; box-shadow: var(--card-box-shadow); overflow: hidden; display: flex; flex-direction: column; }
-    .header-area { padding: 1.0rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider-color); }
+    
+    /* MODIFIED: Fixed height for the header */
+    .header-area { 
+      padding: 0 1.5rem; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border-bottom: 1px solid var(--divider-color);
+      height: 75px;
+    }
     .main-title-group { display: flex; align-items: center; gap: 12px; overflow: hidden; }
     .header-image {
       width: 42px;
@@ -88,7 +97,15 @@
       object-fit: contain;
       flex-shrink: 0;
     }
-    .main-title { font-size: var(--main-title-font-size, 1.75rem); font-weight: 700; color: var(--title-color); white-space: nowrap; }
+    /* MODIFIED: Title truncation */
+    .main-title { 
+      font-size: var(--main-title-font-size, 1.75rem); 
+      font-weight: 700; 
+      color: var(--title-color); 
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     #settingsBtn { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--icon-color); transition: background-color 0.2s, color 0.2s; }
     #settingsBtn:hover { background-color: var(--icon-hover-bg); color: var(--icon-hover-color); }
     #settingsBtn i { font-size: 1.5rem; }
@@ -185,9 +202,8 @@
       opacity: 0.5;
     }
     
-    /* Original audio player styles */
-    #audioPlayerContainer { padding: 0.75rem 1rem; border-top: 1px solid var(--divider-color); }
-    .plyr--audio { border-radius: 6px !important; }
+    #audioPlayerContainer { padding: 0.75rem 1rem; border-top: 1px solid var(--divider-color); min-height: 65px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;}
+    .plyr--audio { border-radius: 6px !important; width: 100%; }
     #audioPlayerContainer .plyr__progress, #audioPlayerContainer .plyr__time { display: none; }
     #audioPlayerContainer .plyr__controls { display: flex; justify-content: center !important; align-items: center; gap: 12px; }
     #audioPlayerContainer .plyr__controls button[data-plyr="play"] { order: -2; }
@@ -307,7 +323,7 @@
     </div>
   </main>
   
-  <!-- Modals -->
+  <!-- All modals remain the same -->
   <div id="stationModal" class="modal-overlay hidden">
     <div class="modal-content">
       <button id="closeModalBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
@@ -524,7 +540,7 @@
   <script>
     let stations = [];
     
-    // Element getters
+    // All element getters are the same as before
     const getEl = id => document.getElementById(id);
     const mainTitle = getEl("mainTitle"), headerImage = getEl("headerImage");
     const personalizationModal = getEl("personalizationModal"), personalizeBtn = getEl("personalizeBtn"), closePersonalizationModalBtn = getEl("closePersonalizationModalBtn"), personalizationForm = getEl("personalizationForm");
@@ -554,13 +570,14 @@
         exportToJsonBtn = getEl('exportToJsonBtn'), exportToM3uBtn = getEl('exportToM3uBtn'), exportToM3u8Btn = getEl('exportToM3u8Btn');
     const importFromUrlChoiceBtn = getEl('importFromUrlChoiceBtn'), importUrlModal = getEl('importUrlModal'), closeImportUrlModalBtn = getEl('closeImportUrlModalBtn'), importUrlForm = getEl('importUrlForm'), importUrlInput = getEl('importUrlInput');
     const mediaTypeSelectModal = getEl('mediaTypeSelectModal'), closeMediaTypeSelectBtn = getEl('closeMediaTypeSelectBtn'), setMediaTypeAudioBtn = getEl('setMediaTypeAudioBtn'), setMediaTypeVideoBtn = getEl('setMediaTypeVideoBtn');
-
+    
     const videoPopup = getEl('video-popup'), videoPopupContent = getEl('video-popup-content'), videoPlayerContainer = getEl('video-player-container');
     const audioPlayer = new Plyr(audioPlayerEl, {});
     let videoPlayer = null, hlsAudio = null, hlsVideo = null;
     let currentEditingIndex = null, importedStations = [];
     let currentLang = 'en';
     
+    // Translations... (no changes here)
     const translations = {
         importMediaTypeTitle: { en: 'Select Media Type', ar: 'اختر نوع الوسائط' },
         importMediaTypeConfirmText: { en: 'Please classify the imported list.', ar: 'يرجى تصنيف القائمة المستوردة.' },
