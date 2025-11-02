@@ -303,7 +303,6 @@
         <button id="settingsBtn" title="Settings"><i class="ph ph-gear"></i></button>
       </div>
       <ul id="stationList" class="station-list"></ul>
-      <!-- The fixed audio player is now permanently visible -->
       <div id="audioPlayerContainer"><audio id="audioPlayer"></audio></div>
     </div>
   </main>
@@ -470,14 +469,12 @@
     </div>
   </div>
 
-  <!-- NEW MODAL for selecting media type on import -->
   <div id="mediaTypeSelectModal" class="modal-overlay modal-overlay-small hidden">
     <div class="modal-content">
         <button id="closeMediaTypeSelectBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
         <h3 class="modal-title" data-lang-key="importMediaTypeTitle">Select Media Type</h3>
         <p class="confirm-text" data-lang-key="importMediaTypeConfirmText">Please classify the imported list.</p>
         <div class="modal-actions">
-            <!-- MODIFIED: Both buttons are now gray -->
             <button id="setMediaTypeAudioBtn" class="btn-secondary" data-lang-key="mediaTypeAudio">Audio</button>
             <button id="setMediaTypeVideoBtn" class="btn-secondary" data-lang-key="mediaTypeVideo">Video</button>
         </div>
@@ -490,7 +487,6 @@
           <h3 class="modal-title" data-lang-key="importModalTitle">Import List</h3>
           <p class="confirm-text" data-lang-key="importConfirmText">New list ready. Merge with current list or replace it?</p>
           <div class="modal-actions">
-              <!-- MODIFIED: Both buttons are now gray -->
               <button id="mergeBtn" class="btn-secondary" data-lang-key="mergeBtn">Merge</button>
               <button id="replaceBtn" class="btn-secondary" data-lang-key="replaceBtn">Replace</button>
           </div>
@@ -517,7 +513,6 @@
       </div>
   </div>
 
-  <!-- This is the popup video player container -->
   <div id="video-popup" class="video-popup">
       <div id="video-popup-content" class="video-popup-content">
           <div id="video-player-container"></div>
@@ -560,22 +555,12 @@
     const importFromUrlChoiceBtn = getEl('importFromUrlChoiceBtn'), importUrlModal = getEl('importUrlModal'), closeImportUrlModalBtn = getEl('closeImportUrlModalBtn'), importUrlForm = getEl('importUrlForm'), importUrlInput = getEl('importUrlInput');
     const mediaTypeSelectModal = getEl('mediaTypeSelectModal'), closeMediaTypeSelectBtn = getEl('closeMediaTypeSelectBtn'), setMediaTypeAudioBtn = getEl('setMediaTypeAudioBtn'), setMediaTypeVideoBtn = getEl('setMediaTypeVideoBtn');
 
-    // Video Player Elements
-    const videoPopup = getEl('video-popup');
-    const videoPopupContent = getEl('video-popup-content');
-    const videoPlayerContainer = getEl('video-player-container');
-
-    // Player Instances
+    const videoPopup = getEl('video-popup'), videoPopupContent = getEl('video-popup-content'), videoPlayerContainer = getEl('video-player-container');
     const audioPlayer = new Plyr(audioPlayerEl, {});
-    let videoPlayer = null; 
-    let hlsAudio = null;
-    let hlsVideo = null;
-    
+    let videoPlayer = null, hlsAudio = null, hlsVideo = null;
     let currentEditingIndex = null, importedStations = [];
     let currentLang = 'en';
-    let editButtonHideTimer = null;
     
-    // Translations
     const translations = {
         importMediaTypeTitle: { en: 'Select Media Type', ar: 'اختر نوع الوسائط' },
         importMediaTypeConfirmText: { en: 'Please classify the imported list.', ar: 'يرجى تصنيف القائمة المستوردة.' },
@@ -769,7 +754,7 @@
 
         const oldActiveItem = stationListUL.querySelector("li.active");
         if (oldActiveItem) {
-            oldActiveItem.classList.remove("active", "show-edit-btn");
+            oldActiveItem.classList.remove("active");
         }
         li.classList.add("active");
         
@@ -778,8 +763,6 @@
         } else {
             playAudioStream(station);
         }
-        
-        resetEditButtonTimer();
     };
 
     // --- GENERAL APP LOGIC ---
@@ -833,7 +816,57 @@
     };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
     const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
-    const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", () => playStation(li, station)); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); stationListUL.appendChild(li); }); };
+    
+    const renderStationList = () => {
+        const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url;
+        stationListUL.innerHTML = '';
+        stations.forEach((station, index) => {
+            const li = document.createElement("li");
+            li.dataset.index = index;
+            if (station.url === currentlyPlayingUrl) {
+                li.classList.add('active');
+            }
+            li.dataset.url = station.url;
+            const stationName = getStationName(station);
+            li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`;
+            
+            li.addEventListener("click", (e) => {
+                if (e.target.closest('.edit-btn')) return;
+                playStation(li, station);
+            });
+            const editBtn = li.querySelector('.edit-btn');
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEditModal(station, index);
+            });
+
+            let hideTimer = null;
+            li.addEventListener('mouseenter', () => {
+                clearTimeout(hideTimer);
+                document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn'));
+                li.classList.add('show-edit-btn');
+            });
+            li.addEventListener('mouseleave', () => {
+                hideTimer = setTimeout(() => {
+                    li.classList.remove('show-edit-btn');
+                }, 2000);
+            });
+            li.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.edit-btn')) return;
+                clearTimeout(hideTimer);
+                const isAlreadyShown = li.classList.contains('show-edit-btn');
+                document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn'));
+                if (!isAlreadyShown) {
+                    li.classList.add('show-edit-btn');
+                    hideTimer = setTimeout(() => {
+                        li.classList.remove('show-edit-btn');
+                    }, 4000);
+                }
+            }, { passive: true });
+
+            stationListUL.appendChild(li);
+        });
+    };
     
     const openEditModal = (station, index) => {
         const stationName = getStationName(station);
@@ -864,12 +897,7 @@
         e.preventDefault();
         const name = addStationNameInput.value.trim(), url = addStreamUrl.value.trim();
         if (!name || !url) return alert(translations.alertRequired[currentLang]);
-        stations.push({
-            name: { en: name, ar: name },
-            url,
-            logoUrl: addLogoUrl.value.trim(),
-            type: addMediaType.value
-        });
+        stations.push({ name: { en: name, ar: name }, url, logoUrl: addLogoUrl.value.trim(), type: addMediaType.value });
         saveAndRerender();
         closeAddModal();
     };
@@ -898,7 +926,6 @@
     const toggleThemeAndClose = () => { (body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode()); closeSettingsModal(); };
     const toggleLanguageAndClose = () => { const newLang = currentLang === 'en' ? 'ar' : 'en'; setLanguage(newLang); closeSettingsModal(); };
     
-    // MODIFIED import logic
     const setImportedMediaType = (type) => {
         importedStations.forEach(station => station.type = type);
         mediaTypeSelectModal.classList.add('hidden');
@@ -990,7 +1017,6 @@
     const handleExportProfile = () => { const profileData = { profile: { title: localStorage.getItem('customTitle') || '', imageUrl: localStorage.getItem('customImageUrl') || '', imageWidth: localStorage.getItem('customImageWidth') || '', imageHeight: localStorage.getItem('customImageHeight') || '', titleFontSize: localStorage.getItem('customTitleFontSize') || '', stationFontSize: localStorage.getItem('customStationFontSize') || '', stationWidth: localStorage.getItem('customStationWidth') || '', stationHeight: localStorage.getItem('customStationHeight') || '', theme: localStorage.getItem('theme') || 'light', language: localStorage.getItem('language') || 'en' }, stations: stations }; const content = JSON.stringify(profileData, null, 2); downloadFile(content, 'radio_profile.json', 'application/json'); closeExportOptionsModal(); };
     const exportToPlaylist = (format) => { let content = '#EXTM3U\n'; stations.forEach(station => { const stationName = getStationName(station).replace(/"/g, "'"); content += `#EXTINF:-1 tvg-name="${stationName}" tvg-logo="${station.logoUrl || ''}",${stationName}\n`; content += `${station.url}\n`; }); const filename = `stations_list.${format}`; downloadFile(content, filename, 'audio/x-mpegurl'); closeExportOptionsModal(); };
     const downloadFile = (content, fileName, contentType) => { const a = document.createElement("a"), file = new Blob([content], { type: contentType }); a.href = URL.createObjectURL(file); a.download = fileName; a.click(); URL.revokeObjectURL(a.href); };
-    function resetEditButtonTimer() { clearTimeout(editButtonHideTimer); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) { activeItem.classList.add('show-edit-btn'); editButtonHideTimer = setTimeout(() => { activeItem.classList.remove('show-edit-btn'); }, 5000); } }
     const openImportOptionsModal = () => { settingsModal.classList.add('hidden'); importOptionsModal.classList.remove('hidden'); };
     const closeImportOptionsModal = () => importOptionsModal.classList.add('hidden');
     const openExportOptionsModal = () => { settingsModal.classList.add('hidden'); exportContentTypeSelection.classList.remove('hidden'); exportFormatSelection.classList.add('hidden'); exportOptionsModal.classList.remove('hidden'); };
@@ -1006,14 +1032,7 @@
             try {
                 const response = await fetch('https://iofahmawi.github.io/jo-radios/stations_list_inverse.json');
                 if (!response.ok) { throw new Error('Network response was not ok'); }
-                let defaultStations = await response.json();
-                const ammanTV = {
-                    "name": { "en": "Amman TV", "ar": "عمان TV" },
-                    "url": "https://ammantv-live.ercdn.net/ammantvhd/ammantvhd.m3u8",
-                    "logoUrl": "https://www.ammantv.net/images/logo-atv-new.png",
-                    "type": "video"
-                };
-                stations = [ammanTV, ...defaultStations];
+                stations = await response.json();
                 saveStations();
             } catch (error) {
                 console.error("Failed to fetch default stations:", error);
@@ -1083,8 +1102,6 @@
         setMediaTypeVideoBtn.addEventListener('click', () => setImportedMediaType('video'));
 
         new Sortable(stationListUL, { animation: 150, ghostClass: 'sortable-ghost', delay: 250, delayOnTouchOnly: true, filter: '.edit-btn', onEnd: function (evt) { const movedItem = stations.splice(evt.oldIndex, 1)[0]; stations.splice(evt.newIndex, 0, movedItem); saveStations(); }, });
-        document.addEventListener('mousemove', resetEditButtonTimer);
-        document.addEventListener('touchstart', resetEditButtonTimer);
         
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
@@ -1099,6 +1116,5 @@
   <script>
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(registration => { console.log('SW registration successful:', registration.scope); }).catch(err => { console.log('SW registration failed:', err); }); }); }
   </script>
-  
 </body>
 </html>
