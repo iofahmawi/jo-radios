@@ -1,0 +1,386 @@
+[
+  {
+    "name": {
+      "en": "Radio Fann",
+      "ar": "Radio Fann"
+    },
+    "logoUrl": "https://i.postimg.cc/PxvrzNCV/1000014808.jpg",
+    "url": "http://45.63.116.205/hls_audio2/audio.m3u8",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Melody",
+      "ar": "Melody"
+    },
+    "logoUrl": "https://i.postimg.cc/SK3msqg6/1000014834.jpg",
+    "url": "http://s3.voscast.com:9966/;",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Watar",
+      "ar": "Watar"
+    },
+    "logoUrl": "https://i.postimg.cc/KzCjdtXy/1000014796.jpg",
+    "url": "https://securestreams2.autopo.st:1243/live",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Noon",
+      "ar": "Noon"
+    },
+    "logoUrl": "https://i.postimg.cc/rwT0VGDV/1000014790.jpg",
+    "url": "https://radionoon.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Mazaj",
+      "ar": "Mazaj"
+    },
+    "logoUrl": "https://i.postimg.cc/8P4DvLyP/1000015658-01.jpg",
+    "url": "https://mazajfm.ice.infomaniak.ch/mazajfm-192.mp3",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Nai",
+      "ar": "Nai"
+    },
+    "logoUrl": "https://i.postimg.cc/t4DT9K0k/1000014806-1.jpg",
+    "url": "https://naifm.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Radio Jordan",
+      "ar": "Radio Jordan"
+    },
+    "logoUrl": "https://i.postimg.cc/cLJWB6j7/1000014952.jpg",
+    "url": "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Rotana",
+      "ar": "Rotana"
+    },
+    "logoUrl": "https://i.postimg.cc/Z5Ybsw9d/1000014815.jpg",
+    "url": "http://45.63.116.205:8000/stream",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Radio Hala",
+      "ar": "Radio Hala"
+    },
+    "logoUrl": "https://i.postimg.cc/zD6K3nTs/1000023868.jpg",
+    "url": "https://hala-alrayamedia.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Radio Jordan English",
+      "ar": "Radio Jordan English"
+    },
+    "logoUrl": "https://i.postimg.cc/02s2DkPZ/1000014812.jpg",
+    "url": "https://jrtv-live.ercdn.net/jrradio/englishradiovideo.m3u8",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Radio Jordan Quran",
+      "ar": "Radio Jordan Quran"
+    },
+    "logoUrl": "https://i.postimg.cc/fbLby8DN/1000014805.jpg",
+    "url": "https://jrtv-live.ercdn.net/jrradio/quranradiovideo.m3u8",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Radio Amman",
+      "ar": "Radio Amman"
+    },
+    "logoUrl": "https://i.postimg.cc/dtjQ9b0F/1000014813.jpg",
+    "url": "https://jrtv-live.ercdn.net/jrradio/ammanradiovideo.m3u8",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Farah Al Nas",
+      "ar": "Farah Al Nas"
+    },
+    "logoUrl": "https://i.postimg.cc/ZnfZPbqw/1000015720-01.jpg",
+    "url": "https://stream.castr.com/67ac851b0e78806cf2b0181d/live_5175caa0e93411efab2e8fb0b2f3289a/tracks-a1/index.fmp4.m3u8",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Radio Al Balad",
+      "ar": "Radio Al Balad"
+    },
+    "logoUrl": "https://i.postimg.cc/c1YLvgyr/1000014811.jpg",
+    "url": "http://s3.voscast.com:8964/;stream1653312509934/1",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Jeish",
+      "ar": "Jeish"
+    },
+    "logoUrl": "https://i.postimg.cc/Cxw5TF2d/1000014803.jpg",
+    "url": "https://jeishfm-alrayamedia.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "SSAD",
+      "ar": "SSAD"
+    },
+    "logoUrl": "https://i.postimg.cc/0Q4PzvZG/1000014770.jpg",
+    "url": "https://s3.radio.co/s2d881c399/listen",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Leqaa",
+      "ar": "Leqaa"
+    },
+    "logoUrl": "https://i.postimg.cc/NFhGNYTs/1000014809.jpg",
+    "url": "https://cast6.my-control-panel.com/proxy/leqaafml/stream",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Ain FM",
+      "ar": "Ain FM"
+    },
+    "logoUrl": "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg",
+    "url": "http://frequencyjo.info:8001/ainfm",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Husna",
+      "ar": "Husna"
+    },
+    "logoUrl": "https://i.postimg.cc/DzMwX1wb/1000014807.jpg",
+    "url": "https://s2.voscast.com:10445/stream",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Hayat",
+      "ar": "Hayat"
+    },
+    "logoUrl": "https://i.postimg.cc/hjXhyp5r/1000014793.jpg",
+    "url": "https://dc1.serverse.com/proxy/kjxwtpdt/stream",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Yaqeen",
+      "ar": "Yaqeen"
+    },
+    "logoUrl": "https://i.postimg.cc/Gp7HxZqt/1000014795.jpg",
+    "url": "http://45.63.116.205/hls_audio4/audio.m3u8",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Al al-Bayt University",
+      "ar": "Al al-Bayt University"
+    },
+    "logoUrl": "https://i.postimg.cc/5254nZN1/1000014769.jpg",
+    "url": "http://aabufm.aabu.edu.jo/aabufm",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Yarmouk University",
+      "ar": "Yarmouk University"
+    },
+    "logoUrl": "https://i.postimg.cc/brQyWMHQ/1000014810.jpg",
+    "url": "https://yufm.yu.edu.jo/broadwave.mp3",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "University of Jordan",
+      "ar": "University of Jordan"
+    },
+    "logoUrl": "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg",
+    "url": "http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Jordan Academy of Arabic",
+      "ar": "Jordan Academy of Arabic"
+    },
+    "logoUrl": "https://i.postimg.cc/SsGyw3yt/1000082596-converted.jpg",
+    "url": "https://eu9.fastcast4u.com/proxy/arabicla?mp=/1",
+    "description": "",
+    "type": "audio",
+    "proxied": false
+  },
+  {
+    "name": {
+      "en": "Talal Abu Ghazaleh",
+      "ar": "Talal Abu Ghazaleh"
+    },
+    "logoUrl": "https://i.postimg.cc/L4rg7FRZ/1000014779.jpg",
+    "url": "http://89.28.216.245:8000/tagbc",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Tafila Technical University",
+      "ar": "Tafila Technical University"
+    },
+    "logoUrl": "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg",
+    "url": "http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Sout Al Khaleej",
+      "ar": "Sout Al Khaleej"
+    },
+    "logoUrl": "https://i.postimg.cc/g0nYmrHc/1000014830.jpg",
+    "url": "https://live.kwikmotion.com/qmcslkrradiolive/slkrradio/playlist.m3u8",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Radio Dahab",
+      "ar": "Radio Dahab"
+    },
+    "logoUrl": "https://i.postimg.cc/QMxF5Xgv/1000014792.jpg",
+    "url": "https://mazajgoldhits.ice.infomaniak.ch/mazajgoldhits-192.mp3?fbclid=IwAR2j_ZU4jreWB0Y4SC4xsW61J21cKuJ3wg7Q0wJZbMsLOEhb8w63bfjEpNI",
+    "description": "",
+    "type": "audio",
+    "proxied": false
+  },
+  {
+    "name": {
+      "en": "Rotana Tarab",
+      "ar": "Rotana Tarab"
+    },
+    "logoUrl": "https://i.postimg.cc/YCx4h4F1/1000014791.jpg",
+    "url": "http://45.63.116.205/hls_audio3/audio.m3u8",
+    "description": "",
+    "type": "audio",
+    "proxied": true
+  },
+  {
+    "name": {
+      "en": "Kids",
+      "ar": "Kids"
+    },
+    "logoUrl": "https://i.postimg.cc/3Jm0QfJf/1000014788-1.jpg",
+    "url": "https://dahab.ice.infomaniak.ch/dahab-192.mp3",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Monte Carlo Doualiya",
+      "ar": "Monte Carlo Doualiya"
+    },
+    "logoUrl": "https://i.postimg.cc/Hn4mBMdz/1000014841-1.jpg",
+    "url": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Hawa Dijlah",
+      "ar": "Hawa Dijlah"
+    },
+    "logoUrl": "https://i.postimg.cc/2j4CzshW/1000014856.jpg",
+    "url": "https://listen.radioking.com/radio/96766/stream/136030",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Play",
+      "ar": "Play"
+    },
+    "logoUrl": "https://i.postimg.cc/4x8JDptF/1000014829.jpg",
+    "url": "https://play995.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Beat",
+      "ar": "Beat"
+    },
+    "logoUrl": "https://i.postimg.cc/mZcF8gxs/1000014775.jpg",
+    "url": "https://securestreams2.autopo.st:1242/live",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Mood",
+      "ar": "Mood"
+    },
+    "logoUrl": "https://i.postimg.cc/prtxfCby/1000014849.jpg",
+    "url": "https://securestreams2.autopo.st:1241/live",
+    "description": "",
+    "type": "audio"
+  },
+  {
+    "name": {
+      "en": "Bliss",
+      "ar": "Bliss"
+    },
+    "logoUrl": "https://i.postimg.cc/Hn5nHjH8/1000014797.jpg",
+    "url": "https://bliss1-alrayamedia.radioca.st/;",
+    "description": "",
+    "type": "audio"
+  }
+]
