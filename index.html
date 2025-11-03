@@ -268,30 +268,25 @@
     #personalizationModal input:-ms-input-placeholder { opacity: 0.7; }
     #personalizationModal input:-moz-placeholder { opacity: 0.7; }
     
-    /* RTL Styles for Arabic Language */
     body.lang-ar .modal-content { direction: rtl; }
     body.lang-ar .modal-close-btn { right: auto; left: 0.75rem; }
     body.lang-ar #editStationForm .modal-actions { flex-direction: row-reverse; }
     body.lang-ar .confirm-text { text-align: right; }
-    /* NEW: RTL support for station list grid */
     body.lang-ar .station-list { direction: rtl; }
 
-    /* Styles for the VIDEO popup player */
     .video-popup {
         position: fixed;
         z-index: 3000;
         inset: 0;
         background-color: rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(5px);
-        display: none; /* Hidden by default */
+        display: none;
         justify-content: center;
         align-items: flex-start;
         padding-top: 20vh;
         cursor: pointer;
     }
-    .video-popup.active {
-        display: flex;
-    }
+    .video-popup.active { display: flex; }
     .video-popup-content {
         position: relative;
         background-color: transparent;
@@ -300,19 +295,10 @@
         touch-action: none;
         cursor: grab;
     }
-    .video-popup-content.dragging {
-        cursor: grabbing;
-        user-select: none;
-    }
-    .plyr--video {
-        overflow: hidden;
-        border-radius: 12px;
-    }
+    .video-popup-content.dragging { cursor: grabbing; user-select: none; }
+    .plyr--video { overflow: hidden; border-radius: 12px; }
     
-    #importOptionsModal .modal-title,
-    #exportOptionsModal .modal-title {
-      margin-bottom: 0.7rem;
-    }
+    #importOptionsModal .modal-title, #exportOptionsModal .modal-title { margin-bottom: 0.7rem; }
   </style>
 </head>
 <body>
@@ -711,8 +697,44 @@
             videoPlayer.play().catch(e => console.error("Video play error:", e));
         }
     }
+    
     function stopAudioPlayer() { audioPlayer.stop(); }
-    function playAudioStream(station) { stopVideoPlayer(); if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; } const isM3U8 = station.url.includes('.m3u8'); audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; audioPlayer.play().catch(e => console.warn(`Audio error:`, e)); if ('mediaSession' in navigator) { navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Radio', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] }); navigator.mediaSession.setActionHandler('play', () => audioPlayer.play()); navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause()); } }
+    
+    // RESTORED: This is the correct, advanced function for HLS audio
+    function playAudioStream(station) {
+        stopVideoPlayer();
+        if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; }
+        const isM3U8 = station.url.includes('.m3u8');
+        const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
+
+        if (isM3U8 && isProxied && Hls.isSupported()) {
+            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
+            audioPlayer.stop();
+            const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
+            hlsAudio = new Hls({
+                xhrSetup: function(xhr, url) {
+                    const originalUrl = url;
+                    if (!url.startsWith(proxyUrlBase) && (url.startsWith('http') || !url.includes('/'))) {
+                        xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
+                    } else {
+                        xhr.open('GET', originalUrl);
+                    }
+                }
+            });
+            hlsAudio.attachMedia(audioPlayerEl);
+            hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url));
+            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e)));
+        } else {
+            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] };
+            audioPlayer.play().catch(e => console.warn(`Audio error:`, e));
+        }
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Radio', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] });
+            navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
+            navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+        }
+    }
     
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
