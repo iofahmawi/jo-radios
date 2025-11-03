@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jordan-radios-cache-v3'; // تم تغيير الإصدار لتفعيل التحديث
+const CACHE_NAME = 'jordan-radios-cache-v5'; // تم تغيير الإصدار لتفعيل التحديث
 const urlsToCache = [
   // --- Core App Shell ---
   './',
