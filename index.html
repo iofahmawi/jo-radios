@@ -656,7 +656,92 @@
     
     // --- VIDEO PLAYER LOGIC (WITH BITRATE SELECTION & MEDIA SESSION) ---
     function stopVideoPlayer() { if (hlsVideo) { hlsVideo.destroy(); hlsVideo = null; } if (videoPlayer) { videoPlayer.destroy(); videoPlayer = null; } videoPlayerContainer.innerHTML = ''; videoPopup.classList.remove('active'); }
-    function playVideoStream(station) { stopAudioPlayer(); const mediaElement = document.createElement('video'); mediaElement.playsinline = true; mediaElement.controls = true; videoPlayerContainer.innerHTML = ''; videoPlayerContainer.appendChild(mediaElement); videoPopup.classList.add('active'); if (station.url.includes('.m3u8') && Hls.isSupported()) { hlsVideo = new Hls(); hlsVideo.loadSource(station.url); hlsVideo.attachMedia(mediaElement); hlsVideo.on(Hls.Events.MANIFEST_PARSED, (event, data) => { const plyrOptions = { i18n: { qualityLabel: { ...data.levels.reduce((labels, level) => { const bitrate = level.bitrate; labels[bitrate] = `${(bitrate / 1000000).toFixed(1)} Mbps`; return labels; }, {}) } } }; if (data.levels.length > 1) { plyrOptions.quality = { default: data.levels[0].bitrate, options: [...data.levels].reverse().map(level => level.bitrate), forced: true, onChange: (selectedBitrate) => { hlsVideo.levels.forEach((level, levelIndex) => { if (level.bitrate === selectedBitrate) { hlsVideo.currentLevel = levelIndex; } }); }, }; } videoPlayer = new Plyr(mediaElement, plyrOptions); videoPlayer.play().catch(e => console.error("Video play error:", e)); if ('mediaSession' in navigator) { navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Video', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] }); navigator.mediaSession.setActionHandler('play', () => videoPlayer.play()); navigator.mediaSession.setActionHandler('pause', () => videoPlayer.pause()); } }); } else { mediaElement.src = station.url; videoPlayer = new Plyr(mediaElement, {}); videoPlayer.play().catch(e => console.error("Video play error:", e)); } }
+    
+    // --- MODIFIED FUNCTION ---
+    function playVideoStream(station) {
+        stopAudioPlayer();
+        const mediaElement = document.createElement('video');
+        mediaElement.playsinline = true;
+        mediaElement.controls = true;
+        videoPlayerContainer.innerHTML = '';
+        videoPlayerContainer.appendChild(mediaElement);
+        videoPopup.classList.add('active');
+    
+        if (station.url.includes('.m3u8') && Hls.isSupported()) {
+            hlsVideo = new Hls({
+                abrEwmaDefaultEstimate: 500000,
+                startLevel: -1 
+            });
+            hlsVideo.loadSource(station.url);
+            hlsVideo.attachMedia(mediaElement);
+    
+            hlsVideo.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                const plyrOptions = { 
+                    i18n: { 
+                        qualityLabel: { 
+                            ...data.levels.reduce((labels, level) => { 
+                                const bitrate = level.bitrate; 
+                                labels[bitrate] = `${(bitrate / 1000000).toFixed(1)} Mbps`; 
+                                return labels; 
+                            }, {}) 
+                        } 
+                    } 
+                };
+                if (data.levels.length > 1) {
+                    plyrOptions.quality = {
+                        default: data.levels[data.levels.length - 1].bitrate,
+                        options: [...data.levels].reverse().map(level => level.bitrate),
+                        forced: true,
+                        onChange: (selectedBitrate) => {
+                            hlsVideo.levels.forEach((level, levelIndex) => {
+                                if (level.bitrate === selectedBitrate) {
+                                    hlsVideo.currentLevel = levelIndex;
+                                }
+                            });
+                        },
+                    };
+                }
+                videoPlayer = new Plyr(mediaElement, plyrOptions);
+                videoPlayer.play().catch(e => console.error("Video play error:", e));
+    
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: getStationName(station),
+                        artist: station.description || 'Live Video',
+                        album: 'Jordan Radios',
+                        artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }]
+                    });
+                    navigator.mediaSession.setActionHandler('play', () => videoPlayer.play());
+                    navigator.mediaSession.setActionHandler('pause', () => videoPlayer.pause());
+                }
+            });
+
+            hlsVideo.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    console.error('HLS Fatal Error:', data.type, data.details);
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            console.log('Attempting to recover from network error...');
+                            hlsVideo.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.log('Attempting to recover from media error...');
+                            hlsVideo.recoverMediaError();
+                            break;
+                        default:
+                            console.log('Unrecoverable HLS error, destroying player.');
+                            stopVideoPlayer();
+                            break;
+                    }
+                }
+            });
+
+        } else {
+            mediaElement.src = station.url;
+            videoPlayer = new Plyr(mediaElement, {});
+            videoPlayer.play().catch(e => console.error("Video play error:", e));
+        }
+    }
     
     // --- AUDIO PLAYER LOGIC (WITH MEDIA SESSION) ---
     function stopAudioPlayer() { audioPlayer.stop(); }
