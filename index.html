@@ -550,7 +550,6 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
-    // The entire JavaScript block is identical to the previous version.
     let stations = [];
     
     const DEFAULT_HEADER_IMAGE = 'https://i.postimg.cc/W3SKLHK1/3170535f785530d2ec9dd76ce2204339.png';
@@ -599,7 +598,7 @@
         mediaTypeLabel: { en: 'Media Type', ar: 'نوع الوسائط' },
         mediaTypeAudio: { en: 'Audio', ar: 'صوت' },
         mediaTypeVideo: { en: 'Video', ar: 'فيديو' },
-        pageTitle: { en: 'Jordan Radios', ar: 'إذاعات الأردن' },
+        pageTitle: { en: 'Jordan Radios', ar: 'الإذاعات الأردنية' },
         personalizeBtn: { en: 'Personalize UI', ar: 'تخصيص الواجهة' },
         personalizationTitle: { en: 'Personalization', ar: 'تخصيص الواجهة' },
         customTitleLabel: { en: 'Custom Title', ar: 'عنوان مخصص' },
@@ -607,12 +606,12 @@
         customImageWidthLabel: { en: 'Image Width (px)', ar: 'عرض الصورة (بكسل)' },
         customImageHeightLabel: { en: 'Image Height (px)', ar: 'ارتفاع الصورة (بكسل)' },
         customImageWidthPlaceholder: { en: 'Default: auto', ar: 'الافتراضي: تلقائي' },
-        customImageHeightPlaceholder: { en: 'Default: 33', ar: 'الافتراضي: 33' },
+        customImageHeightPlaceholder: { en: 'Default: 33', ar: 'الافتراضي: 32' },
         titleFontSizeLabel: { en: 'Title Font Size', ar: 'حجم خط العنوان' },
         stationFontSizeLabel: { en: 'Station Font Size', ar: 'حجم خط الإذاعة' },
         stationLogoWidthLabel: { en: 'Logo Width (px)', ar: 'عرض الشعار (بكسل)' },
         stationLogoHeightLabel: { en: 'Logo Height (px)', ar: 'ارتفاع الشعار (بكسل)' },
-        titleFontSizePlaceholder: { en: 'Default: 1.80', ar: 'الافتراضي: 1.80' },
+        titleFontSizePlaceholder: { en: 'Default: 1.80', ar: 'الافتراضي: 1.65' },
         stationFontSizePlaceholder: { en: 'Default: 0.875', ar: 'الافتراضي: 0.875' },
         stationLogoWidthPlaceholder: { en: 'Default: 58', ar: 'الافتراضي: 58' },
         stationLogoHeightPlaceholder: { en: 'Default: 58', ar: 'الافتراضي: 58' },
@@ -663,13 +662,38 @@
     function stopAudioPlayer() { audioPlayer.stop(); }
     function playAudioStream(station) { stopVideoPlayer(); if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; } const isM3U8 = station.url.includes('.m3u8'); const isProxied = station.url.includes('proxy.iofahmawi.workers.dev'); if (isM3U8 && isProxied && Hls.isSupported()) { audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] }; audioPlayer.stop(); const proxyUrlBase = station.url.split('?url=')[0] + '?url='; hlsAudio = new Hls({ xhrSetup: function(xhr, url) { const originalUrl = url; if (!url.startsWith(proxyUrlBase) && url.includes('http')) { xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl)); } else { xhr.open('GET', originalUrl); } } }); hlsAudio.attachMedia(audioPlayerEl); hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url)); hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e))); } else { audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] }; audioPlayer.play().catch(e => console.warn(`Audio error:`, e)); } if ('mediaSession' in navigator) { navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Radio', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] }); navigator.mediaSession.setActionHandler('play', () => audioPlayer.play()); navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause()); } }
     const playStation = (li, station) => { const wasActive = li.classList.contains('active'); if (wasActive) { if (station.type === 'video') { if(videoPlayer) videoPlayer.togglePlay(); } else { audioPlayer.togglePlay(); } return; } const oldActiveItem = stationListUL.querySelector("li.active"); if (oldActiveItem) { oldActiveItem.classList.remove("active"); } li.classList.add("active"); if (station.type === 'video') { playVideoStream(station); } else { playAudioStream(station); } };
-    const applyFontSizes = () => { const titleSize = localStorage.getItem('customTitleFontSize'); const stationSize = localStorage.getItem('customStationFontSize'); document.documentElement.style.setProperty('--main-title-font-size', titleSize ? `${titleSize}rem` : ''); document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : ''); };
-    const applyStationLogoSize = () => { const stationWidth = localStorage.getItem('customStationWidth'); const stationHeight = localStorage.getItem('customStationHeight'); document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : ''); document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : ''); };
-    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : DEFAULT_HEADER_IMAGE_HEIGHT + 'px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
-    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); personalizationModal.classList.add('hidden'); };
-    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? DEFAULT_HEADER_IMAGE; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? DEFAULT_HEADER_IMAGE_HEIGHT; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
+    
+    const applyLanguageSpecificDefaults = () => {
+        const customTitleSize = localStorage.getItem('customTitleFontSize');
+        if (customTitleSize) {
+            document.documentElement.style.setProperty('--main-title-font-size', `${customTitleSize}rem`);
+        } else {
+            const defaultTitleSize = currentLang === 'ar' ? '1.65rem' : ''; 
+            document.documentElement.style.setProperty('--main-title-font-size', defaultTitleSize);
+        }
+
+        const customImageHeight = localStorage.getItem('customImageHeight');
+        if (customImageHeight) {
+            headerImage.style.height = `${customImageHeight}px`;
+        } else {
+            const defaultImageHeight = currentLang === 'ar' ? '32px' : `${DEFAULT_HEADER_IMAGE_HEIGHT}px`;
+            headerImage.style.height = defaultImageHeight;
+        }
+
+        const stationWidth = localStorage.getItem('customStationWidth');
+        const stationHeight = localStorage.getItem('customStationHeight');
+        document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : '');
+        document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : '');
+        
+        const stationSize = localStorage.getItem('customStationFontSize');
+        document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : '');
+    };
+
+    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } applyLanguageSpecificDefaults(); };
+    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); personalizationModal.classList.add('hidden'); };
+    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? DEFAULT_HEADER_IMAGE; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
-    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } else { el.placeholder = el.getAttribute('placeholder') || ''; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
+    const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } else { el.placeholder = el.getAttribute('placeholder') || ''; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); applyLanguageSpecificDefaults(); };
     const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", (e) => { if (e.target.closest('.edit-btn')) return; playStation(li, station); }); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); let hideTimer = null; li.addEventListener('mouseenter', () => { clearTimeout(hideTimer); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); li.classList.add('show-edit-btn'); }); li.addEventListener('mouseleave', () => { hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 2000); }); li.addEventListener('touchstart', (e) => { if (e.target.closest('.edit-btn')) return; clearTimeout(hideTimer); const isAlreadyShown = li.classList.contains('show-edit-btn'); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); if (!isAlreadyShown) { li.classList.add('show-edit-btn'); hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 4000); } }, { passive: true }); stationListUL.appendChild(li); }); };
     const openEditModal = (station, index) => { const stationName = getStationName(station); currentEditingIndex = index; modalStationImage.src = station.logoUrl; modalStationName.textContent = stationName; editStationName.value = stationName; editStreamUrl.value = station.url; editLogoUrl.value = station.logoUrl; editStationDescription.value = station.description || ''; editMediaType.value = station.type || 'audio'; stationModal.classList.remove('hidden'); };
     const saveStationChanges = e => { e.preventDefault(); if (currentEditingIndex === null) return; const station = stations[currentEditingIndex]; const newName = editStationName.value.trim(); const newUrl = editStreamUrl.value.trim(); if (!newName || !newUrl) return alert(translations.alertRequired[currentLang]); if (typeof station.name === 'object' && station.name !== null) { station.name[currentLang] = newName; } else { station.name = newName; } station.url = newUrl; station.logoUrl = editLogoUrl.value.trim(); station.description = editStationDescription.value.trim(); station.type = editMediaType.value; saveAndRerender(); closeEditModal(); };
@@ -738,7 +762,6 @@
         } else {
             headerImage.src = DEFAULT_HEADER_IMAGE;
             headerImage.style.display = 'block';
-            headerImage.style.height = DEFAULT_HEADER_IMAGE_HEIGHT + 'px';
             headerImage.style.width = 'auto';
         }
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
@@ -794,9 +817,6 @@
         
         const savedLang = localStorage.getItem('language') || 'en';
         setLanguage(savedLang);
-        applyFontSizes();
-        applyStationLogoSize();
-        // setupDraggablePopup(); // Assuming this function exists elsewhere or is not critical
     };
 
     initialize();
