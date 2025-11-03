@@ -2,7 +2,7 @@
   {
     "name": {
       "en": "Radio Fann",
-      "ar": "راديو فن"
+      "ar": "Radio Fann"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio2/audio.m3u8",
     "logoUrl": "https://i.postimg.cc/PxvrzNCV/1000014808.jpg",
@@ -11,7 +11,7 @@
   {
     "name": {
       "en": "Melody",
-      "ar": "ميلودي"
+      "ar": "Melody"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://s3.voscast.com:9966/;",
     "logoUrl": "https://i.postimg.cc/SK3msqg6/1000014834.jpg",
@@ -20,7 +20,7 @@
   {
     "name": {
       "en": "Watar",
-      "ar": "وتر"
+      "ar": "Watar"
     },
     "url": "https://securestreams2.autopo.st:1243/live",
     "logoUrl": "https://i.postimg.cc/KzCjdtXy/1000014796.jpg",
@@ -29,7 +29,7 @@
   {
     "name": {
       "en": "Noon",
-      "ar": "نون"
+      "ar": "Noon"
     },
     "url": "https://radionoon.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/rwT0VGDV/1000014790.jpg",
@@ -38,7 +38,7 @@
   {
     "name": {
       "en": "Mazaj",
-      "ar": "مزاج"
+      "ar": "Mazaj"
     },
     "url": "https://mazajfm.ice.infomaniak.ch/mazajfm-192.mp3",
     "logoUrl": "https://i.postimg.cc/8P4DvLyP/1000015658-01.jpg",
@@ -47,7 +47,7 @@
   {
     "name": {
       "en": "Nai",
-      "ar": "ناي"
+      "ar": "Nai"
     },
     "url": "https://naifm.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/t4DT9K0k/1000014806-1.jpg",
@@ -56,7 +56,7 @@
   {
     "name": {
       "en": "Radio Jordan",
-      "ar": "الإذاعة الأردنية"
+      "ar": "Radio Jordan"
     },
     "url": "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8",
     "logoUrl": "https://i.postimg.cc/cLJWB6j7/1000014952.jpg",
@@ -65,7 +65,7 @@
   {
     "name": {
       "en": "Rotana",
-      "ar": "روتانا"
+      "ar": "Rotana"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205:8000/stream",
     "logoUrl": "https://i.postimg.cc/Z5Ybsw9d/1000014815.jpg",
@@ -74,7 +74,7 @@
   {
     "name": {
       "en": "Radio Hala",
-      "ar": "راديو هلا"
+      "ar": "Radio Hala"
     },
     "url": "https://hala-alrayamedia.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/zD6K3nTs/1000023868.jpg",
@@ -83,7 +83,7 @@
   {
     "name": {
       "en": "Radio Jordan English",
-      "ar": "الإذاعة الأردنية الإنجليزية"
+      "ar": "Radio Jordan English"
     },
     "url": "https://jrtv-live.ercdn.net/jrradio/englishradiovideo.m3u8",
     "logoUrl": "https://i.postimg.cc/02s2DkPZ/1000014812.jpg",
@@ -92,7 +92,7 @@
   {
     "name": {
       "en": "Radio Jordan Quran",
-      "ar": "إذاعة القرآن الكريم"
+      "ar": "Radio Jordan Quran"
     },
     "url": "https://jrtv-live.ercdn.net/jrradio/quranradiovideo.m3u8",
     "logoUrl": "https://i.postimg.cc/fbLby8DN/1000014805.jpg",
@@ -101,7 +101,7 @@
   {
     "name": {
       "en": "Radio Amman",
-      "ar": "راديو عمان"
+      "ar": "Radio Amman"
     },
     "url": "https://jrtv-live.ercdn.net/jrradio/ammanradiovideo.m3u8",
     "logoUrl": "https://i.postimg.cc/dtjQ9b0F/1000014813.jpg",
@@ -110,7 +110,7 @@
   {
     "name": {
       "en": "Ain FM",
-      "ar": "عين"
+      "ar": "Ain FM"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://frequencyjo.info:8001/ainfm",
     "logoUrl": "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg",
@@ -119,7 +119,7 @@
   {
     "name": {
       "en": "Radio Al Balad",
-      "ar": "راديو البلد"
+      "ar": "Radio Al Balad"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://s3.voscast.com:8964/;stream1653312509934/1",
     "logoUrl": "https://i.postimg.cc/c1YLvgyr/1000014811.jpg",
@@ -128,7 +128,7 @@
   {
     "name": {
       "en": "Jeish",
-      "ar": "جيش"
+      "ar": "Jeish"
     },
     "url": "https://jeishfm-alrayamedia.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/Cxw5TF2d/1000014803.jpg",
@@ -137,7 +137,7 @@
   {
     "name": {
       "en": "Yaqeen",
-      "ar": "يقين"
+      "ar": "Yaqeen"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio4/audio.m3u8",
     "logoUrl": "https://i.postimg.cc/Gp7HxZqt/1000014795.jpg",
@@ -146,7 +146,7 @@
   {
     "name": {
       "en": "SSAD",
-      "ar": "صاد"
+      "ar": "SSAD"
     },
     "url": "https://s3.radio.co/s2d881c399/listen",
     "logoUrl": "https://i.postimg.cc/0Q4PzvZG/1000014770.jpg",
@@ -155,7 +155,7 @@
   {
     "name": {
       "en": "Leqaa",
-      "ar": "لقاء"
+      "ar": "Leqaa"
     },
     "url": "https://cast6.my-control-panel.com/proxy/leqaafml/stream",
     "logoUrl": "https://i.postimg.cc/NFhGNYTs/1000014809.jpg",
@@ -164,7 +164,7 @@
   {
     "name": {
       "en": "University of Jordan",
-      "ar": "الجامعة الأردنية"
+      "ar": "University of Jordan"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32",
     "logoUrl": "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg",
@@ -173,7 +173,7 @@
   {
     "name": {
       "en": "Husna",
-      "ar": "حسنى"
+      "ar": "Husna"
     },
     "url": "https://s2.voscast.com:10445/stream",
     "logoUrl": "https://i.postimg.cc/DzMwX1wb/1000014807.jpg",
@@ -182,7 +182,7 @@
   {
     "name": {
       "en": "Hayat",
-      "ar": "حياة"
+      "ar": "Hayat"
     },
     "url": "https://dc1.serverse.com/proxy/kjxwtpdt/stream",
     "logoUrl": "https://i.postimg.cc/hjXhyp5r/1000014793.jpg",
@@ -191,7 +191,7 @@
   {
     "name": {
       "en": "Tafila Technical University",
-      "ar": "جامعة الطفيلة التقنية"
+      "ar": "Tafila Technical University"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1",
     "logoUrl": "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg",
@@ -200,7 +200,7 @@
   {
     "name": {
       "en": "Al al-Bayt University",
-      "ar": "جامعة آل البيت"
+      "ar": "Al al-Bayt University"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://aabufm.aabu.edu.jo/aabufm",
     "logoUrl": "https://i.postimg.cc/5254nZN1/1000014769.jpg",
@@ -209,7 +209,7 @@
   {
     "name": {
       "en": "Yarmouk University",
-      "ar": "جامعة اليرموك"
+      "ar": "Yarmouk University"
     },
     "url": "https://yufm.yu.edu.jo/broadwave.mp3",
     "logoUrl": "https://i.postimg.cc/brQyWMHQ/1000014810.jpg",
@@ -218,7 +218,7 @@
   {
     "name": {
       "en": "Jordan Academy of Arabic",
-      "ar": "مجمع اللغة العربية الأردني"
+      "ar": "Jordan Academy of Arabic"
     },
     "url": "https://eu9.fastcast4u.com/proxy/arabicla?mp=/1",
     "logoUrl": "https://i.postimg.cc/SsGyw3yt/1000082596-converted.jpg",
@@ -227,7 +227,7 @@
   {
     "name": {
       "en": "Talal Abu Ghazaleh",
-      "ar": "طلال أبو غزالة"
+      "ar": "Talal Abu Ghazaleh"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://89.28.216.245:8000/tagbc",
     "logoUrl": "https://i.postimg.cc/L4rg7FRZ/1000014779.jpg",
@@ -245,7 +245,7 @@
   {
     "name": {
       "en": "Sout Al Khaleej",
-      "ar": "صوت الخليج"
+      "ar": "Sout Al Khaleej"
     },
     "url": "https://live.kwikmotion.com/qmcslkrradiolive/slkrradio/playlist.m3u8",
     "logoUrl": "https://i.postimg.cc/g0nYmrHc/1000014830.jpg",
@@ -254,7 +254,7 @@
   {
     "name": {
       "en": "Radio Dahab",
-      "ar": "راديو دهب"
+      "ar": "Radio Dahab"
     },
     "url": "https://mazajgoldhits.ice.infomaniak.ch/mazajgoldhits-192.mp3",
     "logoUrl": "https://i.postimg.cc/QMxF5Xgv/1000014792.jpg",
@@ -263,7 +263,7 @@
   {
     "name": {
       "en": "Rotana Tarab",
-      "ar": "روتانا طرب"
+      "ar": "Rotana Tarab"
     },
     "url": "https://proxy.iofahmawi.workers.dev/?url=http://45.63.116.205/hls_audio3/audio.m3u8",
     "logoUrl": "https://i.postimg.cc/YCx4h4F1/1000014791.jpg",
@@ -272,7 +272,7 @@
   {
     "name": {
       "en": "Kids",
-      "ar": "كيدز"
+      "ar": "Kids"
     },
     "url": "https://dahab.ice.infomaniak.ch/dahab-192.mp3",
     "logoUrl": "https://i.postimg.cc/3Jm0QfJf/1000014788-1.jpg",
@@ -281,7 +281,7 @@
   {
     "name": {
       "en": "Monte Carlo Doualiya",
-      "ar": "مونت كارلو الدولية"
+      "ar": "Monte Carlo Doualiya"
     },
     "url": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
     "logoUrl": "https://i.postimg.cc/Hn4mBMdz/1000014841-1.jpg",
@@ -290,7 +290,7 @@
   {
     "name": {
       "en": "Hawa Dijlah",
-      "ar": "هوا دجلة"
+      "ar": "Hawa Dijlah"
     },
     "url": "https://listen.radioking.com/radio/96766/stream/136030",
     "logoUrl": "https://i.postimg.cc/2j4CzshW/1000014856.jpg",
@@ -299,7 +299,7 @@
   {
     "name": {
       "en": "Play",
-      "ar": "بلاي"
+      "ar": "Play"
     },
     "url": "https://play995.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/4x8JDptF/1000014829.jpg",
@@ -308,7 +308,7 @@
   {
     "name": {
       "en": "Beat",
-      "ar": "بيت"
+      "ar": "Beat"
     },
     "url": "https://securestreams2.autopo.st:1242/live",
     "logoUrl": "https://i.postimg.cc/mZcF8gxs/1000014775.jpg",
@@ -317,7 +317,7 @@
   {
     "name": {
       "en": "Mood",
-      "ar": "مود"
+      "ar": "Mood"
     },
     "url": "https://securestreams2.autopo.st:1241/live",
     "logoUrl": "https://i.postimg.cc/prtxfCby/1000014849.jpg",
@@ -326,7 +326,7 @@
   {
     "name": {
       "en": "Bliss",
-      "ar": "بلييز"
+      "ar": "Bliss"
     },
     "url": "https://bliss1-alrayamedia.radioca.st/;",
     "logoUrl": "https://i.postimg.cc/Hn5nHjH8/1000014797.jpg",
