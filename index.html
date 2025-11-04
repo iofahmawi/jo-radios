@@ -299,6 +299,15 @@
     .plyr--video { overflow: hidden; border-radius: 12px; }
     
     #importOptionsModal .modal-title, #exportOptionsModal .modal-title { margin-bottom: 0.7rem; }
+    
+    /* Unify button widths in modals with multiple choices */
+#importConfirmModal .modal-actions button,
+#importOptionsModal .modal-actions button,
+#exportOptionsModal .modal-actions button,
+#mediaTypeSelectModal .modal-actions button {
+  flex: 1;
+}
+    
   </style>
 </head>
 <body>
