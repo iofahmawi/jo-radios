@@ -154,7 +154,7 @@
     }
     .station-name-text {
       font-size: var(--station-name-font-size, 0.875rem);
-      font-weight: 500;
+      font-weight: var(--station-name-font-weight, 500);
       text-align: center;
       color: var(--text-color);
       width: 100%;
@@ -444,6 +444,12 @@
                     <input type="number" id="customStationHeightInput" data-lang-placeholder-key="stationLogoHeightPlaceholder">
                 </div>
             </div>
+            <div>
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 0.5rem;">
+                    <input type="checkbox" id="customStationFontWeightBold">
+                    <span data-lang-key="stationFontWeightLabel">Make Station Font Bold</span>
+                </label>
+            </div>
             <div class="modal-actions">
                 <button type="submit" class="btn-primary" data-lang-key="saveBtn">Save</button>
             </div>
@@ -555,7 +561,7 @@
     const getEl = id => document.getElementById(id);
     const mainTitle = getEl("mainTitle"), headerImage = getEl("headerImage");
     const personalizationModal = getEl("personalizationModal"), personalizeBtn = getEl("personalizeBtn"), closePersonalizationModalBtn = getEl("closePersonalizationModalBtn"), personalizationForm = getEl("personalizationForm");
-    const customTitleInput = getEl("customTitleInput"), customImageUrlInput = getEl("customImageUrlInput"), customImageWidthInput = getEl("customImageWidthInput"), customImageHeightInput = getEl("customImageHeightInput"), customTitleFontSizeInput = getEl("customTitleFontSizeInput"), customStationFontSizeInput = getEl("customStationFontSizeInput"), customStationWidthInput = getEl("customStationWidthInput"), customStationHeightInput = getEl("customStationHeightInput");
+    const customTitleInput = getEl("customTitleInput"), customImageUrlInput = getEl("customImageUrlInput"), customImageWidthInput = getEl("customImageWidthInput"), customImageHeightInput = getEl("customImageHeightInput"), customTitleFontSizeInput = getEl("customTitleFontSizeInput"), customStationFontSizeInput = getEl("customStationFontSizeInput"), customStationWidthInput = getEl("customStationWidthInput"), customStationHeightInput = getEl("customStationHeightInput"), customStationFontWeightBold = getEl("customStationFontWeightBold");
     const body = document.body, stationListUL = getEl("stationList"), audioPlayerContainer = getEl("audioPlayerContainer"),
         audioPlayerEl = getEl("audioPlayer"), stationModal = getEl('stationModal'), closeModalBtn = getEl('closeModalBtn'),
         editStationForm = getEl('editStationForm'), modalStationImage = getEl('modalStationImage'),
@@ -589,6 +595,7 @@
     let currentLang = 'en';
     
     const translations = {
+        stationFontWeightLabel: { en: 'Make Station Font Bold', ar: 'جعل خط الإذاعات سميك' },
         useProxyLabel: { en: 'Use Proxy for this station', ar: 'استخدام بروكسي لهذه المحطة' },
         stationDescriptionLabel: { en: 'Additional Info', ar: 'معلومات إضافية' },
         importMediaTypeTitle: { en: 'Select Media Type', ar: 'اختر نوع الوسائط' },
@@ -752,9 +759,10 @@
     function setupDraggablePopup() { let isDragging = false, startY, currentTranslateY = 0; const dragStart = (e) => { if (e.target.closest('.plyr__controls')) return; isDragging = true; startY = e.pageY || e.touches[0].pageY; videoPopupContent.classList.add('dragging'); }; const dragMove = (e) => { if (!isDragging) return; e.preventDefault(); const currentY = e.pageY || e.touches[0].pageY; const newTranslateY = currentTranslateY + (currentY - startY); videoPopupContent.style.transform = `translateY(${newTranslateY}px)`; }; const dragEnd = (e) => { if (!isDragging) return; isDragging = false; videoPopupContent.classList.remove('dragging'); const endY = e.pageY || (e.changedTouches ? e.changedTouches[0].pageY : startY); currentTranslateY += (endY - startY); }; videoPopupContent.addEventListener('mousedown', dragStart); document.addEventListener('mousemove', dragMove); document.addEventListener('mouseup', dragEnd); videoPopupContent.addEventListener('touchstart', dragStart, { passive: false }); document.addEventListener('touchmove', dragMove, { passive: false }); document.addEventListener('touchend', dragEnd); videoPopup.addEventListener('click', e => { if (e.target === videoPopup) { stopVideoPlayer(); const activeItem = stationListUL.querySelector('li.active'); if (activeItem) activeItem.classList.remove('active'); } }); }
     const applyFontSizes = () => { const titleSize = localStorage.getItem('customTitleFontSize'); const stationSize = localStorage.getItem('customStationFontSize'); document.documentElement.style.setProperty('--main-title-font-size', titleSize ? `${titleSize}rem` : ''); document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : ''); };
     const applyStationLogoSize = () => { const stationWidth = localStorage.getItem('customStationWidth'); const stationHeight = localStorage.getItem('customStationHeight'); document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : ''); document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : ''); };
+    const applyFontWeight = () => { const isBold = localStorage.getItem('customStationFontWeightBold') === 'true'; document.documentElement.style.setProperty('--station-name-font-weight', isBold ? '700' : '500'); };
     const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : DEFAULT_HEADER_IMAGE_HEIGHT + 'px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
-    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); personalizationModal.classList.add('hidden'); };
-    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
+    const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); const newFontWeightBold = customStationFontWeightBold.checked; localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); localStorage.setItem('customStationFontWeightBold', newFontWeightBold); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); applyFontWeight(); personalizationModal.classList.add('hidden'); };
+    const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; customStationFontWeightBold.checked = localStorage.getItem('customStationFontWeightBold') === 'true'; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
     const setLanguage = (lang) => { currentLang = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; body.classList.toggle('lang-ar', lang === 'ar'); document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.getAttribute('data-lang-key'); if (translations[key] && translations[key][lang]) { el.textContent = translations[key][lang]; } }); document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => { const key = el.getAttribute('data-lang-placeholder-key'); if (translations[key] && translations[key][lang]) { el.placeholder = translations[key][lang]; } }); const savedTitle = localStorage.getItem('customTitle'); if (!savedTitle) { mainTitle.textContent = translations.pageTitle[lang]; } renderStationList(); updateThemeButtonText(); updateLangButtonText(); };
     const renderStationList = () => { const currentlyPlayingUrl = stationListUL.querySelector('li.active')?.dataset.url; stationListUL.innerHTML = ''; stations.forEach((station, index) => { const li = document.createElement("li"); li.dataset.index = index; if (station.url === currentlyPlayingUrl) { li.classList.add('active'); } li.dataset.url = station.url; const stationName = getStationName(station); li.innerHTML = `<img src="${station.logoUrl || 'icon-1024.png'}" class="station-logo" onerror="this.onerror=null;this.src='icon-1024.png';"><span class="station-name-text">${stationName}</span><button class="edit-btn"><i class="ph ph-dots-three-vertical"></i></button>`; li.addEventListener("click", (e) => { if (e.target.closest('.edit-btn')) return; playStation(li, station); }); const editBtn = li.querySelector('.edit-btn'); editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(station, index); }); let hideTimer = null; li.addEventListener('mouseenter', () => { clearTimeout(hideTimer); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); li.classList.add('show-edit-btn'); }); li.addEventListener('mouseleave', () => { hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 2000); }); li.addEventListener('touchstart', (e) => { if (e.target.closest('.edit-btn')) return; clearTimeout(hideTimer); const isAlreadyShown = li.classList.contains('show-edit-btn'); document.querySelectorAll('.station-list li.show-edit-btn').forEach(item => item.classList.remove('show-edit-btn')); if (!isAlreadyShown) { li.classList.add('show-edit-btn'); hideTimer = setTimeout(() => { li.classList.remove('show-edit-btn'); }, 4000); } }, { passive: true }); stationListUL.appendChild(li); }); };
@@ -773,7 +781,7 @@
     const closeSettingsModal = () => settingsModal.classList.add('hidden');
     const openResetConfirm = () => { closeSettingsModal(); resetConfirmModal.classList.remove('hidden'); };
     const closeResetConfirm = () => resetConfirmModal.classList.add('hidden');
-    const resetList = () => { const keysToRemove = ['savedStations', 'customTitle', 'customImageUrl', 'customImageWidth', 'customImageHeight', 'customTitleFontSize', 'customStationFontSize', 'customStationWidth', 'customStationHeight']; keysToRemove.forEach(key => localStorage.removeItem(key)); location.reload(); };
+    const resetList = () => { const keysToRemove = ['savedStations', 'customTitle', 'customImageUrl', 'customImageWidth', 'customImageHeight', 'customTitleFontSize', 'customStationFontSize', 'customStationWidth', 'customStationHeight', 'customStationFontWeightBold']; keysToRemove.forEach(key => localStorage.removeItem(key)); location.reload(); };
     const updateThemeButtonText = () => { const key = body.classList.contains('dark-mode') ? 'themeToggleLight' : 'themeToggleDark'; themeToggleBtn.textContent = translations[key][currentLang]; };
     const updateLangButtonText = () => { langToggleBtn.textContent = currentLang === 'en' ? translations.langToggle.en : translations.langToggle.ar; };
     const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); updateThemeButtonText(); };
@@ -878,14 +886,13 @@
         setLanguage(savedLang);
         applyFontSizes();
         applyStationLogoSize();
+        applyFontWeight();
         setupDraggablePopup();
     };
     initialize();
   </script>
-
   <script>
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(registration => { console.log('SW registration successful:', registration.scope); }).catch(err => { console.log('SW registration failed:', err); }); }); }
   </script>
-
 </body>
 </html>
