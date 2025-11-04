@@ -718,91 +718,41 @@
     
     function stopAudioPlayer() { audioPlayer.stop(); }
     
-    // --- START OF THE FINAL, CORRECTED AND EXPLAINED CODE ---
+    // RESTORED: This is the correct, advanced function for HLS audio
     function playAudioStream(station) {
         stopVideoPlayer();
-        // Always destroy the previous HLS instance. This is CRITICAL to prevent
-        // streams from bleeding into each other and causing chaos.
-        if (hlsAudio) {
-            hlsAudio.destroy();
-            hlsAudio = null;
-        }
-
+        if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; }
         const isM3U8 = station.url.includes('.m3u8');
+        const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
 
-        // This checks if the browser has native HLS support AND the stream is NOT proxied.
-        // Safari on all Apple devices has native support. This is the key to mimicking the simple player.
-        // Hls.isSupported() is false on these browsers, so we use !Hls.isSupported().
-        if (isM3U8 && !station.url.includes('proxy.iofahmawi.workers.dev') && !Hls.isSupported()) {
-            
-            // On browsers like Safari, we let the browser handle HLS natively.
-            // We pass the source to Plyr, but because HLS.js is not supported/loaded,
-            // Plyr will just set the .src on the <audio> element, which is exactly what the simple player does.
-            console.log("Using native HLS playback for this stream.");
-            audioPlayer.source = {
-                type: 'audio',
-                title: getStationName(station),
-                sources: [{ src: station.url, type: 'application/x-mpegURL' }]
-            };
-            audioPlayer.play().catch(e => console.warn(`Native HLS play error:`, e));
-
-        } else if (isM3U8 && Hls.isSupported()) {
-            
-            // For browsers that need HLS.js (like Chrome, Firefox), we use your advanced manual method.
-            // This method works for BOTH proxied and non-proxied streams.
-            console.log("Using HLS.js for this stream.");
-            const isProxiedStream = station.url.includes('proxy.iofahmawi.workers.dev');
-
+        if (isM3U8 && isProxied && Hls.isSupported()) {
             audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
             audioPlayer.stop();
-
-            let hlsConfig = {}; // Default empty config.
-
-            // If it's a proxied stream, we add the xhrSetup.
-            if (isProxiedStream) {
-                const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
-                hlsConfig.xhrSetup = function(xhr, url) {
+            const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
+            hlsAudio = new Hls({
+                xhrSetup: function(xhr, url) {
                     const originalUrl = url;
                     if (!url.startsWith(proxyUrlBase) && (url.startsWith('http') || !url.includes('/'))) {
                         xhr.open('GET', proxyUrlBase + encodeURIComponent(originalUrl));
                     } else {
                         xhr.open('GET', originalUrl);
                     }
-                };
-            }
-            
-            hlsAudio = new Hls(hlsConfig);
+                }
+            });
             hlsAudio.attachMedia(audioPlayerEl);
-            hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hlsAudio.loadSource(station.url);
-            });
-            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => {
-                audioPlayer.play().catch(e => console.warn(`HLS.js play error:`, e));
-            });
-
+            hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url));
+            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e)));
         } else {
-            // Fallback for all other stream types (e.g., .mp3, .aac).
-            audioPlayer.source = {
-                type: 'audio',
-                title: getStationName(station),
-                sources: [{ src: station.url, type: 'audio/mpeg' }]
-            };
-            audioPlayer.play().catch(e => console.warn(`Regular audio play error:`, e));
+            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] };
+            audioPlayer.play().catch(e => console.warn(`Audio error:`, e));
         }
 
-        // Media Session handling remains the same.
         if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: getStationName(station),
-                artist: station.description || 'Live Radio',
-                album: 'Jordan Radios',
-                artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }]
-            });
+            navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Radio', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] });
             navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
             navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
         }
     }
-    // --- END OF THE FINAL, CORRECTED AND EXPLAINED CODE ---
     
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
