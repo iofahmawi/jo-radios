@@ -718,10 +718,11 @@
     
     function stopAudioPlayer() { audioPlayer.stop(); }
     
-    // --- START OF THE FINAL, CORRECTED CODE ---
+    // --- START OF THE FINAL, CORRECTED AND EXPLAINED CODE ---
     function playAudioStream(station) {
         stopVideoPlayer();
-        // Always destroy the previous HLS instance to prevent stream bleeding and state issues.
+        // Always destroy the previous HLS instance. This is CRITICAL to prevent
+        // streams from bleeding into each other and causing chaos.
         if (hlsAudio) {
             hlsAudio.destroy();
             hlsAudio = null;
@@ -729,21 +730,35 @@
 
         const isM3U8 = station.url.includes('.m3u8');
 
-        // This is the unified, robust approach for all HLS (m3u8) streams.
-        if (isM3U8 && Hls.isSupported()) {
+        // This checks if the browser has native HLS support AND the stream is NOT proxied.
+        // Safari on all Apple devices has native support. This is the key to mimicking the simple player.
+        // Hls.isSupported() is false on these browsers, so we use !Hls.isSupported().
+        if (isM3U8 && !station.url.includes('proxy.iofahmawi.workers.dev') && !Hls.isSupported()) {
+            
+            // On browsers like Safari, we let the browser handle HLS natively.
+            // We pass the source to Plyr, but because HLS.js is not supported/loaded,
+            // Plyr will just set the .src on the <audio> element, which is exactly what the simple player does.
+            console.log("Using native HLS playback for this stream.");
+            audioPlayer.source = {
+                type: 'audio',
+                title: getStationName(station),
+                sources: [{ src: station.url, type: 'application/x-mpegURL' }]
+            };
+            audioPlayer.play().catch(e => console.warn(`Native HLS play error:`, e));
+
+        } else if (isM3U8 && Hls.isSupported()) {
+            
+            // For browsers that need HLS.js (like Chrome, Firefox), we use your advanced manual method.
+            // This method works for BOTH proxied and non-proxied streams.
+            console.log("Using HLS.js for this stream.");
             const isProxiedStream = station.url.includes('proxy.iofahmawi.workers.dev');
 
-            // Step 1: Give Plyr a blank source. This is key. It keeps Plyr in control of the UI
-            // and state, preventing the catastrophic issues from the previous attempt.
             audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
             audioPlayer.stop();
 
-            // Step 2: Manually initialize a new HLS.js instance. This creates a clean slate.
-            let hlsConfig = {}; // Default config for non-proxied streams.
+            let hlsConfig = {}; // Default empty config.
 
-            // Step 3: Check if this specific stream requires the proxy server logic.
-            // This does NOT force the proxy on everything. It only applies your xhrSetup
-            // if the stream URL already contains the proxy worker URL.
+            // If it's a proxied stream, we add the xhrSetup.
             if (isProxiedStream) {
                 const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
                 hlsConfig.xhrSetup = function(xhr, url) {
@@ -757,22 +772,16 @@
             }
             
             hlsAudio = new Hls(hlsConfig);
-
-            // Step 4: Attach our manually created HLS instance to the audio element
-            // and then load the real stream URL.
             hlsAudio.attachMedia(audioPlayerEl);
             hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => {
                 hlsAudio.loadSource(station.url);
             });
-            
-            // Step 5: Once HLS.js confirms the stream is parsed and ready, tell Plyr to play.
             hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => {
-                audioPlayer.play().catch(e => console.warn(`HLS Audio play error:`, e));
+                audioPlayer.play().catch(e => console.warn(`HLS.js play error:`, e));
             });
 
         } else {
-            // Fallback for all other stream types (like .mp3, .aac, etc.).
-            // This uses Plyr's standard, simple source handling, which works perfectly for them.
+            // Fallback for all other stream types (e.g., .mp3, .aac).
             audioPlayer.source = {
                 type: 'audio',
                 title: getStationName(station),
@@ -781,7 +790,7 @@
             audioPlayer.play().catch(e => console.warn(`Regular audio play error:`, e));
         }
 
-        // Media Session handling remains the same, controlled by Plyr's instance.
+        // Media Session handling remains the same.
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: getStationName(station),
@@ -793,7 +802,7 @@
             navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
         }
     }
-    // --- END OF THE FINAL, CORRECTED CODE ---
+    // --- END OF THE FINAL, CORRECTED AND EXPLAINED CODE ---
     
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
