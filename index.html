@@ -718,14 +718,45 @@
     
     function stopAudioPlayer() { audioPlayer.stop(); }
     
-    // RESTORED: This is the correct, advanced function for HLS audio
+    // --- START OF MODIFICATION ---
     function playAudioStream(station) {
         stopVideoPlayer();
-        if (hlsAudio) { hlsAudio.destroy(); hlsAudio = null; }
-        const isM3U8 = station.url.includes('.m3u8');
-        const isProxied = station.url.includes('proxy.iofahmawi.workers.dev');
+        if (hlsAudio) {
+            hlsAudio.destroy();
+            hlsAudio = null;
+        }
 
-        if (isM3U8 && isProxied && Hls.isSupported()) {
+        const isM3U8 = station.url.includes('.m3u8');
+
+        // The station object passed here is a copy from the playStation function,
+        // which might have already modified the URL to include the proxy.
+        // So, we check the URL content itself, not a separate flag.
+        const isAlreadyProxiedInUrl = station.url.includes('proxy.iofahmawi.workers.dev');
+
+        // ** THE FIX **
+        // If it's an M3U8 stream and it's NOT using the proxy, we bypass Plyr/HLS.js
+        // and use the simple, native browser method that works.
+        if (isM3U8 && !isAlreadyProxiedInUrl) {
+            
+            audioPlayer.stop(); // Stop any current playback via Plyr
+            
+            // Directly assign the URL to the raw <audio> element's src property
+            audioPlayerEl.src = station.url;
+
+            // Use the raw element to load and play
+            audioPlayerEl.load();
+            audioPlayerEl.play().catch(e => console.warn(`Native audio play error:`, e));
+            
+            // Manually update the player's title, since Plyr's source management is bypassed
+            setTimeout(() => {
+                const titleElement = audioPlayerContainer.querySelector('.plyr__title');
+                if(titleElement) {
+                    titleElement.textContent = getStationName(station);
+                }
+            }, 100);
+
+        } else if (isM3U8 && isAlreadyProxiedInUrl && Hls.isSupported()) {
+            // This is your advanced proxy logic, which remains unchanged
             audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: 'blank.mp3', type: 'audio/mpeg' }] };
             audioPlayer.stop();
             const proxyUrlBase = station.url.split('?url=')[0] + '?url=';
@@ -741,18 +772,30 @@
             });
             hlsAudio.attachMedia(audioPlayerEl);
             hlsAudio.on(Hls.Events.MEDIA_ATTACHED, () => hlsAudio.loadSource(station.url));
-            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Audio error:`, e)));
+            hlsAudio.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.warn(`Proxied HLS play error:`, e)));
+
         } else {
-            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: isM3U8 ? 'application/x-mpegURL' : 'audio/mpeg' }] };
-            audioPlayer.play().catch(e => console.warn(`Audio error:`, e));
+            // Fallback for regular non-M3U8 streams (e.g., MP3), whether proxied or not
+            audioPlayer.source = { type: 'audio', title: getStationName(station), sources: [{ src: station.url, type: 'audio/mpeg' }] };
+            audioPlayer.play().catch(e => console.warn(`Regular audio play error:`, e));
         }
 
+        // --- Media Session Handling ---
         if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({ title: getStationName(station), artist: station.description || 'Live Radio', album: 'Jordan Radios', artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }] });
-            navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
-            navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: getStationName(station),
+                artist: station.description || 'Live Radio',
+                album: 'Jordan Radios',
+                artwork: [{ src: station.logoUrl || 'icon-1024.png', sizes: '512x512', type: 'image/png' }]
+            });
+            
+            // Determine which element is controlling playback to assign handlers correctly
+            const playerElement = (isM3U8 && !isAlreadyProxiedInUrl) ? audioPlayerEl : audioPlayer;
+            navigator.mediaSession.setActionHandler('play', () => playerElement.play());
+            navigator.mediaSession.setActionHandler('pause', () => playerElement.pause());
         }
     }
+    // --- END OF MODIFICATION ---
     
     const playStation = (li, station) => {
         const wasActive = li.classList.contains('active');
