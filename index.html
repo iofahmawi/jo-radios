@@ -760,7 +760,39 @@
     const applyFontSizes = () => { const titleSize = localStorage.getItem('customTitleFontSize'); const stationSize = localStorage.getItem('customStationFontSize'); document.documentElement.style.setProperty('--main-title-font-size', titleSize ? `${titleSize}rem` : ''); document.documentElement.style.setProperty('--station-name-font-size', stationSize ? `${stationSize}rem` : ''); };
     const applyStationLogoSize = () => { const stationWidth = localStorage.getItem('customStationWidth'); const stationHeight = localStorage.getItem('customStationHeight'); document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : ''); document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : ''); };
     const applyFontWeight = () => { const isBold = localStorage.getItem('customStationFontWeightBold') === 'true'; document.documentElement.style.setProperty('--station-name-font-weight', isBold ? '700' : '500'); };
-    const applyCustomization = (title, imageUrl, width, height) => { if (title) { mainTitle.textContent = title; document.title = title; mainTitle.removeAttribute('data-lang-key'); } else { mainTitle.setAttribute('data-lang-key', 'pageTitle'); mainTitle.textContent = translations.pageTitle[currentLang]; document.title = "Web Jordan Radios"; } if (imageUrl) { headerImage.src = imageUrl; headerImage.style.display = 'block'; headerImage.style.height = height ? `${height}px` : DEFAULT_HEADER_IMAGE_HEIGHT + 'px'; headerImage.style.width = width ? `${width}px` : 'auto'; headerImage.style.maxWidth = 'none'; headerImage.style.objectFit = 'contain'; } else { headerImage.style.display = 'none'; } };
+    
+    // --- START OF MODIFICATION ---
+    const applyCustomization = (title, imageUrl, width, height) => {
+        // Handle Title
+        if (title) {
+            mainTitle.textContent = title;
+            document.title = title;
+            mainTitle.removeAttribute('data-lang-key');
+        } else {
+            mainTitle.setAttribute('data-lang-key', 'pageTitle');
+            mainTitle.textContent = translations.pageTitle[currentLang];
+            document.title = "Web Jordan Radios";
+        }
+
+        // Handle Image (Corrected Logic)
+        if (imageUrl) {
+            // If a custom URL is provided, use it
+            headerImage.src = imageUrl;
+            headerImage.style.display = 'block';
+            headerImage.style.height = height ? `${height}px` : DEFAULT_HEADER_IMAGE_HEIGHT + 'px';
+            headerImage.style.width = width ? `${width}px` : 'auto';
+            headerImage.style.maxWidth = 'none';
+            headerImage.style.objectFit = 'contain';
+        } else {
+            // If no custom URL (or an empty one), show the default image
+            headerImage.src = DEFAULT_HEADER_IMAGE;
+            headerImage.style.display = 'block';
+            headerImage.style.height = DEFAULT_HEADER_IMAGE_HEIGHT + 'px';
+            headerImage.style.width = 'auto';
+        }
+    };
+    // --- END OF MODIFICATION ---
+    
     const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); const newFontWeightBold = customStationFontWeightBold.checked; localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); localStorage.setItem('customStationFontWeightBold', newFontWeightBold); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); applyFontWeight(); personalizationModal.classList.add('hidden'); };
     const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; customStationFontWeightBold.checked = localStorage.getItem('customStationFontWeightBold') === 'true'; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
     const getStationName = (station) => { if (typeof station.name === 'object' && station.name !== null) { return station.name[currentLang] || station.name['en']; } return station.name; };
@@ -807,6 +839,7 @@
     const openImportUrlModal = () => { closeImportOptionsModal(); importUrlModal.classList.remove('hidden'); };
     const closeImportUrlModal = () => { importUrlForm.reset(); importUrlModal.classList.add('hidden'); };
 
+    // --- START OF MODIFICATION ---
     const initialize = async () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
         if (savedStationsJSON) {
@@ -822,18 +855,16 @@
                 stations = [];
             }
         }
+        
+        // Simplified and Corrected Logic
         const savedTitle = localStorage.getItem('customTitle');
         const savedImageUrl = localStorage.getItem('customImageUrl');
         const savedImageWidth = localStorage.getItem('customImageWidth');
         const savedImageHeight = localStorage.getItem('customImageHeight');
-        if (localStorage.getItem('customImageUrl') !== null || localStorage.getItem('customTitle') !== null) {
-            applyCustomization(savedTitle, savedImageUrl, savedImageWidth, savedImageHeight);
-        } else {
-            headerImage.src = DEFAULT_HEADER_IMAGE;
-            headerImage.style.display = 'block';
-            headerImage.style.height = DEFAULT_HEADER_IMAGE_HEIGHT + 'px';
-            headerImage.style.width = 'auto';
-        }
+        
+        // Always call applyCustomization. It now handles the default case internally.
+        applyCustomization(savedTitle, savedImageUrl, savedImageWidth, savedImageHeight);
+
         if (localStorage.getItem('theme') === 'dark') enableDarkMode(); else disableDarkMode();
         personalizeBtn.addEventListener('click', openPersonalizationModal);
         closePersonalizationModalBtn.addEventListener('click', () => personalizationModal.classList.add('hidden'));
@@ -889,6 +920,8 @@
         applyFontWeight();
         setupDraggablePopup();
     };
+    // --- END OF MODIFICATION ---
+
     initialize();
   </script>
   <script>
