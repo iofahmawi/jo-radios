@@ -17,7 +17,8 @@
     "logoUrl": "https://i.postimg.cc/SK3msqg6/1000014834.jpg",
     "url": "http://s3.voscast.com:9966/;",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": true
   },
   {
     "name": {
@@ -27,7 +28,8 @@
     "logoUrl": "https://i.postimg.cc/PxvrzNCV/1000014808.jpg",
     "url": "http://45.63.116.205/hls_audio2/audio.m3u8",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": false
   },
   {
     "name": {
@@ -87,7 +89,8 @@
     "logoUrl": "https://i.postimg.cc/cLJWB6j7/1000014952.jpg",
     "url": "https://jrtv-live.ercdn.net/jrradio/jordanradiovideo.m3u8",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": false
   },
   {
     "name": {
@@ -147,7 +150,8 @@
     "logoUrl": "https://i.postimg.cc/151YD5Hq/1000076554-converted.jpg",
     "url": "http://frequencyjo.info:8001/ainfm",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": true
   },
   {
     "name": {
@@ -207,7 +211,8 @@
     "logoUrl": "https://i.postimg.cc/jqJLy3Nq/1000014799.jpg",
     "url": "http://jufmstreaming.ju.edu.jo/;?type=http&nocache=32",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": true
   },
   {
     "name": {
@@ -227,7 +232,8 @@
     "logoUrl": "https://i.postimg.cc/5254nZN1/1000014769.jpg",
     "url": "http://aabufm.aabu.edu.jo/aabufm",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": true
   },
   {
     "name": {
@@ -237,7 +243,8 @@
     "logoUrl": "https://i.postimg.cc/Dykm6Qdr/1000014800.jpg",
     "url": "http://fm.ttu.edu.jo:88/broadwavelow.mp3?src=1",
     "description": "",
-    "type": "audio"
+    "type": "audio",
+    "proxied": true
   },
   {
     "name": {
