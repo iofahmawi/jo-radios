@@ -518,10 +518,12 @@
           <button id="closeImportConfirmBtn" class="modal-close-btn"><i class="ph ph-x"></i></button>
           <h3 class="modal-title" data-lang-key="importModalTitle">Import List</h3>
           <p class="confirm-text" data-lang-key="importConfirmText">New list ready. Merge with current list or replace it?</p>
+          <!-- --- START OF MODIFICATION --- -->
           <div class="modal-actions">
-              <button id="mergeBtn" class="btn-secondary" data-lang-key="mergeBtn">Merge</button>
               <button id="replaceBtn" class="btn-secondary" data-lang-key="replaceBtn">Replace</button>
+              <button id="mergeBtn" class="btn-secondary" data-lang-key="mergeBtn">Merge</button>
           </div>
+          <!-- --- END OF MODIFICATION --- -->
       </div>
   </div>
   <div id="deleteConfirmModal" class="modal-overlay modal-overlay-small hidden">
@@ -761,7 +763,6 @@
     const applyStationLogoSize = () => { const stationWidth = localStorage.getItem('customStationWidth'); const stationHeight = localStorage.getItem('customStationHeight'); document.documentElement.style.setProperty('--station-logo-width', stationWidth ? `${stationWidth}px` : ''); document.documentElement.style.setProperty('--station-logo-height', stationHeight ? `${stationHeight}px` : ''); };
     const applyFontWeight = () => { const isBold = localStorage.getItem('customStationFontWeightBold') === 'true'; document.documentElement.style.setProperty('--station-name-font-weight', isBold ? '700' : '500'); };
     
-    // --- START OF MODIFICATION ---
     const applyCustomization = (title, imageUrl, width, height) => {
         // Handle Title
         if (title) {
@@ -791,7 +792,6 @@
             headerImage.style.width = 'auto';
         }
     };
-    // --- END OF MODIFICATION ---
     
     const saveCustomization = (e) => { e.preventDefault(); const newTitle = customTitleInput.value.trim(); const newImageUrl = customImageUrlInput.value.trim(); const newWidth = customImageWidthInput.value.trim(); const newHeight = customImageHeightInput.value.trim(); const newTitleSize = customTitleFontSizeInput.value.trim(); const newStationSize = customStationFontSizeInput.value.trim(); const newStationWidth = customStationWidthInput.value.trim(); const newStationHeight = customStationHeightInput.value.trim(); const newFontWeightBold = customStationFontWeightBold.checked; localStorage.setItem('customTitle', newTitle); localStorage.setItem('customImageUrl', newImageUrl); localStorage.setItem('customImageWidth', newWidth); localStorage.setItem('customImageHeight', newHeight); localStorage.setItem('customTitleFontSize', newTitleSize); localStorage.setItem('customStationFontSize', newStationSize); localStorage.setItem('customStationWidth', newStationWidth); localStorage.setItem('customStationHeight', newStationHeight); localStorage.setItem('customStationFontWeightBold', newFontWeightBold); applyCustomization(newTitle, newImageUrl, newWidth, newHeight); applyFontSizes(); applyStationLogoSize(); applyFontWeight(); personalizationModal.classList.add('hidden'); };
     const openPersonalizationModal = () => { customTitleInput.value = localStorage.getItem('customTitle') ?? ''; customImageUrlInput.value = localStorage.getItem('customImageUrl') ?? ''; customImageWidthInput.value = localStorage.getItem('customImageWidth') ?? ''; customImageHeightInput.value = localStorage.getItem('customImageHeight') ?? ''; customTitleFontSizeInput.value = localStorage.getItem('customTitleFontSize') ?? ''; customStationFontSizeInput.value = localStorage.getItem('customStationFontSize') ?? ''; customStationWidthInput.value = localStorage.getItem('customStationWidth') ?? ''; customStationHeightInput.value = localStorage.getItem('customStationHeight') ?? ''; customStationFontWeightBold.checked = localStorage.getItem('customStationFontWeightBold') === 'true'; settingsModal.classList.add('hidden'); personalizationModal.classList.remove('hidden'); };
@@ -839,7 +839,6 @@
     const openImportUrlModal = () => { closeImportOptionsModal(); importUrlModal.classList.remove('hidden'); };
     const closeImportUrlModal = () => { importUrlForm.reset(); importUrlModal.classList.add('hidden'); };
 
-    // --- START OF MODIFICATION ---
     const initialize = async () => {
         const savedStationsJSON = localStorage.getItem('savedStations');
         if (savedStationsJSON) {
@@ -920,7 +919,6 @@
         applyFontWeight();
         setupDraggablePopup();
     };
-    // --- END OF MODIFICATION ---
 
     initialize();
   </script>
