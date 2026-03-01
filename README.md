@@ -1,6 +1,6 @@
 <div dir="rtl">
 
-## إذاعات الأردن&nbsp;&nbsp;📻
+# إذاعات الأردن&nbsp;&nbsp;📻
 
 [![version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/iofahmawi/jo-radios)
 [![PWA](https://img.shields.io/badge/PWA-Enabled-brightgreen)](https://iofahmawi.github.io/jo-radios/index.html)
